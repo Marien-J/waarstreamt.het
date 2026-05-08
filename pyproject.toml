@@ -21,6 +21,13 @@ dev = [
     "matplotlib>=3.8.0",
     "seaborn>=0.13.0",
 ]
+dashboard = [
+    "dash>=2.14.0",
+    "dash-bootstrap-components>=1.5.0",
+    "fuzzywuzzy>=0.18.0",
+    "python-levenshtein>=0.23.0",
+    "pandas>=2.2.0",
+]
 
 [build-system]
 requires = ["hatchling"]
