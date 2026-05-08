@@ -4,6 +4,7 @@ import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
 import path from 'path'
 
 export default defineConfig({
+  base: process.env.GITHUB_PAGES === 'true' ? '/waarstreamt.het/' : '/',
   plugins: [
     react(),
     TanStackRouterVite(),
