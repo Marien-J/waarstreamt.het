@@ -1,10 +1,12 @@
 {
   "tasks": [
     {
-      "slug": "20260508-nl-streaming-catalog-extractor",      "status": "DONE"
+      "slug": "20260508-nl-streaming-catalog-extractor",
+      "status": "DONE"
     },
     {
-      "slug": "20260508-fix-justwatch-api-imports",      "status": "READY_FOR_REVIEW"
+      "slug": "20260508-fix-justwatch-api-imports",
+      "status": "READY_FOR_REVIEW"
     },
     {
       "slug": "20260508-streaming-analysis-notebook",
@@ -12,7 +14,11 @@
     },
     {
       "slug": "20260508-streaming-dashboard",
-      "status": "READY_FOR_DEV"
+      "status": "DEPRECATED"
+    },
+    {
+      "slug": "20260508-nl-streaming-web-app",
+      "status": "READY_FOR_REVIEW"
     }
   ]
 }
