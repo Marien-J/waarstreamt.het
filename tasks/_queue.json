@@ -1,3 +1,10 @@
 {
-  "tasks": []
+  "tasks": [
+    {
+      "slug": "20260508-nl-streaming-catalog-extractor",      "status": "DONE"
+    },
+    {
+      "slug": "20260508-fix-justwatch-api-imports",      "status": "READY_FOR_REVIEW"
+    }
+  ]
 }

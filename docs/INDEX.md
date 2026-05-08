@@ -3,7 +3,9 @@
 Canonical entry point. The Planner reads this first when sparring.
 
 ## Features
-(none yet — populated by the Developer per task)
+
+- [NL Streaming Catalog Extractor](features/nl-streaming-catalog.md) — JustWatch-based Dutch streaming availability data extraction
 
 ## Architecture decisions
+
 (none yet — populated as decisions are made)
