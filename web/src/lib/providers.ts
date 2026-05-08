@@ -16,7 +16,7 @@ let providersCache: Record<string, ProviderMetadata> | null = null
 export async function loadProviders(): Promise<Record<string, ProviderMetadata>> {
   if (providersCache) return providersCache
 
-  const response = await fetch('/data/providers.json')
+  const response = await fetch(`${import.meta.env.BASE_URL}data/providers.json`)
   providersCache = await response.json()
   return providersCache!
 }

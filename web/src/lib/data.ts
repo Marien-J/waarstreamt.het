@@ -45,7 +45,7 @@ export async function loadTitles(): Promise<Title[]> {
   if (titlesCache) return titlesCache
 
   try {
-    const response = await fetch('/data/titles.json')
+    const response = await fetch(`${import.meta.env.BASE_URL}data/titles.json`)
     if (!response.ok) {
       throw new Error(`Failed to load titles: ${response.status} ${response.statusText}`)
     }
@@ -61,7 +61,7 @@ export async function loadManifest(): Promise<Manifest> {
   if (manifestCache) return manifestCache
 
   try {
-    const response = await fetch('/data/manifest.json')
+    const response = await fetch(`${import.meta.env.BASE_URL}data/manifest.json`)
     if (!response.ok) {
       throw new Error(`Failed to load manifest: ${response.status} ${response.statusText}`)
     }
