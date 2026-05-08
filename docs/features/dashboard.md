@@ -1,5 +1,11 @@
 # Dashboard
 
+**⚠️ DEPRECATED**: This Python Dash dashboard has been replaced by the modern React/Vite web app. See [NL Streaming Web App](nl-streaming-web-app.md) for the current implementation.
+
+**Legacy documentation preserved below for historical reference.**
+
+---
+
 Web interface for searching and exploring the Dutch streaming catalog.
 
 ## Overview

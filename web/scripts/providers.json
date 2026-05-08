@@ -1,0 +1,107 @@
+{
+  "nfx": {
+    "short_name": "nfx",
+    "display_name": "Netflix",
+    "logo_url": "https://images.justwatch.com/icon/430997/s100",
+    "brand_color": "#E50914",
+    "tier": "mainstream"
+  },
+  "prv": {
+    "short_name": "prv",
+    "display_name": "Amazon Prime Video",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#00A8E1",
+    "tier": "mainstream"
+  },
+  "atp": {
+    "short_name": "atp",
+    "display_name": "Apple TV Plus",
+    "logo_url": "https://images.justwatch.com/icon/190848813/s100",
+    "brand_color": "#000000",
+    "tier": "mainstream"
+  },
+  "kpn": {
+    "short_name": "kpn",
+    "display_name": "KPN",
+    "logo_url": "https://images.justwatch.com/icon/430997/s100",
+    "brand_color": "#00A03E",
+    "tier": "mainstream"
+  },
+  "ply": {
+    "short_name": "ply",
+    "display_name": "Google Play Movies",
+    "logo_url": "https://images.justwatch.com/icon/169478387/s100",
+    "brand_color": "#4285F4",
+    "tier": "mainstream"
+  },
+  "vdl": {
+    "short_name": "vdl",
+    "display_name": "Videoland",
+    "logo_url": "https://images.justwatch.com/icon/111860795/s100",
+    "brand_color": "#FF6600",
+    "tier": "mainstream"
+  },
+  "amz": {
+    "short_name": "amz",
+    "display_name": "Amazon Video",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#00A8E1",
+    "tier": "mainstream"
+  },
+  "hmx": {
+    "short_name": "hmx",
+    "display_name": "HBO Max",
+    "logo_url": "https://images.justwatch.com/icon/305908916/s100",
+    "brand_color": "#7B35C3",
+    "tier": "niche"
+  },
+  "hmf": {
+    "short_name": "hmf",
+    "display_name": "hayu",
+    "logo_url": "https://images.justwatch.com/icon/127944183/s100",
+    "brand_color": "#FF0066",
+    "tier": "niche"
+  },
+  "pth": {
+    "short_name": "pth",
+    "display_name": "Pathé Thuis",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#E4002B",
+    "tier": "niche"
+  },
+  "wki": {
+    "short_name": "wki",
+    "display_name": "Rakuten TV",
+    "logo_url": "https://images.justwatch.com/icon/128599719/s100",
+    "brand_color": "#BF0000",
+    "tier": "niche"
+  },
+  "mej": {
+    "short_name": "mej",
+    "display_name": "meJane",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#FF6B9D",
+    "tier": "niche"
+  },
+  "itu": {
+    "short_name": "itu",
+    "display_name": "Apple TV Store",
+    "logo_url": "https://images.justwatch.com/icon/190848813/s100",
+    "brand_color": "#000000",
+    "tier": "niche"
+  },
+  "dis": {
+    "short_name": "dis",
+    "display_name": "Disney Plus",
+    "logo_url": "https://images.justwatch.com/icon/147638351/s100",
+    "brand_color": "#113CCF",
+    "tier": "mainstream"
+  },
+  "zav": {
+    "short_name": "zav",
+    "display_name": "Zavvi",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#000000",
+    "tier": "niche"
+  }
+}
