@@ -78,6 +78,29 @@ data/streaming_nl_2026-05-08_providers.csv # Provider lookup
 
 Re-running on the same day overwrites. Different days create new dated files.
 
+## Analysis notebook
+
+Exploratory data analysis is available in [`notebooks/streaming_nl_analysis.ipynb`](../../notebooks/streaming_nl_analysis.ipynb), covering:
+
+- Dataset overview (providers, content types, date ranges)
+- Provider coverage and monetization breakdown
+- Content library composition (SHOW/MOVIE split, genre distribution)
+- Availability patterns (exclusivity vs. multi-platform)
+- Pricing insights (rental/purchase price distributions)
+- Quality metrics (4K/HD/SD availability, IMDb/TMDB scores)
+- Release year trends (content recency by provider)
+
+Run with:
+```bash
+uv sync --dev  # Installs jupyter, pandas, matplotlib, seaborn
+uv run jupyter notebook notebooks/streaming_nl_analysis.ipynb
+```
+
+Or execute headless:
+```bash
+uv run jupyter nbconvert --execute --to notebook --inplace notebooks/streaming_nl_analysis.ipynb
+```
+
 ## Future enrichment paths
 
 - **TMDB join**: Use `tmdb_id` to fetch cast, crew, detailed descriptions, episode counts.

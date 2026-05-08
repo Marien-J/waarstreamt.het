@@ -5,6 +5,10 @@
     },
     {
       "slug": "20260508-fix-justwatch-api-imports",      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "slug": "20260508-streaming-analysis-notebook",
+      "status": "READY_FOR_DEV"
     }
   ]
 }
