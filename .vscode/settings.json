@@ -1,0 +1,5 @@
+{
+  "chat.subagents.allowInvocationsFromSubagents": true,
+  "chat.agentFilesLocations": [".github/agents"],
+  "github.copilot.chat.agent.runTasks.enabled": true
+}
