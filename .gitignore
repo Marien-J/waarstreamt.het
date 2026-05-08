@@ -232,3 +232,6 @@ build/
 Thumbs.db
 .idea/
 *.swp
+
+# Project-specific
+data/
