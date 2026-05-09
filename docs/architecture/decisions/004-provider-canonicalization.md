@@ -46,3 +46,19 @@ The initial implementation only enumerated brand codes from the 6 small `data/st
 - **Provider name fallback in preprocess:** passthrough brand IDs (short_names not in `BRAND_BY_SHORT_NAME`) now fall back to the JustWatch `provider_name` column from the CSV instead of the raw 3-letter code, so even unmapped brands display correctly.
 - **UI safety net:** `title-detail.tsx` falls back to `offer.provider_name` (full name) when a `brand_id` is missing from the loaded `providers_<cc>.json`.
 - **Regression guard:** `web/scripts/test-filters.ts` assertion [7] rejects any `providers_<cc>.json` entry where `display_name.length <= 4 && display_name === display_name.toLowerCase()`.
+
+## Updates 2026-05-09 (task 20260509-derive-display-names-from-csv) [simplification]
+
+The `BRANDS` registry previously hand-authored `display_name` for every brand (~103 entries). JustWatch's CSV already carries this information in the `provider_name` column, so hand-authoring it was unnecessary duplication.
+
+### Change
+
+- **`display_name` is now derived at preprocess time** from the CSV `provider_name` column. For each brand, `deriveProviders` selects the `provider_name` of the most-frequent `provider_short_name` by FLATRATE-offer count; tie-break is alphabetic on `provider_name`. Fallback (no FLATRATE offers): most-frequent provider_name across any monetization type. Final fallback: `brand_id` itself.
+- **`BrandInfo.display_name` dropped** from the `provider-brands.ts` interface. The `BRANDS` registry now only carries `brand_color` and optional `logo_url` — both are not in the CSV and still need manual overrides.
+- **No entries dropped** from `BRANDS` (all retained entries have a non-default `brand_color` or a `logo_url` override; none used the `#888888` preprocess fallback).
+
+### Consequences
+
+- `web/scripts/provider-brands.ts` loses ~103 `display_name` lines; `BRANDS` shrinks significantly.
+- Derived names like `"MagentaTV"`, `"Amazon Prime Video"`, `"MUBI"` come directly from JustWatch data and will auto-update if JustWatch renames a provider.
+- The regression guard in `test-filters.ts` assertion [7] still applies (derived names from JustWatch are always full names, never raw 3-letter codes).

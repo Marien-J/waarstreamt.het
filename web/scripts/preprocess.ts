@@ -226,26 +226,50 @@ interface ProviderBrandEntry {
 }
 
 function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
-  // Count unique titles per brand_id (FLATRATE only)
+  // Count unique titles per brand_id (FLATRATE only) — for tier assignment
   const brandTitles = new Map<string, Set<string>>()
-  // Track which short_names map to each brand
+  // Track which short_names map to each brand (FLATRATE) — for short_names field
   const brandShortNames = new Map<string, Set<string>>()
-  // Track first provider_name seen per brand_id (fallback display for passthrough brands)
-  const brandProviderName = new Map<string, string>()
+  // FLATRATE offer-count per (brand_id, short_name) — for display_name selection
+  const brandFlatrateOffers = new Map<string, Map<string, { provider_name: string; count: number }>>()
+  // All-offer-count per (brand_id, short_name) — for display_name fallback
+  const brandAllOffers = new Map<string, Map<string, { provider_name: string; count: number }>>()
+
+  function trackOffer(
+    map: Map<string, Map<string, { provider_name: string; count: number }>>,
+    bid: string, sn: string, pn: string
+  ) {
+    if (!map.has(bid)) map.set(bid, new Map())
+    const inner = map.get(bid)!
+    if (!inner.has(sn)) inner.set(sn, { provider_name: pn, count: 0 })
+    inner.get(sn)!.count++
+  }
 
   for (const title of titles) {
     for (const offer of title.offers) {
+      const bid = offer.brand_id
+      const sn = offer.provider_short_name
+      const pn = offer.provider_name || bid
+      // Track all offers (fallback for display_name)
+      trackOffer(brandAllOffers, bid, sn, pn)
       if (offer.monetization_type === 'FLATRATE') {
-        const bid = offer.brand_id
         if (!brandTitles.has(bid)) brandTitles.set(bid, new Set())
         brandTitles.get(bid)!.add(title.jw_entry_id)
         if (!brandShortNames.has(bid)) brandShortNames.set(bid, new Set())
-        brandShortNames.get(bid)!.add(offer.provider_short_name)
-        if (!brandProviderName.has(bid) && offer.provider_name) {
-          brandProviderName.set(bid, offer.provider_name)
-        }
+        brandShortNames.get(bid)!.add(sn)
+        trackOffer(brandFlatrateOffers, bid, sn, pn)
       }
     }
+  }
+
+  // Pick display_name: most-frequent short_name's provider_name; tie-break alphabetic
+  function pickDisplayName(
+    inner: Map<string, { provider_name: string; count: number }> | undefined
+  ): string | undefined {
+    if (!inner || inner.size === 0) return undefined
+    const entries = [...inner.values()]
+    entries.sort((a, b) => b.count !== a.count ? b.count - a.count : a.provider_name.localeCompare(b.provider_name))
+    return entries[0].provider_name || undefined
   }
 
   // Sort by title count desc
@@ -266,9 +290,13 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
       continue // drop
     }
     const meta = BRANDS[brandId]
+    const displayName =
+      pickDisplayName(brandFlatrateOffers.get(brandId)) ??
+      pickDisplayName(brandAllOffers.get(brandId)) ??
+      brandId
     result[brandId] = {
       brand_id: brandId,
-      display_name: meta?.display_name ?? brandProviderName.get(brandId) ?? brandId,
+      display_name: displayName,
       logo_url: meta?.logo_url,
       brand_color: meta?.brand_color ?? '#888888',
       title_count: count,

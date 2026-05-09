@@ -75,6 +75,10 @@
     {
       "slug": "20260509-monetization-coalesce-and-purchases-toggle",
       "status": "DONE"
+    },
+    {
+      "slug": "20260509-derive-display-names-from-csv",
+      "status": "DONE"
     }
   ]
 }
