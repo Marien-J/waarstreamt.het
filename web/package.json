@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "check:i18n": "tsx scripts/check-i18n-keys.ts",
-    "test:search": "tsx scripts/test-search.ts"
+    "test:search": "tsx scripts/test-search.ts",
+    "test:filters": "tsx scripts/test-filters.ts"
   },
   "dependencies": {
     "react": "^18.3.0",

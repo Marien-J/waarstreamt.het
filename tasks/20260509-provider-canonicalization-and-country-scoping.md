@@ -98,8 +98,101 @@ Fix the data layer once: derive provider lists per country from the actual catal
 
 ---
 ## Developer log
-(Developer appends here)
+
+### Brand mapping table (all short_names across 6 country CSVs)
+
+| Country | short_name | display_name | brand_id |
+|---------|-----------|--------------|----------|
+| BE | prv | Amazon Prime Video | amazon |
+| BE | nfx | Netflix | netflix |
+| BE | vrt | VRT MAX | vrt |
+| DE | amp | Amazon Prime Video | amazon |
+| DE | jyn | Joyn | jyn |
+| DE | nfx | Netflix | netflix |
+| DE | app | Paramount+ | paramount |
+| DE | tvn | RTL+ | tvn |
+| DE | wls | WOW | wls |
+| GB | amp | Amazon Prime Video | amazon |
+| GB | bbc | BBC iPlayer | bbc |
+| GB | itv | ITVX | itv |
+| GB | ntv | NOW | ntv |
+| GB | nfx | Netflix | netflix |
+| GB | app | Paramount+ | paramount |
+| JP | amp | Amazon Prime Video | amazon |
+| JP | hlu | Hulu | hulu |
+| JP | nfx | Netflix | netflix |
+| JP | unx | U-NEXT | unx |
+| NL | prv | Amazon Prime Video | amazon |
+| NL | mxx | HBO Max | max |
+| NL | nfx | Netflix | netflix |
+| NL | sst | SkyShowtime | sst |
+| NL | vil | Videoland | videoland |
+| US | amp | Amazon Prime Video | amazon |
+| US | hlu | Hulu | hulu |
+| US | mxx | Max | max |
+| US | nfx | Netflix | netflix |
+| US | app | Paramount+ | paramount |
+| US | pct | Peacock | peacock |
+
+Total: 30 short_name entries across 6 countries, 14 distinct brand_ids. Additional codes mapped in `provider-brands.ts` for TVOD variants (amz, itu, etc.) and future-proofing.
+
+### Files changed
+- `web/scripts/provider-brands.ts` — already existed with complete mapping; verified correct
+- `web/scripts/preprocess.ts` — already implemented brand_id + providers_<cc>.json emission; ran to generate per-country files
+- `web/src/lib/providers.ts` — added `ProviderMetadata` type alias for backward compat
+- `web/src/routes/title.$id.tsx` — fixed: `loadProviders(country.toLowerCase())`, group offers by `brand_id`
+- `web/src/routes/__root.tsx` — fixed: `BrandMetadata` type, `loadProviders(country.toLowerCase())`, country dep in useEffect
+- `web/src/components/title-detail.tsx` — fixed: group by `brand_id`
+- `web/src/store/app-store.ts` — added persist version 2 + migrate (short_names → brand_ids)
+- `web/scripts/verify-wiring.ts` — added 4 brand canonicalization assertions
+- `web/scripts/test-filters.ts` — created (NEW)
+- `web/package.json` — added `test:filters` script
+- `docs/architecture/decisions/004-provider-canonicalization.md` — created (NEW ADR)
+- `docs/features/streaming-web-app.md` — added provider canonicalization section
+- `docs/features/streaming-catalog.md` — added preprocess output section
+- `docs/INDEX.md` — linked ADR 004
+- `tasks/_queue.json` — status → READY_FOR_REVIEW
+
+### Generated data
+- `web/public/data/providers_nl.json` — 16 brands (8 mainstream)
+- `web/public/data/providers_de.json` — 45 brands (8 mainstream)
+- `web/public/data/providers_be.json` — 8 brands (8 mainstream)
+- `web/public/data/providers_us.json` — 67 brands (8 mainstream)
+- `web/public/data/providers_gb.json` — 15 brands (8 mainstream)
+- `web/public/data/providers_jp.json` — 18 brands (8 mainstream)
+
+### Gate results
+- `uv run pytest -q` — 18 passed ✓
+- `npm run build` — ✓ built in 3.31s
+- `npm run test:search` — 9 passed ✓
+- `npm run test:filters` — 114 passed ✓
+- `npx tsx scripts/check-i18n-keys.ts` — all 4 dicts have same 62 keys ✓
+- `npx tsx scripts/verify-wiring.ts` — all assertions satisfied ✓
+
+### Design decisions
+- `ProviderMetadata` alias added to `providers.ts` to avoid breaking consumers that imported the old name without needing a broad rename refactor.
+- `genre=drama` in test spec was corrected to `genre=drm` (3-letter genre codes used throughout the catalog).
+- `verify-wiring.ts` regex for `loadProviders(countryCode` changed to `[\s\S]{0,10}` lookahead since the param is on the next line in the multi-line function signature.
+- Legacy `web/scripts/providers.json` and `web/public/data/providers.json` retained (not deleted) — safe because the frontend now exclusively fetches `providers_<cc>.json`; cleanup can happen in a follow-up task.
 
 ---
 ## Reviewer verdict
 (Reviewer appends here)
+
+APPROVED. All gates re-run independently and passed:
+- `uv run pytest -q` — 18 passed ✓
+- `npm run build` — vite built in 2.14s, preprocess emits all 6 per-country providers_<cc>.json ✓
+- `npm run test:search` — 9 passed ✓
+- `npm run test:filters` — 114 assertions passed ✓
+- `npx tsx scripts/check-i18n-keys.ts` — 62 keys, 4 dicts ✓
+- `npx tsx scripts/verify-wiring.ts` — all assertions satisfied ✓
+
+Spot checks:
+- All 17 short_names in the 6 provider CSVs are mapped in `provider-brands.ts` ✓
+- KPN absent from providers_de.json, providers_us.json, providers_gb.json, providers_jp.json; present in providers_nl.json ✓
+- app-store.ts version 2 migrate maps legacy short_names → brand_ids and drops unknowns ✓
+- title.$id.tsx groups offers by `brand_id ?? provider_short_name` (no duplicate Amazon cards) ✓
+- ADR 004 exists with Context / Decision / Consequences ✓
+
+Branch: agent/20260509-provider-canonicalization-and-country-scoping
+PR: https://github.com/Marien-J/waarstreamt.het/compare/main...agent/20260509-provider-canonicalization-and-country-scoping?expand=1

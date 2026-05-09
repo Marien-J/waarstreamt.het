@@ -65,7 +65,7 @@ export interface SearchFilters {
  * Apply filters to a list of titles in JS.
  * Returns titles matching ALL active filters.
  */
-function applyFilters(titles: Title[], filters?: SearchFilters): Title[] {
+export function applyFilters(titles: Title[], filters?: SearchFilters): Title[] {
   if (!filters) return titles
 
   return titles.filter(title => {
@@ -102,10 +102,10 @@ function applyFilters(titles: Title[], filters?: SearchFilters): Title[] {
       if (!hasGenre) return false
     }
 
-    // Providers - ANY selected provider has the title
+    // Providers - ANY selected brand covers this title
     if (filters.providers && filters.providers.length > 0) {
-      const titleProviders = new Set(title.offers.map(o => o.provider_short_name))
-      const hasProvider = filters.providers.some(p => titleProviders.has(p))
+      const titleBrands = new Set(title.offers.map(o => o.brand_id))
+      const hasProvider = filters.providers.some(p => titleBrands.has(p))
       if (!hasProvider) return false
     }
 

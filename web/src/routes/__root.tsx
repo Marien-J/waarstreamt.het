@@ -7,7 +7,7 @@ import { useAppStore } from '@/store/app-store'
 import { usePreferencesStore } from '@/store/preferences'
 import { detectCountry } from '@/lib/geo'
 import { useState, useEffect } from 'react'
-import { loadProviders, type ProviderMetadata } from '@/lib/providers'
+import { loadProviders, type BrandMetadata } from '@/lib/providers'
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -15,8 +15,8 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   const { darkMode, myProviders } = useAppStore()
-  const { applyDetectedCountry } = usePreferencesStore()
-  const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
+  const { applyDetectedCountry, country } = usePreferencesStore()
+  const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [showProviderPicker, setShowProviderPicker] = useState(false)
 
   useEffect(() => {
@@ -28,8 +28,8 @@ function RootLayout() {
   }, [darkMode])
 
   useEffect(() => {
-    loadProviders().then(setProviders)
-  }, [])
+    loadProviders(country.toLowerCase()).then(setProviders)
+  }, [country])
 
   // Run geo-detection once on mount (no-op if user has explicit preference)
   useEffect(() => {

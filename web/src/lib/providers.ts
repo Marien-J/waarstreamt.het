@@ -1,35 +1,33 @@
-export const PROVIDER_TIERS = {
-  mainstream: ['nfx', 'prv', 'atp', 'kpn', 'ply', 'vdl', 'amz', 'dis'],
-  niche: ['hmx', 'hmf', 'pth', 'wki', 'mej', 'itu', 'zav'],
-}
-
-export interface ProviderMetadata {
-  short_name: string
+export interface BrandMetadata {
+  brand_id: string
   display_name: string
-  logo_url: string
+  logo_url?: string
   brand_color: string
+  title_count: number
   tier: 'mainstream' | 'niche' | 'channel'
+  short_names: string[]
 }
 
-let providersCache: Record<string, ProviderMetadata> | null = null
+// Per-country cache: cc → brand record
+const providersCache = new Map<string, Record<string, BrandMetadata>>()
 
-export async function loadProviders(): Promise<Record<string, ProviderMetadata>> {
-  if (providersCache) return providersCache
+export async function loadProviders(
+  countryCode: string = 'nl'
+): Promise<Record<string, BrandMetadata>> {
+  const cc = countryCode.toLowerCase()
+  if (providersCache.has(cc)) return providersCache.get(cc)!
 
-  const response = await fetch(`${import.meta.env.BASE_URL}data/providers.json`)
-  providersCache = await response.json()
-  return providersCache!
-}
-
-export function getProviderTier(shortName: string): 'mainstream' | 'niche' | 'channel' {
-  if (PROVIDER_TIERS.mainstream.includes(shortName)) return 'mainstream'
-  if (PROVIDER_TIERS.niche.includes(shortName)) return 'niche'
-  return 'channel'
+  const response = await fetch(
+    `${import.meta.env.BASE_URL}data/providers_${cc}.json`
+  )
+  const data: Record<string, BrandMetadata> = await response.json()
+  providersCache.set(cc, data)
+  return data
 }
 
 export function groupProvidersByTier(
   providers: string[],
-  _metadata: Record<string, ProviderMetadata>
+  metadata: Record<string, BrandMetadata>
 ): {
   mainstream: string[]
   niche: string[]
@@ -41,14 +39,20 @@ export function groupProvidersByTier(
     channels: [] as string[],
   }
 
-  for (const provider of providers) {
-    const tier = getProviderTier(provider)
-    if (tier === 'channel') {
-      result.channels.push(provider)
+  for (const brandId of providers) {
+    const tier = metadata[brandId]?.tier ?? 'channel'
+    if (tier === 'mainstream') {
+      result.mainstream.push(brandId)
+    } else if (tier === 'niche') {
+      result.niche.push(brandId)
     } else {
-      result[tier].push(provider)
+      result.channels.push(brandId)
     }
   }
 
   return result
 }
+
+// Backward-compat alias (consumers that imported the old ProviderMetadata type)
+export type ProviderMetadata = BrandMetadata
+

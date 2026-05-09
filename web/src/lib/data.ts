@@ -1,5 +1,6 @@
 export interface Offer {
   provider_short_name: string
+  brand_id: string
   monetization_type: string
   presentation_type: string
   price_value: number | null

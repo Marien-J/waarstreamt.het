@@ -34,7 +34,7 @@ function TitleDetailView() {
         setFallbackTitle(null)
       }
 
-      const providersData = await loadProviders()
+      const providersData = await loadProviders(country.toLowerCase())
       setProviders(providersData)
       setLoading(false)
     }
@@ -78,12 +78,13 @@ function TitleDetailView() {
 
   const displayTitle = title ?? fallbackTitle!
 
-  // Group offers by provider (only for current-country title)
+  // Group offers by brand_id (only for current-country title)
   const offersByProvider = new Map<string, typeof displayTitle.offers>()
   if (title) {
     for (const offer of title.offers) {
-      const existing = offersByProvider.get(offer.provider_short_name) || []
-      offersByProvider.set(offer.provider_short_name, [...existing, offer])
+      const key = offer.brand_id ?? offer.provider_short_name
+      const existing = offersByProvider.get(key) || []
+      offersByProvider.set(key, [...existing, offer])
     }
   }
 

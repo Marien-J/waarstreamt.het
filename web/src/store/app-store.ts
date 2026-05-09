@@ -1,6 +1,30 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+// Known short_name → brand_id mappings for legacy My Providers migration
+const LEGACY_SHORT_NAME_TO_BRAND: Record<string, string> = {
+  amp: 'amazon', prv: 'amazon', amz: 'amazon', pva: 'amazon', aim: 'amazon',
+  nfx: 'netflix', nfa: 'netflix', nfk: 'netflix',
+  mxx: 'max', aho: 'max',
+  dnp: 'disney', dis: 'disney',
+  app: 'paramount', pmp: 'paramount',
+  atp: 'apple', itu: 'apple',
+  ply: 'google',
+  hlu: 'hulu',
+  unx: 'unx',
+  vil: 'videoland', vdl: 'videoland',
+  vrt: 'vrt',
+  jyn: 'jyn',
+  tvn: 'tvn',
+  wls: 'wls',
+  bbc: 'bbc',
+  itv: 'itv',
+  ntv: 'ntv',
+  sst: 'sst',
+  pct: 'peacock',
+  kpn: 'kpn',
+}
+
 interface AppState {
   // Dark mode
   darkMode: boolean
@@ -107,6 +131,20 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'waarstreamt-storage',
+      version: 2,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version < 2) {
+          const s = persistedState as { myProviders?: string[] }
+          if (Array.isArray(s.myProviders)) {
+            const knownBrandIds = new Set(Object.values(LEGACY_SHORT_NAME_TO_BRAND))
+            const migrated = s.myProviders
+              .map((p: string) => LEGACY_SHORT_NAME_TO_BRAND[p] ?? p)
+              .filter((p: string) => knownBrandIds.has(p))
+            s.myProviders = [...new Set(migrated)]
+          }
+        }
+        return persistedState as ReturnType<typeof useAppStore.getState>
+      },
       partialize: (state) => ({
         darkMode: state.darkMode,
         myProviders: state.myProviders,

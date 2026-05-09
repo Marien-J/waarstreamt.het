@@ -17,11 +17,12 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
     loadProviders().then(setProviders)
   }, [])
 
-  // Group offers by provider
+  // Group offers by brand_id
   const offersByProvider = new Map<string, typeof title.offers>()
   for (const offer of title.offers) {
-    const existing = offersByProvider.get(offer.provider_short_name) || []
-    offersByProvider.set(offer.provider_short_name, [...existing, offer])
+    const key = offer.brand_id ?? offer.provider_short_name
+    const existing = offersByProvider.get(key) || []
+    offersByProvider.set(key, [...existing, offer])
   }
 
   return (
