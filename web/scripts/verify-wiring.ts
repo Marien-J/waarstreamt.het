@@ -108,6 +108,11 @@ assert('detail.unavailable_in_country' in nl, 'nl has detail.unavailable_in_coun
 assert('detail.unavailable_in_country' in de, 'de has detail.unavailable_in_country')
 assert('detail.unavailable_in_country' in fr, 'fr has detail.unavailable_in_country')
 
+// ── web/index.html meta ───────────────────────────────────────────────────────
+const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf-8')
+console.log('\nChecking web/index.html …')
+assert(!indexHtml.includes('NL Streaming'), 'title does not contain "NL Streaming"')
+
 // ── Final result ──────────────────────────────────────────────────────────────
 console.log()
 if (failed) {
