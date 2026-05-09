@@ -116,7 +116,7 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
               <div className="space-y-2">
                 {Array.from(offersByProvider.entries()).map(([providerKey, offers]) => {
                   const provider = providers[providerKey]
-                  const displayName = provider?.display_name || providerKey
+                  const displayName = provider?.display_name || offers[0]?.provider_name || providerKey
 
                   return (
                     <div key={providerKey} className="card p-3">

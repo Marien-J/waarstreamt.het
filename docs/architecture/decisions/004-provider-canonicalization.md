@@ -33,3 +33,16 @@ Introduce a brand-canonicalization layer and derive per-country provider lists f
 - **Positive:** Filtering by brand_id works cross-country because the canonical ID is the same regardless of which JustWatch short_name the country uses.
 - **Negative:** Users with saved My Providers preferences get a one-time migration; any saved short_name that has a brand_id equivalent is remapped, truly unknown values are dropped.
 - **Neutral:** `web/scripts/providers.json` (legacy hand-curated source) is no longer the source of truth; it can be removed. `web/public/data/providers.json` is superseded by per-country files.
+
+## Updates 2026-05-09 (task 20260509-complete-brand-coverage)
+
+The initial implementation only enumerated brand codes from the 6 small `data/streaming_*_providers.csv` lookup files (~6 entries per country). The main offer-level CSVs contain many additional provider short_names that appear in title offers (`mag`, `etv`, `mbi`, `cru`, `uck`, `wki`, etc.) — these fell through as passthrough brands, displaying raw 3-letter codes in the UI.
+
+### Changes
+
+- **Brand enumeration source:** `BRAND_BY_SHORT_NAME` in `web/scripts/provider-brands.ts` now covers every short_name observed in all 6 offer-level CSVs, not just the small providers lookup files. Total: ~120+ short_name mappings.
+- **MagentaTV consolidation:** both `mag` and `etv` (technical_name: `entertaintv`) map to brand_id `magenta` with `display_name: "MagentaTV"`.
+- **New brands added:** MUBI (`mbi`/`amu`), Crunchyroll (`cru`/`cra`), BritBox (`bbo`/`abb`/`bba`), Sky Go (`skg`), ARD Plus (`ard`/`ara`/`arl`), Rakuten TV (`wki`), UCI Kino (`uck`), Acorn TV (`act`/`aac`/`acr`), many US-specific channel providers, and JP-specific providers.
+- **Provider name fallback in preprocess:** passthrough brand IDs (short_names not in `BRAND_BY_SHORT_NAME`) now fall back to the JustWatch `provider_name` column from the CSV instead of the raw 3-letter code, so even unmapped brands display correctly.
+- **UI safety net:** `title-detail.tsx` falls back to `offer.provider_name` (full name) when a `brand_id` is missing from the loaded `providers_<cc>.json`.
+- **Regression guard:** `web/scripts/test-filters.ts` assertion [7] rejects any `providers_<cc>.json` entry where `display_name.length <= 4 && display_name === display_name.toLowerCase()`.

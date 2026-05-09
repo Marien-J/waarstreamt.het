@@ -211,7 +211,7 @@ function TitleDetailView() {
                             />
                           )}
                           <h3 className="font-semibold text-lg">
-                            {provider?.display_name || providerCode}
+                            {provider?.display_name || offers[0]?.provider_name || providerCode}
                           </h3>
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">

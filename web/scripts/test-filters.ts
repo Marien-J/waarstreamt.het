@@ -236,6 +236,20 @@ for (const cc of COUNTRIES) {
   }
 }
 
+// ── [7] No provider display_name is a raw short-code passthrough ──────────────
+console.log('\n[7] No provider display_name is a raw short-code passthrough …')
+for (const cc of COUNTRIES) {
+  if (!data[cc]) continue
+  const { providers } = data[cc]
+  for (const brand of Object.values(providers)) {
+    const dn = brand.display_name
+    assert(
+      !(dn.length <= 4 && dn === dn.toLowerCase()),
+      `${cc.toUpperCase()} | brand '${brand.brand_id}': display_name "${dn}" is not a raw short-code`
+    )
+  }
+}
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\n${'─'.repeat(50)}`)
 if (failed) {

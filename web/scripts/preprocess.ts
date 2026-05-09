@@ -43,6 +43,7 @@ interface CSVRow {
 
 interface Offer {
   provider_short_name: string
+  provider_name: string
   brand_id: string
   monetization_type: string
   presentation_type: string
@@ -152,6 +153,7 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
 
     const offer: Offer = {
       provider_short_name: row.provider_short_name,
+      provider_name: row.provider_name,
       brand_id: BRAND_BY_SHORT_NAME[row.provider_short_name] ?? row.provider_short_name,
       monetization_type: row.monetization_type,
       presentation_type: presentationType,
@@ -213,6 +215,8 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
   const brandTitles = new Map<string, Set<string>>()
   // Track which short_names map to each brand
   const brandShortNames = new Map<string, Set<string>>()
+  // Track first provider_name seen per brand_id (fallback display for passthrough brands)
+  const brandProviderName = new Map<string, string>()
 
   for (const title of titles) {
     for (const offer of title.offers) {
@@ -222,6 +226,9 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
         brandTitles.get(bid)!.add(title.jw_entry_id)
         if (!brandShortNames.has(bid)) brandShortNames.set(bid, new Set())
         brandShortNames.get(bid)!.add(offer.provider_short_name)
+        if (!brandProviderName.has(bid) && offer.provider_name) {
+          brandProviderName.set(bid, offer.provider_name)
+        }
       }
     }
   }
@@ -236,7 +243,7 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
   for (const { brandId, count } of sorted) {
     rank++
     let tier: 'mainstream' | 'niche'
-    if (rank <= MAINSTREAM_LIMIT) {
+    if (rank <= MAINSTREAM_LIMIT && count >= NICHE_THRESHOLD) {
       tier = 'mainstream'
     } else if (count >= NICHE_THRESHOLD) {
       tier = 'niche'
@@ -246,7 +253,7 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
     const meta = BRANDS[brandId]
     result[brandId] = {
       brand_id: brandId,
-      display_name: meta?.display_name ?? brandId,
+      display_name: meta?.display_name ?? brandProviderName.get(brandId) ?? brandId,
       logo_url: meta?.logo_url,
       brand_color: meta?.brand_color ?? '#888888',
       title_count: count,
