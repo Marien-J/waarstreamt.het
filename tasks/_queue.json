@@ -43,6 +43,10 @@
     {
       "slug": "20260509-title-detail-country-reactivity",
       "status": "DONE"
+    },
+    {
+      "slug": "20260509-svg-flags-windows-fallback",
+      "status": "READY_FOR_REVIEW"
     }
   ]
 }

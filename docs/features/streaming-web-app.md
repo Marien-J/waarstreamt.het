@@ -44,7 +44,7 @@ Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
 ## Country & Language Switchers
 
 Two inline control groups in the header, visually differentiated:
-- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (hidden on `<640px`) + 5 buttons each showing `<flag-emoji> <ISO-code>` (e.g., `🇩🇪 DE`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`.
+- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (hidden on `<640px`) + 5 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
 - **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (hidden on `<640px`) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
@@ -67,7 +67,7 @@ Switching language is instantaneous (no catalog reload).
 ### Unavailable state
 
 When a title exists in one country's catalog but **not** in the currently selected country:
-- The "Where to Watch" section is replaced by an inline banner: *"Not available on any streaming service in 🇧🇪 BE."* (i18n key `detail.unavailable_in_country` with `{country}` placeholder).
+- The "Where to Watch" section is replaced by an inline banner rendered as `<Flag code={country} /> {t('detail.unavailable_in_country', { country })}` where `{country}` is the ISO code (e.g. `NL`). The SVG flag is rendered in JSX alongside the translated text — no emoji codepoints in the string. (i18n key `detail.unavailable_in_country`).
 - Poster, metadata (title, year, type, runtime, ratings, genres) are still shown using `findTitleAcrossCachedCatalogs(id)` — a helper in `lib/data.ts` that searches whichever catalogs are already in the `titlesCache` Map.
 - The JustWatch link remains functional.
 - If the ID is not in **any** cached catalog, the original "Title not found" fallback (`detail.not_found_title` / `detail.not_found_sub`) is shown.
