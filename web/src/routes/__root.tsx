@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute, useNavigate } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ProviderPicker } from '@/components/provider-picker'
 import { CountrySwitcher } from '@/components/country-switcher'
@@ -20,6 +20,7 @@ function RootLayout() {
   const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [showProviderPicker, setShowProviderPicker] = useState(false)
   const t = useTranslation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (darkMode) {
@@ -44,7 +45,7 @@ function RootLayout() {
       <header className="card border-b border-[var(--border)] flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-            <h1 className="text-2xl font-bold">Waar streamt het?</h1>
+            <button onClick={() => navigate({ to: '/', search: { q: '', providers: [], genres: [], monetization: [], type: 'all', yearMin: 1950, yearMax: new Date().getFullYear(), ratingMin: 0, includeUnrated: true, quality: [], runtimeMin: 0, runtimeMax: 300 } })} className="text-2xl font-bold hover:opacity-80 transition-opacity cursor-pointer">Waar streamt het?</button>
             <div className="flex items-center gap-2 flex-wrap">
               <CountrySwitcher />
               <LanguageSwitcher />
