@@ -68,6 +68,10 @@ console.log('\nChecking routes/title.$id.tsx …')
 assert(titleDetailSrc.includes('usePreferencesStore'), 'imports usePreferencesStore')
 assert(/loadTitles\(country/.test(titleDetailSrc), 'calls loadTitles(country…)')
 assert(/\[id, country\]/.test(titleDetailSrc), 'useEffect depends on [id, country]')
+assert(
+  titleDetailSrc.includes("navigate({ to: '/', search: { q:"),
+  'title.$id.tsx navigates to / with q search param'
+)
 
 // ── Flag component wiring ─────────────────────────────────────────────────────
 const countrySwitcherSrc = readSrc('components/country-switcher.tsx')

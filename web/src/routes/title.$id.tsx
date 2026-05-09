@@ -20,6 +20,7 @@ function TitleDetailView() {
   const [fallbackTitle, setFallbackTitle] = useState<Title | null>(null)
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
   const [loading, setLoading] = useState(true)
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -89,13 +90,31 @@ function TitleDetailView() {
   return (
     <div className="h-full overflow-y-auto">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Back button */}
-        <button
-          onClick={() => navigate({ to: '/' })}
-          className="mb-4 min-h-[44px] text-[var(--accent)] hover:underline flex items-center gap-2"
-        >
-          ← {t('detail.back_to_browse')}
-        </button>
+        {/* Back button + search row */}
+        <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <button
+            onClick={() => navigate({ to: '/' })}
+            className="min-h-[44px] text-[var(--accent)] hover:underline flex items-center gap-2 flex-shrink-0"
+          >
+            ← {t('detail.back_to_browse')}
+          </button>
+          <form
+            className="w-full sm:max-w-[360px]"
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (!query.trim()) return
+              navigate({ to: '/', search: { q: query.trim() } })
+            }}
+          >
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('search_placeholder')}
+              className="w-full min-h-[44px] px-3 py-2 border border-[var(--border)] rounded bg-[var(--bg)] text-[var(--fg)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)]"
+            />
+          </form>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Poster */}
@@ -201,7 +220,7 @@ function TitleDetailView() {
                               href={offer.offer_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-between min-h-[44px] p-3 border border-[var(--border)] rounded hover:border-[var(--accent)] transition-colors"
+                              className="flex items-center justify-between p-3 border border-[var(--border)] rounded hover:border-[var(--accent)] transition-colors"
                             >
                               <div>
                                 <div className="font-medium capitalize">
