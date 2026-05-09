@@ -70,3 +70,9 @@ Country configs live in `src/streaming_nl/config.py` under `COUNTRY_CONFIGS`. Ea
 1. **1999-row API cap**: The JustWatch API limits `count + offset` to 1999 per `(provider, content_type)` partition. Logged as WARNING if hit.
 2. **Provider name fuzzy matching**: Provider names are matched case-insensitively against JustWatch's catalog. Unmatched providers log a WARNING and are skipped.
 3. **Unofficial API**: Schema changes may break extraction without notice.
+
+## Preprocess output (web layer)
+
+`web/scripts/preprocess.ts` consumes the CSV files and emits:
+- `web/public/data/titles_<cc>.json` — title catalog per country; each offer has `brand_id` (canonical) + `provider_short_name` (raw, for deeplinks). `available_on_flatrate` contains brand IDs.
+- `web/public/data/providers_<cc>.json` — brand metadata per country derived from real offer counts; tier = mainstream (top 8) or niche (≥50 FLATRATE titles). Brand IDs are the primary key; see `web/scripts/provider-brands.ts` for the short_name→brand_id mapping.

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '@/store/app-store'
-import { loadProviders, groupProvidersByTier, type ProviderMetadata } from '@/lib/providers'
+import { loadProviders, groupProvidersByTier, type BrandMetadata } from '@/lib/providers'
+import { usePreferencesStore } from '@/store/preferences'
 
 interface ProviderPickerProps {
   onClose: () => void
@@ -8,8 +9,9 @@ interface ProviderPickerProps {
 
 export function ProviderPicker({ onClose }: ProviderPickerProps) {
   const { myProviders, setMyProviders } = useAppStore()
+  const { country } = usePreferencesStore()
   const [selected, setSelected] = useState<string[]>(myProviders)
-  const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
+  const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [providerTiers, setProviderTiers] = useState<{
     mainstream: string[]
     niche: string[]
@@ -17,12 +19,12 @@ export function ProviderPicker({ onClose }: ProviderPickerProps) {
   }>({ mainstream: [], niche: [], channels: [] })
 
   useEffect(() => {
-    loadProviders().then(data => {
+    loadProviders(country.toLowerCase()).then(data => {
       setProviders(data)
       const allProviderCodes = Object.keys(data)
       setProviderTiers(groupProvidersByTier(allProviderCodes, data))
     })
-  }, [])
+  }, [country])
 
   const toggle = (providerCode: string) => {
     setSelected(prev =>

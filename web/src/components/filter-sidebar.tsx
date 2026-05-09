@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import type { Title } from '@/lib/data'
 import { GENRE_CODES, getGenreLabel } from '@/lib/genres'
-import { loadProviders, groupProvidersByTier, type ProviderMetadata } from '@/lib/providers'
+import { loadProviders, groupProvidersByTier, type BrandMetadata } from '@/lib/providers'
 import { useTranslation } from '@/lib/i18n'
+import { usePreferencesStore } from '@/store/preferences'
 
 interface FilterSidebarProps {
   searchParams: {
@@ -30,7 +31,8 @@ const QUALITY_OPTIONS = ['HD', '4K', 'SD']
 
 export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, titles }: FilterSidebarProps) {
   const t = useTranslation()
-  const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
+  const { country } = usePreferencesStore()
+  const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [providerTiers, setProviderTiers] = useState<{
     mainstream: string[]
     niche: string[]
@@ -38,12 +40,12 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
   }>({ mainstream: [], niche: [], channels: [] })
 
   useEffect(() => {
-    loadProviders().then(data => {
+    loadProviders(country.toLowerCase()).then(data => {
       setProviders(data)
       const allProviderCodes = Object.keys(data)
       setProviderTiers(groupProvidersByTier(allProviderCodes, data))
     })
-  }, [])
+  }, [country])
 
   const currentYear = new Date().getFullYear()
 

@@ -17,11 +17,12 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
     loadProviders().then(setProviders)
   }, [])
 
-  // Group offers by provider
+  // Group offers by brand_id
   const offersByProvider = new Map<string, typeof title.offers>()
   for (const offer of title.offers) {
-    const existing = offersByProvider.get(offer.provider_short_name) || []
-    offersByProvider.set(offer.provider_short_name, [...existing, offer])
+    const key = offer.brand_id ?? offer.provider_short_name
+    const existing = offersByProvider.get(key) || []
+    offersByProvider.set(key, [...existing, offer])
   }
 
   return (
@@ -115,7 +116,7 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
               <div className="space-y-2">
                 {Array.from(offersByProvider.entries()).map(([providerKey, offers]) => {
                   const provider = providers[providerKey]
-                  const displayName = provider?.display_name || providerKey
+                  const displayName = provider?.display_name || offers[0]?.provider_name || providerKey
 
                   return (
                     <div key={providerKey} className="card p-3">

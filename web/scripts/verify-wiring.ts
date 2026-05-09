@@ -124,6 +124,30 @@ const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf-8')
 console.log('\nChecking web/index.html …')
 assert(!indexHtml.includes('NL Streaming'), 'title does not contain "NL Streaming"')
 
+// ── Brand canonicalization gates ──────────────────────────────────────────────
+console.log('\nChecking provider canonicalization …')
+assert(
+  existsSync(join(ROOT, 'scripts', 'provider-brands.ts')),
+  'web/scripts/provider-brands.ts exists'
+)
+
+const providersSrc = readSrc('lib/providers.ts')
+assert(
+  /loadProviders\([\s\S]{0,10}countryCode/.test(providersSrc),
+  'lib/providers.ts has loadProviders(countryCode signature'
+)
+
+const preprocessSrc = readFileSync(join(ROOT, 'scripts', 'preprocess.ts'), 'utf-8')
+assert(
+  preprocessSrc.includes('providers_${cc}.json') || preprocessSrc.includes('providers_'),
+  'web/scripts/preprocess.ts writes providers_${cc}.json'
+)
+
+assert(
+  titleDetailSrc.includes('brand_id'),
+  'routes/title.$id.tsx references brand_id in offer grouping'
+)
+
 // ── Final result ──────────────────────────────────────────────────────────────
 console.log()
 if (failed) {

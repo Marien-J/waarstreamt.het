@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
+import { BRAND_BY_SHORT_NAME, BRANDS } from './provider-brands.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -42,6 +43,8 @@ interface CSVRow {
 
 interface Offer {
   provider_short_name: string
+  provider_name: string
+  brand_id: string
   monetization_type: string
   presentation_type: string
   price_value: number | null
@@ -78,17 +81,6 @@ interface CountryMeta {
   offer_count: number
   language: string
 }
-
-interface Manifest {
-  extracted_at: string
-  build_hash: string
-  countries: Record<string, CountryMeta>
-}
-
-// Load provider metadata
-const providersJson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'providers.json'), 'utf-8')
-)
 
 const dataDir = path.join(__dirname, '../../data')
 
@@ -161,6 +153,8 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
 
     const offer: Offer = {
       provider_short_name: row.provider_short_name,
+      provider_name: row.provider_name,
+      brand_id: BRAND_BY_SHORT_NAME[row.provider_short_name] ?? row.provider_short_name,
       monetization_type: row.monetization_type,
       presentation_type: presentationType,
       price_value: row.price_value ? parseFloat(row.price_value) : null,
@@ -177,11 +171,12 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
 
   for (const title of titles) {
     title.offer_count = title.offers.length
+    // available_on_flatrate: brand IDs (deduped), not raw short_names
     title.available_on_flatrate = [
       ...new Set(
         title.offers
           .filter(o => o.monetization_type === 'FLATRATE')
-          .map(o => o.provider_short_name)
+          .map(o => o.brand_id)
       )
     ]
     const rentPrices = title.offers
@@ -194,7 +189,79 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
     title.lowest_buy = buyPrices.length > 0 ? Math.min(...buyPrices) : null
   }
 
-  return { titles, offerCount: validRows.length, extractedAt }
+  // Drop titles with zero offers (catalog hygiene)
+  const titlesWithOffers = titles.filter(t => t.offers.length > 0)
+
+  return { titles: titlesWithOffers, offerCount: validRows.length, extractedAt }
+}
+
+// Derive per-country providers_<cc>.json from actual title offer data
+// Top 8 brands by unique FLATRATE title count = mainstream; ≥ threshold = niche; rest dropped
+const NICHE_THRESHOLD = 50
+const MAINSTREAM_LIMIT = 8
+
+interface ProviderBrandEntry {
+  brand_id: string
+  display_name: string
+  logo_url?: string
+  brand_color: string
+  title_count: number
+  tier: 'mainstream' | 'niche'
+  short_names: string[]
+}
+
+function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
+  // Count unique titles per brand_id (FLATRATE only)
+  const brandTitles = new Map<string, Set<string>>()
+  // Track which short_names map to each brand
+  const brandShortNames = new Map<string, Set<string>>()
+  // Track first provider_name seen per brand_id (fallback display for passthrough brands)
+  const brandProviderName = new Map<string, string>()
+
+  for (const title of titles) {
+    for (const offer of title.offers) {
+      if (offer.monetization_type === 'FLATRATE') {
+        const bid = offer.brand_id
+        if (!brandTitles.has(bid)) brandTitles.set(bid, new Set())
+        brandTitles.get(bid)!.add(title.jw_entry_id)
+        if (!brandShortNames.has(bid)) brandShortNames.set(bid, new Set())
+        brandShortNames.get(bid)!.add(offer.provider_short_name)
+        if (!brandProviderName.has(bid) && offer.provider_name) {
+          brandProviderName.set(bid, offer.provider_name)
+        }
+      }
+    }
+  }
+
+  // Sort by title count desc
+  const sorted = [...brandTitles.entries()]
+    .map(([brandId, titleSet]) => ({ brandId, count: titleSet.size }))
+    .sort((a, b) => b.count - a.count)
+
+  const result: Record<string, ProviderBrandEntry> = {}
+  let rank = 0
+  for (const { brandId, count } of sorted) {
+    rank++
+    let tier: 'mainstream' | 'niche'
+    if (rank <= MAINSTREAM_LIMIT && count >= NICHE_THRESHOLD) {
+      tier = 'mainstream'
+    } else if (count >= NICHE_THRESHOLD) {
+      tier = 'niche'
+    } else {
+      continue // drop
+    }
+    const meta = BRANDS[brandId]
+    result[brandId] = {
+      brand_id: brandId,
+      display_name: meta?.display_name ?? brandProviderName.get(brandId) ?? brandId,
+      logo_url: meta?.logo_url,
+      brand_color: meta?.brand_color ?? '#888888',
+      title_count: count,
+      tier,
+      short_names: [...(brandShortNames.get(brandId) ?? [])].sort(),
+    }
+  }
+  return result
 }
 
 // Create output directory
@@ -203,6 +270,12 @@ fs.mkdirSync(outputDir, { recursive: true })
 
 const manifestCountries: Record<string, CountryMeta> = {}
 let firstExtractedAt = ''
+
+interface Manifest {
+  extracted_at: string
+  build_hash: string
+  countries: Record<string, CountryMeta>
+}
 
 for (const cc of SUPPORTED_COUNTRIES) {
   const csvFile = findLatestCsvForCountry(cc)
@@ -226,19 +299,18 @@ for (const cc of SUPPORTED_COUNTRIES) {
   const sizeMb = (fs.statSync(titlesPath).size / 1024 / 1024).toFixed(2)
   console.log(`   ✅ Wrote titles_${cc}.json (${sizeMb} MB, ${titles.length} titles)`)
 
+  // Write providers_<cc>.json
+  const providers = deriveProviders(titles)
+  const providersPath = path.join(outputDir, `providers_${cc}.json`)
+  fs.writeFileSync(providersPath, JSON.stringify(providers, null, 2))
+  console.log(`   ✅ Wrote providers_${cc}.json (${Object.keys(providers).length} brands)`)
+
   manifestCountries[cc] = {
     title_count: titles.length,
     offer_count: offerCount,
     language,
   }
 }
-
-// Write providers.json
-fs.writeFileSync(
-  path.join(outputDir, 'providers.json'),
-  JSON.stringify(providersJson, null, 2)
-)
-console.log(`   ✅ Wrote providers.json`)
 
 // Write manifest.json
 const manifest: Manifest = {
