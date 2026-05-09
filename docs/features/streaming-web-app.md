@@ -85,6 +85,16 @@ All formerly hardcoded English strings are now wired through `t(...)`:
 
 Language switching while on the detail page re-renders labels instantly (no reload).
 
+## Detail Page — Search Bar
+
+A compact search input sits in the same row as the "Back to browse" button (stacks below on mobile, `sm:flex-row`):
+
+- Submitting a non-empty query calls `navigate({ to: '/', search: { q: query } })`, landing back on the browse page with the search pre-filled.
+- Empty submit is a no-op.
+- Desktop: `sm:max-w-[360px]`. Mobile: full width. Tap target ≥ 44 px.
+- Reuses the existing `search_placeholder` i18n key — no new keys added.
+- `initializeSearch` is **not** called on the detail page; the index is only built on `routes/index.tsx`.
+
 
 ## Data Flow
 
