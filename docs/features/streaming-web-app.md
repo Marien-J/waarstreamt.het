@@ -22,7 +22,7 @@ npm run build && vercel --prod
 
 ## Multi-Country Support
 
-The app supports 5 countries (NL, DE, BE, US, GB) with automatic country detection:
+The app supports 6 countries (NL, DE, BE, US, GB, JP) with automatic country detection:
 
 1. **7-day localStorage cache** (returns immediately on repeat visits)
 2. **ipapi.co geolocation** (`country_code` field) — 4s timeout
@@ -39,12 +39,12 @@ Explicit user selection (via the country dropdown) always overrides detection an
 - Genre labels are language-aware via `src/lib/genres.ts`
 - Language switch is instantaneous (no reload)
 
-Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
+Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en, JP→en.
 
 ## Country & Language Switchers
 
 Two inline control groups in the header, visually differentiated:
-- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (always visible) + 5 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
+- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (always visible) + 6 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
 - **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (always visible) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.

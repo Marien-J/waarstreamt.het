@@ -112,6 +112,13 @@ assert('detail.unavailable_in_country' in nl, 'nl has detail.unavailable_in_coun
 assert('detail.unavailable_in_country' in de, 'de has detail.unavailable_in_country')
 assert('detail.unavailable_in_country' in fr, 'fr has detail.unavailable_in_country')
 
+// ── Japan country entries ─────────────────────────────────────────────────────
+const flagSrc = readSrc('components/flag.tsx')
+const preferencesSrc = readFileSync(join(ROOT, 'src', 'store', 'preferences.ts'), 'utf-8')
+console.log('\nChecking Japan (JP) country entries …')
+assert(flagSrc.includes('JP'), "flag.tsx contains 'JP' key in FLAGS record")
+assert(preferencesSrc.includes("'JP'"), "preferences.ts contains 'JP' in CountryCode type")
+
 // ── web/index.html meta ───────────────────────────────────────────────────────
 const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf-8')
 console.log('\nChecking web/index.html …')

@@ -80,6 +80,19 @@ COUNTRY_CONFIGS: dict[str, CountryConfig] = {
             "Paramount+",
         ],
     },
+    "JP": {
+        "country": "JP",
+        "language": "en",
+        "provider_names": [
+            "Netflix",
+            "Amazon Prime Video",
+            "Disney+",
+            "Apple TV+",
+            "Hulu",
+            "U-NEXT",
+            "Paramount+",
+        ],
+    },
 }
 
 # JustWatch API settings
