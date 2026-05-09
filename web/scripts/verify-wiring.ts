@@ -71,6 +71,7 @@ assert(/\[id, country\]/.test(titleDetailSrc), 'useEffect depends on [id, countr
 
 // ── Flag component wiring ─────────────────────────────────────────────────────
 const countrySwitcherSrc = readSrc('components/country-switcher.tsx')
+const languageSwitcherSrc = readSrc('components/language-switcher.tsx')
 console.log('\nChecking Flag component wiring …')
 assert(
   countrySwitcherSrc.includes('Flag'),
@@ -83,6 +84,17 @@ assert(
 assert(
   !/[\u{1F1E6}-\u{1F1FF}]/u.test(titleDetailSrc),
   'routes/title.$id.tsx has no regional-indicator emoji codepoints'
+)
+
+// ── Mobile-responsive label visibility ───────────────────────────────────────
+console.log('\nChecking mobile-responsive label visibility …')
+assert(
+  !countrySwitcherSrc.includes('hidden sm:inline'),
+  'country-switcher label is not hidden on mobile (no hidden sm:inline)'
+)
+assert(
+  !languageSwitcherSrc.includes('hidden sm:inline'),
+  'language-switcher label is not hidden on mobile (no hidden sm:inline)'
 )
 
 // ── detail.unavailable_in_country in all 4 dicts ──────────────────────────────
