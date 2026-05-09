@@ -87,3 +87,16 @@ export function getTitleById(titles: Title[], id: string): Title | undefined {
   return titles.find(t => t.jw_entry_id === id)
 }
 
+/**
+ * Search all currently-cached catalogs for a title by jw_entry_id.
+ * Returns the first match found, or null if no cached catalog contains it.
+ * Useful as a metadata fallback when a title is absent from the current country's catalog.
+ */
+export function findTitleAcrossCachedCatalogs(jwEntryId: string): Title | null {
+  for (const titles of titlesCache.values()) {
+    const found = titles.find(t => t.jw_entry_id === jwEntryId)
+    if (found) return found
+  }
+  return null
+}
+
