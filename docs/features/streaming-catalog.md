@@ -5,7 +5,7 @@
 
 ## Overview
 
-Backend Python CLI job that extracts streaming availability data for 5 countries (NL, DE, BE, US, GB) via the JustWatch API. Produces dated CSV snapshots per country suitable for analysis and web app consumption.
+Backend Python CLI job that extracts streaming availability data for 6 countries (NL, DE, BE, US, GB, JP) via the JustWatch API. Produces dated CSV snapshots per country suitable for analysis and web app consumption.
 
 ## Supported Countries
 
@@ -16,6 +16,7 @@ Backend Python CLI job that extracts streaming availability data for 5 countries
 | Belgium | BE | nl | Netflix, Streamz, Amazon Prime Video, Disney+, Apple TV+, VRT MAX, GoPlay |
 | United States | US | en | Netflix, Hulu, Amazon Prime Video, Disney+, Apple TV+, Max, Paramount+, Peacock |
 | United Kingdom | GB | en | Netflix, Amazon Prime Video, Disney+, Apple TV+, BBC iPlayer, NOW, ITVX, Paramount+ |
+| Japan | JP | en | Netflix, Amazon Prime Video, Hulu, U-NEXT (Disney+, Apple TV+, Paramount+ unmatched by JustWatch JP API) |
 
 ## CLI Usage
 

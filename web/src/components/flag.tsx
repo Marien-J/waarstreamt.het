@@ -60,6 +60,13 @@ const FLAGS: Record<CountryCode, ReactElement> = {
       <rect y="12" width="60" height="6" fill="#C8102E" />
     </svg>
   ),
+  // Japan — white field, red disc centred (3:2 ratio)
+  JP: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" style={S}>
+      <rect width="3" height="2" fill="#fff" />
+      <circle cx="1.5" cy="1" r="0.3" fill="#BC002D" />
+    </svg>
+  ),
 }
 
 interface FlagProps {

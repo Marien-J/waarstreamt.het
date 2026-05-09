@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Supported country codes
-const SUPPORTED_COUNTRIES = ['nl', 'de', 'be', 'us', 'gb']
+const SUPPORTED_COUNTRIES = ['nl', 'de', 'be', 'us', 'gb', 'jp']
 
 // Types
 interface CSVRow {
