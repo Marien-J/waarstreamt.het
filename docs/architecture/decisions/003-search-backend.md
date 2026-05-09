@@ -35,3 +35,7 @@ Query length floor: < 2 chars → empty result (reduces noise). Empty query → 
 - No semantic / vector search (not needed for this use case)
 
 Known-good queries are locked in `web/scripts/test-search.ts` (`npm run test:search`) to catch regressions.
+
+## Update — 2026-05-10: index now builds in a Web Worker
+
+Following [ADR 006](006-data-tiering-and-worker.md), the catalog is fetched and parsed off the main thread in `web/src/workers/catalog-worker.ts`. The MiniSearch index is built inside the same worker over the rehydrated `Title[]` (compact wire keys decoded in `web/src/lib/data.ts`). The worker posts the finished `Title[]` + serialised index to the main thread, which attaches them via `attachWorker()` in `routes/index.tsx`. This change eliminates the multi-second main-thread freeze on large catalogs (US 34 MB, DE 20 MB) without any change to search ranking, fuzzy parameters, or query semantics.

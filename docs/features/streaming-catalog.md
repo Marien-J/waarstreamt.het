@@ -63,12 +63,13 @@ See `src/streaming_nl/writer.py` for the full column list.
 Country configs live in `src/streaming_nl/config.py` under `COUNTRY_CONFIGS`. Each entry specifies:
 - `country`: two-letter code
 - `language`: primary extraction language
-- `provider_names`: target provider list
+
+Providers are discovered dynamically at runtime by querying JustWatch for that country's available packages — no manual list required.
 
 ## Known limitations
 
 1. **1999-row API cap**: The JustWatch API limits `count + offset` to 1999 per `(provider, content_type)` partition. Logged as WARNING if hit.
-2. **Provider name fuzzy matching**: Provider names are matched case-insensitively against JustWatch's catalog. Unmatched providers log a WARNING and are skipped.
+2. **All provider types included**: Provider discovery returns all JustWatch packages for the country. Subscription-only filtering is pending until `simplejustwatchapi` exposes a monetization type on provider objects.
 3. **Unofficial API**: Schema changes may break extraction without notice.
 
 ## Preprocess output (web layer)

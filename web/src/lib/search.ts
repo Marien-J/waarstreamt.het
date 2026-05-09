@@ -1,51 +1,59 @@
-import MiniSearch from 'minisearch'
 import type { Title } from './data'
 
-export interface SearchableTitle {
-  jw_entry_id: string
-  title: string
-}
+// ── Worker integration ────────────────────────────────────────────────────────
+//
+// The MiniSearch index is built in catalog-worker.ts (off main thread).
+// The main thread stores the decoded Title[] and uses it for JS-side filtering.
+// Text search queries are sent to the worker; results come back as id arrays.
 
-/** Lowercase + diacritic-strip + whitespace-collapse */
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
+type WorkerSearchResult = { queryId: number; ids: string[] }
 
-let searchIndex: MiniSearch<SearchableTitle> | null = null
+let _worker: Worker | null = null
+let _searchReady = false
+let _nextQueryId = 0
+const _pending = new Map<number, (ids: string[]) => void>()
+
+/** Title cache on the main thread (no offers — catalog tier only) */
 let titlesCache: Title[] = []
 let titleCacheMap: Map<string, Title> = new Map()
 
-export async function initializeSearch(titles: Title[]): Promise<void> {
-  console.log('🔍 Initializing search index...')
+/**
+ * Called from the route component when the worker posts a 'ready' message.
+ * Stores titles for filter-only queries (no text search) and marks ready.
+ */
+export function setSearchTitles(titles: Title[]): void {
   titlesCache = titles
   titleCacheMap = new Map(titles.map(t => [t.jw_entry_id, t]))
-
-  searchIndex = new MiniSearch<SearchableTitle>({
-    fields: ['title'],
-    storeFields: ['jw_entry_id'],
-    processTerm: (term: string) => {
-      const n = normalize(term)
-      return n.length > 0 ? n : null
-    },
-    searchOptions: {
-      prefix: true,
-      fuzzy: 0.2,
-      combineWith: 'AND',
-      boost: { title: 2 },
-    },
-  })
-
-  searchIndex.addAll(
-    titles.map(t => ({ id: t.jw_entry_id, jw_entry_id: t.jw_entry_id, title: t.title }))
-  )
-
-  console.log(`   ✅ Indexed ${titles.length} titles`)
+  _searchReady = true
 }
+
+/**
+ * Attach the catalog worker. Called once from the route component after creating it.
+ * Sets up the message handler that resolves pending search promises.
+ */
+export function attachWorker(worker: Worker): void {
+  _worker = worker
+  _searchReady = false
+  titlesCache = []
+  titleCacheMap = new Map()
+  _nextQueryId = 0
+  _pending.clear()
+}
+
+/** Reset when country switches (worker will reload). */
+export function detachWorker(): void {
+  _searchReady = false
+  titlesCache = []
+  titleCacheMap = new Map()
+  _pending.clear()
+}
+
+/** Returns the current titles held in the search module cache. */
+export function getCurrentTitles(): Title[] {
+  return titlesCache
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────────
 
 export interface SearchFilters {
   providers?: string[]
@@ -64,7 +72,7 @@ export interface SearchFilters {
 
 /**
  * Apply filters to a list of titles in JS.
- * Returns titles matching ALL active filters.
+ * Works on catalog-tier Title objects (no offers — uses brands/monet/quals fields).
  */
 export function applyFilters(titles: Title[], filters?: SearchFilters): Title[] {
   if (!filters) return titles
@@ -89,7 +97,7 @@ export function applyFilters(titles: Title[], filters?: SearchFilters): Title[] 
       }
     }
 
-    // Runtime (only if non-default)
+    // Runtime
     if (filters.runtimeMin !== undefined && filters.runtimeMin > 0) {
       if (!title.runtime_minutes || title.runtime_minutes < filters.runtimeMin) return false
     }
@@ -99,118 +107,94 @@ export function applyFilters(titles: Title[], filters?: SearchFilters): Title[] 
 
     // Genres - ANY selected genre matches
     if (filters.genres && filters.genres.length > 0) {
-      const hasGenre = filters.genres.some(g => title.genres.includes(g))
-      if (!hasGenre) return false
+      if (!filters.genres.some(g => title.genres.includes(g))) return false
     }
 
-    // Providers - ANY selected brand covers this title
+    // Providers - use title.brands (all brand ids, any monetization)
     if (filters.providers && filters.providers.length > 0) {
-      const titleBrands = new Set(title.offers.map(o => o.brand_id))
-      const hasProvider = filters.providers.some(p => titleBrands.has(p))
-      if (!hasProvider) return false
+      const hasBrand = filters.providers.some(p => title.brands.includes(p))
+      if (!hasBrand) return false
     }
 
-    // Monetization - ANY offer of selected types
-    // When showPurchases === false, strip BUY from the active set and exclude BUY offers
+    // Monetization - use title.monet (unique monetization types present)
     if (filters.monetization && filters.monetization.length > 0) {
-      const showPurchases = filters.showPurchases !== false  // default true if not provided
-      let activeMonetization = filters.monetization
+      const showPurchases = filters.showPurchases !== false
       if (!showPurchases) {
-        activeMonetization = filters.monetization.filter(m => m !== 'BUY')
-        if (activeMonetization.length === 0) {
-          // No monetization filter after stripping BUY → skip this filter
-          // (treat as no monetization filter, but still exclude BUY offers below)
-        } else {
-          const monetizations = new Set(
-            title.offers
-              .filter(o => o.monetization_type !== 'BUY')
-              .map(o => o.monetization_type)
-          )
-          const hasMonetization = activeMonetization.some(m => monetizations.has(m))
-          if (!hasMonetization) return false
+        const activeMonetization = filters.monetization.filter(m => m !== 'BUY')
+        if (activeMonetization.length > 0) {
+          const hasActiveMonet = activeMonetization.some(m => title.monet.includes(m))
+          if (!hasActiveMonet) return false
         }
-        // When showPurchases is false, a title that only has BUY offers is excluded
-        const hasNonBuyOffer = title.offers.some(o => o.monetization_type !== 'BUY')
-        if (!hasNonBuyOffer) return false
+        // Exclude BUY-only titles when showPurchases is off
+        const hasNonBuy = title.monet.some(m => m !== 'BUY')
+        if (!hasNonBuy) return false
       } else {
-        const monetizations = new Set(title.offers.map(o => o.monetization_type))
-        const hasMonetization = filters.monetization.some(m => monetizations.has(m))
+        const hasMonetization = filters.monetization.some(m => title.monet.includes(m))
         if (!hasMonetization) return false
       }
     } else if (filters.showPurchases === false) {
-      // No monetization filter set, but showPurchases is off: exclude BUY-only titles
-      const hasNonBuyOffer = title.offers.some(o => o.monetization_type !== 'BUY')
-      if (!hasNonBuyOffer) return false
+      const hasNonBuy = title.monet.some(m => m !== 'BUY')
+      if (!hasNonBuy) return false
     }
 
-    // Quality - ANY offer of selected quality
+    // Quality - use title.quals (unique presentation types)
     if (filters.quality && filters.quality.length > 0) {
-      const qualities = new Set(title.offers.map(o => o.presentation_type))
-      const hasQuality = filters.quality.some(q => qualities.has(q))
-      if (!hasQuality) return false
+      if (!filters.quality.some(q => title.quals.includes(q))) return false
     }
 
     return true
   })
 }
 
+// ── Search ────────────────────────────────────────────────────────────────────
+
 /**
  * Search and filter titles.
- * - Empty query: return all titles (filtered)
- * - Query < 2 chars: return empty result
- * - Otherwise: MiniSearch prefix+fuzzy, score bonus for prefix-match on first token,
- *   sort by score desc then popularity desc
+ * - Empty query: filter all cached titles with applyFilters, return id[]
+ * - Short query (<2 chars): return []
+ * - Otherwise: post to worker for MiniSearch, then apply JS filters on results
  */
 export async function searchTitles(
   query: string,
   filters?: SearchFilters
 ): Promise<string[]> {
-  if (!searchIndex) {
-    throw new Error('Search index not initialized')
-  }
-
   const trimmed = query.trim()
-  let candidates: Title[]
 
   if (trimmed.length === 0) {
-    candidates = titlesCache
-  } else if (trimmed.length < 2) {
+    return applyFilters(titlesCache, filters).map(t => t.jw_entry_id)
+  }
+  if (trimmed.length < 2) {
     return []
-  } else {
-    const hits = searchIndex.search(trimmed)
-
-    const normQuery = normalize(trimmed)
-    const firstQueryToken = normQuery.split(' ')[0]
-
-    const scored = hits.map(hit => {
-      const id = hit.id as string
-      const title = titleCacheMap.get(id)
-      let score = hit.score
-      if (title && firstQueryToken) {
-        const firstTitleToken = normalize(title.title).split(' ')[0]
-        if (firstTitleToken.startsWith(firstQueryToken)) {
-          score *= 1.5
-        }
-      }
-      return { id, score }
-    })
-
-    scored.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score
-      const ta = titleCacheMap.get(a.id)
-      const tb = titleCacheMap.get(b.id)
-      const pa = ta?.imdb_score ?? ta?.tmdb_score ?? 0
-      const pb = tb?.imdb_score ?? tb?.tmdb_score ?? 0
-      return pb - pa
-    })
-
-    candidates = scored
-      .map(r => titleCacheMap.get(r.id))
-      .filter((t): t is Title => t !== undefined)
   }
 
-  const filtered = applyFilters(candidates, filters)
-  return filtered.map(t => t.jw_entry_id)
+  // Text search via worker
+  if (!_worker) {
+    return []
+  }
+
+  const queryId = _nextQueryId++
+  const ids = await new Promise<string[]>((resolve) => {
+    _pending.set(queryId, resolve)
+    _worker!.postMessage({ type: 'search', queryId, query: trimmed })
+  })
+
+  const matchingTitles = ids
+    .map(id => titleCacheMap.get(id))
+    .filter((t): t is Title => t !== undefined)
+
+  return applyFilters(matchingTitles, filters).map(t => t.jw_entry_id)
+}
+
+/**
+ * Called from the worker message handler in the route component
+ * when a search-result message arrives.
+ */
+export function resolveSearchResult(result: WorkerSearchResult): void {
+  const resolve = _pending.get(result.queryId)
+  if (resolve) {
+    resolve(result.ids)
+    _pending.delete(result.queryId)
+  }
 }
 
 export async function searchAndFilterTitles(
@@ -218,4 +202,10 @@ export async function searchAndFilterTitles(
   filters: SearchFilters
 ): Promise<string[]> {
   return searchTitles(query, filters)
+}
+
+// Keep for backward compat — callers that called initializeSearch can now use attachWorker
+export async function initializeSearch(_titles: Title[]): Promise<void> {
+  // No-op: index build is now done in the worker via attachWorker + 'load' message.
+  // The route component calls attachWorker() and setSearchTitles() instead.
 }

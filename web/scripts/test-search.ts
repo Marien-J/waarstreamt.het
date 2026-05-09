@@ -105,9 +105,26 @@ function assert(condition: boolean, message: string): void {
   }
 }
 
+interface WireCatalogEntry {
+  i: string; t: string; tp: string; y: number; r: number | null;
+  p: string; jw: string; g: string[]; im: number | null; td: number | null;
+  tm: number | null; a: string | null; f: string[]; rl: number | null;
+  bl: number | null; mn: string[]; b: string[]; q: string[]
+}
+
+function loadCatalog(catalogPath: string): Title[] {
+  const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf-8'))
+  // Support both old format (array) and new format ({entries:[...]})
+  const entries: WireCatalogEntry[] = Array.isArray(raw) ? raw : raw.entries
+  return entries.map((w: WireCatalogEntry): Title => ({
+    jw_entry_id: w.i, title: w.t,
+    imdb_score: w.im, tmdb_score: w.td,
+  } as Title))
+}
+
 function runCatalogTests(label: string, jsonPath: string, tests: Array<() => void>): void {
   console.log(`\n=== ${label} ===`)
-  const titles: Title[] = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+  const titles: Title[] = loadCatalog(jsonPath)
   const titleMap = new Map(titles.map(t => [t.jw_entry_id, t]))
   const idx = buildIndex(titles)
   console.log(`Loaded ${titles.length} titles`)
@@ -122,7 +139,7 @@ function runCatalogTests(label: string, jsonPath: string, tests: Array<() => voi
 
 // ── NL Tests ─────────────────────────────────────────────────────────────────
 
-const nlPath = path.join(__dirname, '../public/data/titles_nl.json')
+const nlPath = path.join(__dirname, '../public/data/catalog_nl.json')
 
 runCatalogTests('NL Catalog', nlPath, [
   () => {
@@ -180,7 +197,7 @@ runCatalogTests('NL Catalog', nlPath, [
 
 // ── DE Tests ─────────────────────────────────────────────────────────────────
 
-const dePath = path.join(__dirname, '../public/data/titles_de.json')
+const dePath = path.join(__dirname, '../public/data/catalog_de.json')
 
 runCatalogTests('DE Catalog', dePath, [
   () => {

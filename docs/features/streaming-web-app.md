@@ -49,18 +49,29 @@ Two inline control groups in the header, visually differentiated:
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
 
-Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. On country change:
-1. `setLoading(true)` and `setFilteredTitles([])` fire immediately so the loading spinner appears and the stale result grid is cleared before the async fetch begins.
-2. The new catalog is fetched, then `await initializeSearch(loadedTitles)` rebuilds the MiniSearch index.
-3. Only after both complete does `setLoading(false)` fire, revealing the new country's titles.
+Switching country triggers reload of the matching catalog in a background **Web Worker** (`src/workers/catalog-worker.ts`) and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. On country change:
+1. `setLoading(true)` and `setFilteredTitles([])` fire immediately so the loading skeleton appears and the stale result grid is cleared before the async fetch begins.
+2. The worker fetches `catalog_<cc>.json`, rehydrates the compact wire records into `Title[]`, and builds the MiniSearch index — entirely off the main thread.
+3. Only after the worker posts `{type:'ready'}` does `setLoading(false)` fire, revealing the new country's titles.
 
 Switching language is instantaneous (no catalog reload).
+
+## Data layout (two-tier)
+
+Per country `<cc>` (nl | de | be | us | gb | jp), `preprocess.ts` emits:
+
+- **`web/public/data/catalog_<cc>.json`** — slim, eager. Fields: `id`, `title`, `type`, `year`, `runtime`, `poster`, `genres`, `imdb`, `tmdb`, `tomato`, `age_cert`, `flatrate`, `rent_lo`, `buy_lo`, `monet`, `brands`. Stored with compact single/two-char keys on disk; rehydrated by `src/lib/data.ts` before being handed to the UI. Sizes: NL 11 MB, BE 11 MB, DE 20 MB, GB 19 MB, JP 12 MB, US 34 MB.
+- **`web/public/data/offers_<cc>.json`** (or `offers_<cc>_<n>.json` when sharded) — lazy. A `Record<id, Offer[]>` loaded on first detail-page click for that title's shard. Shard index = `parseInt(id.replace(/^[a-z]+/, '')) % K` where K = smallest power of 2 keeping each shard ≤ 50 MB (K=2 for DE and US). Cached in memory after first fetch.
+- **`web/public/data/providers_<cc>.json`** — brand metadata (display name, tier, title counts).
+- **`web/public/data/manifest.json`** — per-country `title_count`, `offer_count`, `offers_shard_count`, `catalog_size_bytes`, `language`, `extracted_at`, `build_hash`.
+
+See [ADR 006](../architecture/decisions/006-data-tiering-and-worker.md) for the full rationale.
 
 ## Monetization model
 
 ### Canonical offer types
 
-Only three offer types appear in `titles_<cc>.json`: **FLATRATE** (subscription), **RENT**, and **BUY**. Everything else (`FREE`, `ADS`, `CINEMA`, compound types like `FLATRATE_AND_BUY`) is normalized out by `web/scripts/preprocess.ts`. Titles with zero remaining offers after normalization are excluded entirely. This is the single source of truth — the frontend never needs to handle non-canonical types.
+Only three offer types appear in `catalog_<cc>.json`: **FLATRATE** (subscription), **RENT**, and **BUY**. Everything else (`FREE`, `ADS`, `CINEMA`, compound types like `FLATRATE_AND_BUY`) is normalized out by `web/scripts/preprocess.ts`. Titles with zero remaining offers after normalization are excluded entirely. This is the single source of truth — the frontend never needs to handle non-canonical types.
 
 ### "View purchases" toggle
 
@@ -152,12 +163,12 @@ A compact search input sits in the same row as the "Back to browse" button (stac
 1. **Build time**: `npm run build` runs `scripts/preprocess.ts`
    - Discovers all `data/streaming_<cc>_<lang>_<date>.csv` files, picks latest per country
    - Aggregates from title×offer grain to title-level with nested offers
-   - Outputs one `public/data/titles_<cc>.json` per country
-   - Writes `public/data/manifest.json` with per-country metadata
+   - Emits `public/data/catalog_<cc>.json` (slim catalog, compact wire keys) and `public/data/offers_<cc>.json` (or sharded `offers_<cc>_<n>.json` for DE/US) per country
+   - Writes `public/data/providers_<cc>.json` and `public/data/manifest.json`
 
 2. **Runtime**:
    - Geo-detection runs on first load; explicit preference wins
-   - `loadTitles(countryCode)` fetches and caches `titles_<cc>.json` per country
+   - A Web Worker (`src/workers/catalog-worker.ts`) fetches `catalog_<cc>.json`, rehydrates compact wire records, builds the MiniSearch index off the main thread, and posts `{type:'ready', titles}` to `routes/index.tsx`. Offers are lazy-loaded on first detail-page click via `loadOffersForTitle(id, cc)`.
    - User searches → MiniSearch BM25 ranking with prefix + fuzzy
    - Results rendered via virtualized grid
 
@@ -181,7 +192,8 @@ web/
 │   ├── preprocess.ts          # Build-time: CSV → JSON per country
 │   └── check-i18n-keys.ts    # Assert all dicts have same key set
 ├── src/
-│   ├── app.tsx                # Root: geo-detection, catalog loading, header
+│   ├── workers/
+│   │   └── catalog-worker.ts  # Web Worker: fetch + parse + MiniSearch index
 │   ├── components/
 │   │   ├── country-switcher.tsx
 │   │   ├── language-switcher.tsx
@@ -191,7 +203,8 @@ web/
 │   │   ├── title-detail.tsx
 │   │   └── filter-sidebar.tsx
 │   ├── lib/
-│   │   ├── data.ts            # loadTitles(countryCode), per-country cache
+│   │   ├── data.ts            # loadTitles(cc), loadOffersForTitle(id,cc), manifest cache
+│   │   ├── wire.ts            # WireCatalogEntry / WireOffer compact types + decoders
 │   │   ├── geo.ts             # detectCountry() with ipapi.co + fallbacks
 │   │   ├── i18n.ts            # useTranslation() hook
 │   │   ├── genres.ts          # Language-aware genre labels
@@ -207,11 +220,23 @@ web/
 │       └── fr.json
 └── public/data/               # Generated at build time
     ├── manifest.json
-    ├── titles_nl.json
-    ├── titles_de.json
-    ├── titles_be.json
-    ├── titles_us.json
-    └── titles_gb.json
+    ├── catalog_nl.json        # 11 MB
+    ├── catalog_de.json        # 20 MB
+    ├── catalog_be.json        # 11 MB
+    ├── catalog_gb.json        # 19 MB
+    ├── catalog_jp.json        # 12 MB
+    ├── catalog_us.json        # 34 MB
+    ├── offers_nl.json         # 16 MB
+    ├── offers_de_0.json       # 27 MB  (sharded K=2)
+    ├── offers_de_1.json       # 26 MB
+    ├── offers_be.json         # 14 MB
+    ├── offers_gb.json         # 35 MB
+    ├── offers_jp.json         # 21 MB
+    ├── offers_us_0.json       # 41 MB  (sharded K=2)
+    ├── offers_us_1.json       # 41 MB
+    ├── providers_nl.json
+    ├── ... (providers_de/be/gb/jp/us)
+    └── manifest.json
 ```
 
 ## Search

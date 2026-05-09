@@ -22,66 +22,14 @@
     },
     {
       "slug": "20260509-multi-country-multi-language",
+      "status": "READY_FOR_DEV"
+    },
+    {
+      "slug": "20260509-dynamic-provider-discovery",
       "status": "DONE"
     },
     {
-      "slug": "20260509-wire-switchers-into-root",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-switcher-labels-and-visual-differentiation",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-fix-title-search-quality",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-instant-switcher-updates",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-title-detail-country-reactivity",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-svg-flags-windows-fallback",
-      "status": "READY_FOR_REVIEW"
-    },
-    {
-      "slug": "20260509-mobile-responsive-pass",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-rebrand-multi-country",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-detail-page-search-bar",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-add-japan-country",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-provider-canonicalization-and-country-scoping",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-complete-brand-coverage",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-monetization-coalesce-and-purchases-toggle",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-derive-display-names-from-csv",
-      "status": "DONE"
-    },
-    {
-      "slug": "20260509-home-title-link",
+      "slug": "20260509-perf-tier-and-worker",
       "status": "DONE"
     }
   ]

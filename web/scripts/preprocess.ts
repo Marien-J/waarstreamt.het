@@ -80,6 +80,8 @@ interface CountryMeta {
   title_count: number
   offer_count: number
   language: string
+  catalog_size_bytes: number
+  offers_shard_count: number
 }
 
 const dataDir = path.join(__dirname, '../../data')
@@ -291,6 +293,7 @@ function deriveProviders(titles: Title[]): Record<string, ProviderBrandEntry> {
     }
     const meta = BRANDS[brandId]
     const displayName =
+      meta?.display_name ??
       pickDisplayName(brandFlatrateOffers.get(brandId)) ??
       pickDisplayName(brandAllOffers.get(brandId)) ??
       brandId
@@ -320,6 +323,140 @@ interface Manifest {
   countries: Record<string, CountryMeta>
 }
 
+// ── Wire format types (compact keys for disk storage) ────────────────────────
+
+interface WireCatalogEntry {
+  i: string;    // jw_entry_id
+  t: string;    // title
+  tp: 'MOVIE' | 'SHOW'
+  y: number;    // release_year
+  r: number | null  // runtime_minutes
+  p: string;    // poster_url
+  jw: string;   // jw_url
+  g: string[];  // genres
+  im: number | null  // imdb_score
+  td: number | null  // tmdb_score
+  tm: number | null  // tomatometer
+  a: string | null   // age_certification
+  f: string[];  // available_on_flatrate (brand ids)
+  rl: number | null  // lowest_rent
+  bl: number | null  // lowest_buy
+  mn: string[]  // monet (unique monetization types)
+  b: string[]   // brands (all brand ids, any monet)
+  q: string[]   // quals (unique presentation types)
+}
+
+interface WireOffer {
+  bi: string;   // brand_id
+  sn: string;   // provider_short_name
+  pn: string;   // provider_name
+  mt: string;   // monetization_type
+  pt: string;   // presentation_type
+  pv: number | null  // price_value (currency stored once per file)
+  ou: string;   // offer_url
+  al: string[]  // audio_languages
+  sl: string[]  // subtitle_languages
+}
+
+function toCatalogEntry(title: Title): WireCatalogEntry {
+  const brands = [...new Set(title.offers.map(o => o.brand_id))]
+  const monet = [...new Set(title.offers.map(o => o.monetization_type))]
+  const quals = [...new Set(title.offers.map(o => o.presentation_type).filter(Boolean))]
+  return {
+    i: title.jw_entry_id, t: title.title, tp: title.object_type,
+    y: title.release_year, r: title.runtime_minutes,
+    p: title.poster_url, jw: title.jw_url, g: title.genres,
+    im: title.imdb_score, td: title.tmdb_score, tm: title.tomatometer,
+    a: title.age_certification, f: title.available_on_flatrate,
+    rl: title.lowest_rent, bl: title.lowest_buy, mn: monet, b: brands, q: quals,
+  }
+}
+
+function toWireOffer(o: Offer): WireOffer {
+  return {
+    bi: o.brand_id, sn: o.provider_short_name, pn: o.provider_name,
+    mt: o.monetization_type, pt: o.presentation_type, pv: o.price_value,
+    ou: o.offer_url, al: o.audio_languages, sl: o.subtitle_languages,
+  }
+}
+
+function detectCurrency(titles: Title[]): string {
+  for (const t of titles) {
+    for (const o of t.offers) {
+      if (o.price_currency) return o.price_currency
+    }
+  }
+  return ''
+}
+
+function shardIndexFor(id: string, k: number): number {
+  const num = parseInt(id.replace(/^[a-z]+/, ''), 10)
+  return isNaN(num) ? 0 : Math.abs(num) % k
+}
+
+function writeCountryFiles(
+  cc: string,
+  titles: Title[],
+  outDir: string
+): { catalogSizeBytes: number; offersShardCount: number } {
+  const MAX_SHARD_BYTES = 50 * 1024 * 1024
+
+  // Catalog
+  const catalogFile = { entries: titles.map(toCatalogEntry) }
+  const catalogPath = path.join(outDir, `catalog_${cc}.json`)
+  fs.writeFileSync(catalogPath, JSON.stringify(catalogFile, null, 0))
+  const catalogSize = fs.statSync(catalogPath).size
+  console.log(`   ✅ Wrote catalog_${cc}.json (${(catalogSize / 1024 / 1024).toFixed(2)} MB, ${titles.length} titles)`)
+
+  // Build flat offers record
+  const currency = detectCurrency(titles)
+  const offersRecord: Record<string, WireOffer[]> = {}
+  for (const t of titles) {
+    if (t.offers.length > 0) {
+      offersRecord[t.jw_entry_id] = t.offers.map(toWireOffer)
+    }
+  }
+
+  // Find smallest power-of-2 K so each shard <= 50MB
+  let k = 1
+  while (k <= 64) {
+    if (k === 1) {
+      const size = Buffer.byteLength(JSON.stringify({ currency, offers: offersRecord }), 'utf-8')
+      if (size <= MAX_SHARD_BYTES) break
+    } else {
+      const shards: Record<string, WireOffer[]>[] = Array.from({ length: k }, () => ({}))
+      for (const [id, wo] of Object.entries(offersRecord)) {
+        shards[shardIndexFor(id, k)][id] = wo
+      }
+      const allFit = shards.every(s =>
+        Buffer.byteLength(JSON.stringify({ currency, offers: s }), 'utf-8') <= MAX_SHARD_BYTES
+      )
+      if (allFit) break
+    }
+    k *= 2
+  }
+
+  if (k === 1) {
+    const offersPath = path.join(outDir, `offers_${cc}.json`)
+    fs.writeFileSync(offersPath, JSON.stringify({ currency, offers: offersRecord }, null, 0))
+    const mb = (fs.statSync(offersPath).size / 1024 / 1024).toFixed(2)
+    console.log(`   ✅ Wrote offers_${cc}.json (${mb} MB)`)
+  } else {
+    const shards: Record<string, WireOffer[]>[] = Array.from({ length: k }, () => ({}))
+    for (const [id, wo] of Object.entries(offersRecord)) {
+      shards[shardIndexFor(id, k)][id] = wo
+    }
+    for (let i = 0; i < k; i++) {
+      const offersPath = path.join(outDir, `offers_${cc}_${i}.json`)
+      fs.writeFileSync(offersPath, JSON.stringify({ currency, offers: shards[i] }, null, 0))
+      const mb = (fs.statSync(offersPath).size / 1024 / 1024).toFixed(2)
+      console.log(`   ✅ Wrote offers_${cc}_${i}.json (${mb} MB, ${Object.keys(shards[i]).length} titles)`)
+    }
+  }
+
+  return { catalogSizeBytes: catalogSize, offersShardCount: k }
+}
+
 for (const cc of SUPPORTED_COUNTRIES) {
   const csvFile = findLatestCsvForCountry(cc)
   if (!csvFile) {
@@ -336,11 +473,8 @@ for (const cc of SUPPORTED_COUNTRIES) {
   const langMatch = csvFile.match(/^streaming_[a-z]+_([a-z]+)_\d{4}/)
   const language = langMatch ? langMatch[1] : cc
 
-  // Write titles_<cc>.json
-  const titlesPath = path.join(outputDir, `titles_${cc}.json`)
-  fs.writeFileSync(titlesPath, JSON.stringify(titles, null, 0))
-  const sizeMb = (fs.statSync(titlesPath).size / 1024 / 1024).toFixed(2)
-  console.log(`   ✅ Wrote titles_${cc}.json (${sizeMb} MB, ${titles.length} titles)`)
+  // Write catalog_<cc>.json + offers_<cc>[_n].json (two-tier format)
+  const { catalogSizeBytes, offersShardCount } = writeCountryFiles(cc, titles, outputDir)
 
   // Write providers_<cc>.json
   const providers = deriveProviders(titles)
@@ -352,7 +486,35 @@ for (const cc of SUPPORTED_COUNTRIES) {
     title_count: titles.length,
     offer_count: offerCount,
     language,
+    catalog_size_bytes: catalogSizeBytes,
+    offers_shard_count: offersShardCount,
   }
+}
+
+// Remove legacy un-prefixed files if they exist
+for (const legacyFile of ['titles.json', 'providers.json']) {
+  const legacyPath = path.join(outputDir, legacyFile)
+  if (fs.existsSync(legacyPath)) {
+    fs.unlinkSync(legacyPath)
+    console.log(`   🗑️  Removed legacy ${legacyFile}`)
+  }
+}
+
+// Remove legacy per-country titles_<cc>.json files (replaced by catalog_<cc>.json + offers)
+for (const f of fs.readdirSync(outputDir)) {
+  if (/^titles_[a-z]+\.json$/.test(f)) {
+    fs.unlinkSync(path.join(outputDir, f))
+    console.log(`   🗑️  Removed legacy ${f}`)
+  }
+}
+
+// Size guard: fail build if any JSON file exceeds 95MB (hard GitHub limit is 100MB)
+const oversizedFiles = fs.readdirSync(outputDir)
+  .filter(f => f.endsWith('.json'))
+  .filter(f => fs.statSync(path.join(outputDir, f)).size > 95 * 1024 * 1024)
+if (oversizedFiles.length > 0) {
+  console.error(`\n❌ ERROR: Files exceed 95MB GitHub limit: ${oversizedFiles.join(', ')}`)
+  process.exit(1)
 }
 
 // Write manifest.json
