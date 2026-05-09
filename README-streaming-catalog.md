@@ -1,4 +1,4 @@
-# streaming-nl
+# Streaming Catalog
 
 Multi-country streaming catalog extractor using JustWatch data.
 

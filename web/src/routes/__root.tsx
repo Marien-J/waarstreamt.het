@@ -41,9 +41,9 @@ function RootLayout() {
       {/* Header */}
       <header className="card border-b border-[var(--border)] flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
             <h1 className="text-2xl font-bold">Waar streamt het?</h1>
-            <div className="flex items-center gap-2 flex-wrap justify-end">
+            <div className="flex items-center gap-2 flex-wrap">
               <CountrySwitcher />
               <LanguageSwitcher />
               <ThemeToggle />

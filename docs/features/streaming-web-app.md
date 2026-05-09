@@ -44,8 +44,8 @@ Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
 ## Country & Language Switchers
 
 Two inline control groups in the header, visually differentiated:
-- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (hidden on `<640px`) + 5 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
-- **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (hidden on `<640px`) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
+- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (always visible) + 5 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
+- **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (always visible) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
 
@@ -55,6 +55,22 @@ Switching country triggers reload of the matching `titles_<cc>.json` and re-inde
 3. Only after both complete does `setLoading(false)` fire, revealing the new country's titles.
 
 Switching language is instantaneous (no catalog reload).
+
+## Mobile layout
+
+**Header strategy (mobile-first stacking):** On `<640px` (`sm` breakpoint), the header switches from a single `flex-row` to a `flex-col` layout. The app title occupies its own line, then the country/language/theme controls flow below it with `flex-wrap`. This ensures the `Country:` and `Language:` prefix labels are always readable without horizontal overflow. On `sm+` the layout reverts to the original single-row `justify-between`.
+
+**Tap targets:** All interactive elements that must be reachable on touch screens satisfy ≥44×44 px:
+- Filter toggle button (`lg:hidden` in browse view): `min-h-[44px]`
+- Filter drawer close ×: `min-h-[44px] min-w-[44px]`
+- Offer links in title detail: `min-h-[44px]`
+- Back-to-browse button: `min-h-[44px]`
+
+**Filter drawer:** The mobile bottom-sheet now uses a `flex flex-col max-h-[80vh]` wrapper, keeping the header and new sticky footer always visible while only the filter list scrolls (`flex-1 min-h-0 overflow-y-auto`). The sticky footer provides two CTAs:
+- **Clear all filters** — calls `clearFilters()` and closes the drawer.
+- **Apply** — closes the drawer (filters are applied in real-time via URL params).
+
+**No horizontal scroll:** `overflow-x: hidden` is set on `body` in `globals.css`. The result grid computes column count from container width (3 columns at <480 px) so it never overflows its parent.
 
 ## Title Detail Page — Country Reactivity
 

@@ -75,6 +75,7 @@ assert(
 
 // ── Flag component wiring ─────────────────────────────────────────────────────
 const countrySwitcherSrc = readSrc('components/country-switcher.tsx')
+const languageSwitcherSrc = readSrc('components/language-switcher.tsx')
 console.log('\nChecking Flag component wiring …')
 assert(
   countrySwitcherSrc.includes('Flag'),
@@ -89,6 +90,17 @@ assert(
   'routes/title.$id.tsx has no regional-indicator emoji codepoints'
 )
 
+// ── Mobile-responsive label visibility ───────────────────────────────────────
+console.log('\nChecking mobile-responsive label visibility …')
+assert(
+  !countrySwitcherSrc.includes('hidden sm:inline'),
+  'country-switcher label is not hidden on mobile (no hidden sm:inline)'
+)
+assert(
+  !languageSwitcherSrc.includes('hidden sm:inline'),
+  'language-switcher label is not hidden on mobile (no hidden sm:inline)'
+)
+
 // ── detail.unavailable_in_country in all 4 dicts ──────────────────────────────
 import en from '../src/i18n/en.json' assert { type: 'json' }
 import nl from '../src/i18n/nl.json' assert { type: 'json' }
@@ -99,6 +111,11 @@ assert('detail.unavailable_in_country' in en, 'en has detail.unavailable_in_coun
 assert('detail.unavailable_in_country' in nl, 'nl has detail.unavailable_in_country')
 assert('detail.unavailable_in_country' in de, 'de has detail.unavailable_in_country')
 assert('detail.unavailable_in_country' in fr, 'fr has detail.unavailable_in_country')
+
+// ── web/index.html meta ───────────────────────────────────────────────────────
+const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf-8')
+console.log('\nChecking web/index.html …')
+assert(!indexHtml.includes('NL Streaming'), 'title does not contain "NL Streaming"')
 
 // ── Final result ──────────────────────────────────────────────────────────────
 console.log()
