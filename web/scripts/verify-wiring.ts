@@ -62,6 +62,24 @@ import { existsSync } from 'fs'
 console.log('\nChecking app.tsx is deleted …')
 assert(!existsSync(join(ROOT, 'src', 'app.tsx')), 'app.tsx does not exist')
 
+// ── routes/title.$id.tsx ─────────────────────────────────────────────────────
+const titleDetailSrc = readSrc('routes/title.$id.tsx')
+console.log('\nChecking routes/title.$id.tsx …')
+assert(titleDetailSrc.includes('usePreferencesStore'), 'imports usePreferencesStore')
+assert(/loadTitles\(country/.test(titleDetailSrc), 'calls loadTitles(country…)')
+assert(/\[id, country\]/.test(titleDetailSrc), 'useEffect depends on [id, country]')
+
+// ── detail.unavailable_in_country in all 4 dicts ──────────────────────────────
+import en from '../src/i18n/en.json' assert { type: 'json' }
+import nl from '../src/i18n/nl.json' assert { type: 'json' }
+import de from '../src/i18n/de.json' assert { type: 'json' }
+import fr from '../src/i18n/fr.json' assert { type: 'json' }
+console.log('\nChecking detail.unavailable_in_country key in all dictionaries …')
+assert('detail.unavailable_in_country' in en, 'en has detail.unavailable_in_country')
+assert('detail.unavailable_in_country' in nl, 'nl has detail.unavailable_in_country')
+assert('detail.unavailable_in_country' in de, 'de has detail.unavailable_in_country')
+assert('detail.unavailable_in_country' in fr, 'fr has detail.unavailable_in_country')
+
 // ── Final result ──────────────────────────────────────────────────────────────
 console.log()
 if (failed) {

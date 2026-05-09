@@ -56,6 +56,36 @@ Switching country triggers reload of the matching `titles_<cc>.json` and re-inde
 
 Switching language is instantaneous (no catalog reload).
 
+## Title Detail Page — Country Reactivity
+
+`routes/title.$id.tsx` is fully country-reactive:
+
+- Reads `country` from `usePreferencesStore` and passes `country.toLowerCase()` to `loadTitles`.
+- `country` is in the `useEffect` dependency array `[id, country]` → switching country while on the detail page immediately triggers a reload.
+- `setLoading(true)` fires before the async fetch, matching the same pattern as `routes/index.tsx`.
+
+### Unavailable state
+
+When a title exists in one country's catalog but **not** in the currently selected country:
+- The "Where to Watch" section is replaced by an inline banner: *"Not available on any streaming service in 🇧🇪 BE."* (i18n key `detail.unavailable_in_country` with `{country}` placeholder).
+- Poster, metadata (title, year, type, runtime, ratings, genres) are still shown using `findTitleAcrossCachedCatalogs(id)` — a helper in `lib/data.ts` that searches whichever catalogs are already in the `titlesCache` Map.
+- The JustWatch link remains functional.
+- If the ID is not in **any** cached catalog, the original "Title not found" fallback (`detail.not_found_title` / `detail.not_found_sub`) is shown.
+
+### i18n on the detail page
+
+All formerly hardcoded English strings are now wired through `t(...)`:
+| Key | Default EN value |
+|-----|-----------------|
+| `detail.back_to_browse` | Back to browse |
+| `detail.not_found_title` | Title not found |
+| `detail.not_found_sub` | The title you're looking for doesn't exist. |
+| `detail.back_cta` | Back to browse |
+| `detail.unavailable_in_country` | Not available on any streaming service in {country}. |
+
+Language switching while on the detail page re-renders labels instantly (no reload).
+
+
 ## Data Flow
 
 1. **Build time**: `npm run build` runs `scripts/preprocess.ts`

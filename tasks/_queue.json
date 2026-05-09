@@ -39,6 +39,10 @@
     {
       "slug": "20260509-instant-switcher-updates",
       "status": "DONE"
+    },
+    {
+      "slug": "20260509-title-detail-country-reactivity",
+      "status": "DONE"
     }
   ]
 }

@@ -55,5 +55,10 @@
   "genre_war": "Krieg & Militär",
   "genre_msc": "Musik & Musical",
   "genre_spt": "Sport",
-  "genre_wsn": "Western"
+  "genre_wsn": "Western",
+  "detail.back_to_browse": "Zurück zur Übersicht",
+  "detail.not_found_title": "Titel nicht gefunden",
+  "detail.not_found_sub": "Der gesuchte Titel existiert nicht.",
+  "detail.back_cta": "Zurück zur Übersicht",
+  "detail.unavailable_in_country": "Auf keinem Streamingdienst verfügbar in {country}."
 }

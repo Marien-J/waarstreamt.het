@@ -55,5 +55,10 @@
   "genre_war": "Oorlog & Militair",
   "genre_msc": "Muziek & Musical",
   "genre_spt": "Sport",
-  "genre_wsn": "Western"
+  "genre_wsn": "Western",
+  "detail.back_to_browse": "Terug naar browsen",
+  "detail.not_found_title": "Titel niet gevonden",
+  "detail.not_found_sub": "De titel die je zoekt bestaat niet.",
+  "detail.back_cta": "Terug naar browsen",
+  "detail.unavailable_in_country": "Niet beschikbaar op een streamingdienst in {country}."
 }
