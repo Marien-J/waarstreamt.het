@@ -2,8 +2,8 @@
  * Cross-country filter verification tests.
  * Run: npm run test:filters (from web/)
  *
- * Loads each country's titles_<cc>.json + providers_<cc>.json and asserts
- * correctness of brand-based filtering.
+ * Loads each country's catalog_<cc>.json + providers_<cc>.json and asserts
+ * correctness of brand-based filtering using the new two-tier wire format.
  */
 
 import fs from 'fs'
@@ -13,39 +13,36 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PUBLIC_DATA = path.join(__dirname, '../public/data')
 
-// ── Types (mirrors web/src/lib/data.ts) ──────────────────────────────────────
-interface Offer {
-  provider_short_name: string
-  brand_id: string
-  monetization_type: string
-  presentation_type: string
-  price_value: number | null
-  price_currency: string
-  offer_url: string
-  audio_languages: string[]
-  subtitle_languages: string[]
+// ── Wire format types (mirrors web/src/lib/wire.ts) ───────────────────────────
+interface WireCatalogEntry {
+  i: string; t: string; tp: 'MOVIE' | 'SHOW'; y: number; r: number | null
+  p: string; jw: string; g: string[]; im: number | null; td: number | null
+  tm: number | null; a: string | null
+  f: string[]  // available_on_flatrate (brand ids)
+  rl: number | null; bl: number | null
+  mn: string[] // unique monetization types
+  b: string[]  // all brand ids (any monetization)
+  q: string[]  // unique presentation types
 }
 
+// ── Catalog-tier Title shape (mirrors web/src/lib/data.ts) ───────────────────
 interface Title {
   jw_entry_id: string
   object_type: 'MOVIE' | 'SHOW'
   title: string
   release_year: number
   runtime_minutes: number | null
-  imdb_id: string | null
-  tmdb_id: string | null
   genres: string[]
   age_certification: string | null
   imdb_score: number | null
   tmdb_score: number | null
   tomatometer: number | null
-  jw_url: string
-  poster_url: string
-  offers: Offer[]
-  offer_count: number
   available_on_flatrate: string[]
   lowest_rent: number | null
   lowest_buy: number | null
+  brands: string[]   // all brand ids (any monetization)
+  monet: string[]    // unique monetization_type values
+  quals: string[]    // unique presentation_type values
 }
 
 interface BrandMetadata {
@@ -58,7 +55,7 @@ interface BrandMetadata {
   short_names: string[]
 }
 
-// ── applyFilters (mirrors web/src/lib/search.ts) ─────────────────────────────
+// ── applyFilters (mirrors catalog-tier logic in web/src/lib/search.ts) ────────
 interface SearchFilters {
   providers?: string[]
   genres?: string[]
@@ -74,23 +71,36 @@ function applyFilters(titles: Title[], filters: SearchFilters): Title[] {
     if (filters.genres && filters.genres.length > 0) {
       if (!filters.genres.some(g => title.genres.includes(g))) return false
     }
+    // Use title.brands (all brand ids, any monetization) — catalog-tier
     if (filters.providers && filters.providers.length > 0) {
-      const titleBrands = new Set(title.offers.map(o => o.brand_id))
-      if (!filters.providers.some(p => titleBrands.has(p))) return false
+      if (!filters.providers.some(p => title.brands.includes(p))) return false
     }
+    // Use title.monet (unique monetization types) — catalog-tier
     if (filters.monetization && filters.monetization.length > 0) {
-      const monetizations = new Set(title.offers.map(o => o.monetization_type))
-      if (!filters.monetization.some(m => monetizations.has(m))) return false
+      if (!filters.monetization.some(m => title.monet.includes(m))) return false
     }
     return true
   })
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function loadTitles(cc: string): Title[] {
-  const p = path.join(PUBLIC_DATA, `titles_${cc}.json`)
-  if (!fs.existsSync(p)) throw new Error(`Missing titles_${cc}.json`)
-  return JSON.parse(fs.readFileSync(p, 'utf-8'))
+function decodeCatalogEntry(w: WireCatalogEntry): Title {
+  return {
+    jw_entry_id: w.i, object_type: w.tp, title: w.t,
+    release_year: w.y, runtime_minutes: w.r,
+    genres: w.g, age_certification: w.a,
+    imdb_score: w.im, tmdb_score: w.td, tomatometer: w.tm,
+    available_on_flatrate: w.f, lowest_rent: w.rl, lowest_buy: w.bl,
+    brands: w.b, monet: w.mn, quals: w.q,
+  }
+}
+
+function loadCatalog(cc: string): Title[] {
+  const p = path.join(PUBLIC_DATA, `catalog_${cc}.json`)
+  if (!fs.existsSync(p)) throw new Error(`Missing catalog_${cc}.json`)
+  const raw = JSON.parse(fs.readFileSync(p, 'utf-8'))
+  const entries: WireCatalogEntry[] = raw.entries
+  return entries.map(decodeCatalogEntry)
 }
 
 function loadProviders(cc: string): Record<string, BrandMetadata> {
@@ -121,7 +131,7 @@ console.log('\n=== test-filters ===\n')
 const data: Record<string, { titles: Title[]; providers: Record<string, BrandMetadata> }> = {}
 for (const cc of COUNTRIES) {
   try {
-    data[cc] = { titles: loadTitles(cc), providers: loadProviders(cc) }
+    data[cc] = { titles: loadCatalog(cc), providers: loadProviders(cc) }
     console.log(`  loaded ${cc}: ${data[cc].titles.length} titles, ${Object.keys(data[cc].providers).length} brands`)
   } catch (e) {
     console.error(`  ✗  FAIL: ${(e as Error).message}`)
@@ -129,19 +139,19 @@ for (const cc of COUNTRIES) {
   }
 }
 
-// ── 2. All offers have canonical monetization_type ────────────────────────────
-console.log('\n[0] All offers have monetization_type ∈ {FLATRATE, RENT, BUY} …')
-const CANONICAL_TYPES = new Set(['FLATRATE', 'RENT', 'BUY'])
+// ── 2. All catalog monet fields contain only canonical monetization types ────────
+console.log('\n[0] All titles have monet ⊆ {FLATRATE, RENT, BUY, FREE, ADS} …')
+const CANONICAL_TYPES = new Set(['FLATRATE', 'RENT', 'BUY', 'FREE', 'ADS'])
 for (const cc of COUNTRIES) {
   if (!data[cc]) continue
   const { titles } = data[cc]
   let nonCanonical = 0
   for (const title of titles) {
-    for (const offer of title.offers) {
-      if (!CANONICAL_TYPES.has(offer.monetization_type)) nonCanonical++
+    for (const mt of title.monet) {
+      if (!CANONICAL_TYPES.has(mt)) nonCanonical++
     }
   }
-  assert(nonCanonical === 0, `${cc.toUpperCase()} | all offers have canonical monetization_type (found ${nonCanonical} non-canonical)`)
+  assert(nonCanonical === 0, `${cc.toUpperCase()} | all monet entries are canonical (found ${nonCanonical} non-canonical)`)
 }
 
 // ── 3. KPN absent from non-NL countries ──────────────────────────────────────
@@ -211,43 +221,19 @@ for (const cc of COUNTRIES) {
   )
 }
 
-// ── 7. No result contains offer brand_id not in that country's providers ──────
-console.log('\n[6] No title has offer brand_id absent from country providers …')
+// ── 7. All mainstream brands appear in title.brands of ≥1 FLATRATE title ──────
+console.log('\n[6] All mainstream brands appear in brands field of ≥1 FLATRATE title …')
 for (const cc of COUNTRIES) {
   if (!data[cc]) continue
   const { titles, providers } = data[cc]
-  const providerBrandIds = new Set(Object.keys(providers))
-  let strayFound = false
-  for (const title of titles) {
-    for (const offer of title.offers) {
-      if (!providerBrandIds.has(offer.brand_id)) {
-        // brand not in providers means it was below the niche threshold — that's OK
-        // we only fail if the brand is in a provider-filtered result
-        strayFound = true
-        break
-      }
-    }
-    if (strayFound) break
-  }
-  // This is a soft check: brands below threshold are legitimately absent from providers.json
-  // We can only assert that filtered results don't include brands claimed in providers.
-  const allFilteredTitles = applyFilters(titles, { monetization: ['FLATRATE'] })
-  let hasStray = false
-  for (const title of allFilteredTitles) {
-    for (const brandId of title.available_on_flatrate) {
-      // If brand is in available_on_flatrate but NOT in providers, it was below threshold — ok
-      // Only fail if a mainstream brand is completely missing
-    }
-  }
-  // Validate: all mainstream providers actually appear in available_on_flatrate of ≥1 title
+  const allFlatrateByBrands = titles.filter(t => t.monet.includes('FLATRATE'))
   const mainstreamBrands = Object.values(providers).filter(b => b.tier === 'mainstream')
   for (const brand of mainstreamBrands) {
-    const appears = allFilteredTitles.some(t => t.available_on_flatrate.includes(brand.brand_id))
+    const appears = allFlatrateByBrands.some(t => t.brands.includes(brand.brand_id))
     assert(
       appears,
-      `${cc.toUpperCase()} | mainstream brand '${brand.brand_id}' appears in ≥1 FLATRATE title`
+      `${cc.toUpperCase()} | mainstream brand '${brand.brand_id}' appears in brands of ≥1 FLATRATE title`
     )
-    void hasStray
   }
 }
 

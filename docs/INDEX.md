@@ -15,3 +15,4 @@ Canonical entry point. The Planner reads this first when sparring.
 - [003: Search Backend](architecture/decisions/003-search-backend.md) — Orama → MiniSearch: no stemming, prefix+fuzzy, diacritic normalization
 - [004: Provider Canonicalization](architecture/decisions/004-provider-canonicalization.md) — Brand layer + per-country derived provider data; brand IDs replace raw short_names; display_name derived from CSV provider_name (2026-05-09)
 - [005: Monetization Coalesce & Purchases Toggle](architecture/decisions/005-monetization-coalesce.md) — Drop non-canonical offers at preprocess; global "View purchases" toggle defaulted OFF.
+- [006: Data Tiering, Compact Wire Format, and Web Worker Index Build](architecture/decisions/006-data-tiering-and-worker.md) — Catalog/offers split, compact keys, offer sharding by id-mod-K, Web Worker search index build; eliminates 100 MB+ files and main-thread freezes.

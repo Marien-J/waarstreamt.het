@@ -1,7 +1,14 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useCallback } from 'react'
-import { loadTitles, type Title } from '@/lib/data'
-import { initializeSearch, searchAndFilterTitles } from '@/lib/search'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { type Title } from '@/lib/data'
+import {
+  attachWorker,
+  detachWorker,
+  setSearchTitles,
+  searchAndFilterTitles,
+  resolveSearchResult,
+  applyFilters,
+} from '@/lib/search'
 import { useAppStore } from '@/store/app-store'
 import { usePreferencesStore } from '@/store/preferences'
 import { SearchBar } from '@/components/search-bar'
@@ -13,7 +20,7 @@ export const Route = createFileRoute('/')({
     q: (search.q as string) || '',
     providers: search.providers ? String(search.providers).split(',').filter(Boolean) : [],
     genres: search.genres ? String(search.genres).split(',').filter(Boolean) : [],
-    monetization: search.monetization ? String(search.monetization).split(',').filter(Boolean) : [],  // Empty = show all
+    monetization: search.monetization ? String(search.monetization).split(',').filter(Boolean) : [],
     type: (search.type as 'all' | 'MOVIE' | 'SHOW') || 'all',
     yearMin: Number(search.yearMin) || 1950,
     yearMax: Number(search.yearMax) || new Date().getFullYear(),
@@ -32,37 +39,66 @@ function BrowseView() {
   const [titles, setTitles] = useState<Title[]>([])
   const [filteredTitles, setFilteredTitles] = useState<Title[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchReady, setSearchReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const { myProviders, showPurchases } = useAppStore()
   const { country } = usePreferencesStore()
 
+  // Pending query typed before the index is ready
+  const pendingQueryRef = useRef<string | null>(null)
+  const workerRef = useRef<Worker | null>(null)
+
+  // Create/recreate the worker on country change
   useEffect(() => {
-    async function init() {
-      setLoading(true)
-      setFilteredTitles([])
-      try {
-        console.log('Loading titles...')
-        const loadedTitles = await loadTitles(country.toLowerCase())
-        console.log(`Loaded ${loadedTitles.length} titles`)
+    setLoading(true)
+    setSearchReady(false)
+    setTitles([])
+    setFilteredTitles([])
+    detachWorker()
+
+    const worker = new Worker(
+      new URL('../workers/catalog-worker.ts', import.meta.url),
+      { type: 'module' }
+    )
+    workerRef.current = worker
+    attachWorker(worker)
+
+    worker.onmessage = (event) => {
+      const msg = event.data
+      if (msg.type === 'ready') {
+        const loadedTitles: Title[] = msg.titles
+        setSearchTitles(loadedTitles)
         setTitles(loadedTitles)
-        console.log('Initializing search index...')
-        await initializeSearch(loadedTitles)
-        console.log('Search initialized')
+        setSearchReady(true)
         setLoading(false)
-      } catch (err) {
-        console.error('Failed to initialize:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load catalog')
+        // Flush pending query
+        if (pendingQueryRef.current !== null) {
+          navigate({ search: { ...searchParams, q: pendingQueryRef.current } })
+          pendingQueryRef.current = null
+        }
+      } else if (msg.type === 'search-result') {
+        resolveSearchResult(msg)
+      } else if (msg.type === 'error') {
+        console.error('Worker error:', msg.message)
+        setError(msg.message)
         setLoading(false)
       }
     }
-    init()
-  }, [country])
 
-  const applyFilters = useCallback(async () => {
+    const baseUrl = import.meta.env.BASE_URL as string
+    worker.postMessage({ type: 'load', country: country.toLowerCase(), baseUrl })
+
+    return () => {
+      worker.terminate()
+      workerRef.current = null
+      detachWorker()
+    }
+  }, [country]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const applyCurrentFilters = useCallback(async () => {
     if (!titles.length) return
 
-    // Combine myProviders with URL providers filter
     const activeProviders = searchParams.providers.length > 0
       ? searchParams.providers
       : myProviders.length > 0
@@ -85,9 +121,9 @@ function BrowseView() {
     }
 
     const resultIds = await searchAndFilterTitles(searchParams.q, filters)
-    
+
     if (resultIds.length === 0 && !searchParams.q && activeProviders.length === 0) {
-      // Default view: recent + highly rated flatrate titles
+      // Default view: highly rated FLATRATE titles
       const defaultTitles = titles
         .filter(t => t.available_on_flatrate.length > 0)
         .sort((a, b) => {
@@ -98,33 +134,42 @@ function BrowseView() {
         .slice(0, 100)
       setFilteredTitles(defaultTitles)
     } else {
+      const titleMap = new Map(titles.map(t => [t.jw_entry_id, t]))
       const results = resultIds
-        .map(id => titles.find(t => t.jw_entry_id === id))
+        .map(id => titleMap.get(id))
         .filter((t): t is Title => t !== undefined)
       setFilteredTitles(results)
     }
   }, [titles, searchParams, myProviders, showPurchases])
 
   useEffect(() => {
-    applyFilters()
-  }, [applyFilters])
+    applyCurrentFilters()
+  }, [applyCurrentFilters])
 
-  const updateSearchParam = (key: string, value: any) => {
-    const newSearch = { ...searchParams }
-    
-    if (value === '' || value === null || value === undefined || (Array.isArray(value) && value.length === 0)) {
-      delete newSearch[key]
-    } else if (Array.isArray(value)) {
-      newSearch[key] = value.join(',')
-    } else {
-      newSearch[key] = value
+  // Before index is ready, stash the search query for flush on 'ready'
+  const handleSearch = (query: string) => {
+    if (!searchReady && query.trim()) {
+      pendingQueryRef.current = query
     }
-
+    const newSearch = { ...searchParams }
+    if (!query) {
+      delete (newSearch as any).q
+    } else {
+      (newSearch as any).q = query
+    }
     navigate({ search: newSearch })
   }
 
-  const handleSearch = (query: string) => {
-    updateSearchParam('q', query)
+  const updateSearchParam = (key: string, value: any) => {
+    const newSearch = { ...searchParams }
+    if (value === '' || value === null || value === undefined || (Array.isArray(value) && value.length === 0)) {
+      delete (newSearch as any)[key]
+    } else if (Array.isArray(value)) {
+      (newSearch as any)[key] = value.join(',')
+    } else {
+      (newSearch as any)[key] = value
+    }
+    navigate({ search: newSearch })
   }
 
   const clearFilters = () => {
@@ -133,10 +178,21 @@ function BrowseView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[var(--muted)]">Loading catalog...</p>
+      <div className="h-full flex">
+        {/* Desktop sidebar skeleton */}
+        <aside className="hidden lg:block w-72 border-r border-[var(--border)] flex-shrink-0" />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="card border-b border-[var(--border)] p-4 flex gap-2 flex-shrink-0">
+            <div className="flex-1">
+              <SearchBar onSearch={handleSearch} initialValue={searchParams.q} />
+            </div>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-[var(--muted)]">Loading catalog...</p>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -193,10 +249,7 @@ function BrowseView() {
             Showing {filteredTitles.length} of {titles.length} titles
           </span>
           {(searchParams.q || searchParams.providers.length > 0 || searchParams.genres.length > 0) && (
-            <button
-              onClick={clearFilters}
-              className="text-[var(--accent)] hover:underline"
-            >
+            <button onClick={clearFilters} className="text-[var(--accent)] hover:underline">
               Clear all filters
             </button>
           )}

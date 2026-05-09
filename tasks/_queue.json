@@ -27,6 +27,10 @@
     {
       "slug": "20260509-dynamic-provider-discovery",
       "status": "DONE"
+    },
+    {
+      "slug": "20260509-perf-tier-and-worker",
+      "status": "IN_REVIEW"
     }
   ]
 }

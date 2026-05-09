@@ -393,6 +393,7 @@ export const BRAND_BY_SHORT_NAME: Record<string, string> = {
 export interface BrandInfo {
   brand_color: string
   logo_url?: string
+  display_name?: string  // override CSV-derived name
 }
 
 /**
@@ -742,5 +743,11 @@ export const BRANDS: Record<string, BrandInfo> = {
   },
   ucikino: {
     brand_color: '#E5001C',
+  },
+
+  // Aha (Indian streaming service, all-lowercase brand name)
+  aha: {
+    brand_color: '#E0B800',
+    display_name: 'Aha',
   },
 }

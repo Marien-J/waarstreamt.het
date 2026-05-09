@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { loadTitles, findTitleAcrossCachedCatalogs, type Title } from '@/lib/data'
+import { loadTitles, findTitleAcrossCachedCatalogs, loadOffersForTitle, type Title, type Offer } from '@/lib/data'
 import { getGenreLabel } from '@/lib/genres'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 import { usePreferencesStore } from '@/store/preferences'
@@ -22,10 +22,12 @@ function TitleDetailView() {
   const [fallbackTitle, setFallbackTitle] = useState<Title | null>(null)
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
   const [loading, setLoading] = useState(true)
+  const [titleOffers, setTitleOffers] = useState<Offer[]>([])
   const [query, setQuery] = useState('')
 
   useEffect(() => {
     setLoading(true)
+    setTitleOffers([])
     async function load() {
       const titles = await loadTitles(country.toLowerCase())
       const foundTitle = titles.find(t => t.jw_entry_id === id)
@@ -39,6 +41,16 @@ function TitleDetailView() {
       const providersData = await loadProviders(country.toLowerCase())
       setProviders(providersData)
       setLoading(false)
+
+      // Lazy-load offers for this title (detail page only)
+      if (foundTitle) {
+        try {
+          const offers = await loadOffersForTitle(id, country.toLowerCase())
+          setTitleOffers(offers)
+        } catch (err) {
+          console.warn('Could not load offers for', id, err)
+        }
+      }
     }
     load()
   }, [id, country])
@@ -80,13 +92,13 @@ function TitleDetailView() {
 
   const displayTitle = title ?? fallbackTitle!
 
-  // Group offers by brand_id (only for current-country title)
+  // Group offers by brand_id (lazy-loaded separately from catalog)
   // Filter out BUY offers when showPurchases is false
-  const offersByProvider = new Map<string, typeof displayTitle.offers>()
-  if (title) {
+  const offersByProvider = new Map<string, Offer[]>()
+  if (title && titleOffers.length > 0) {
     const visibleOffers = showPurchases
-      ? title.offers
-      : title.offers.filter(o => o.monetization_type !== 'BUY')
+      ? titleOffers
+      : titleOffers.filter(o => o.monetization_type !== 'BUY')
     for (const offer of visibleOffers) {
       const key = offer.brand_id ?? offer.provider_short_name
       const existing = offersByProvider.get(key) || []
