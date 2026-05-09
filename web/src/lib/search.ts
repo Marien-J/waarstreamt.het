@@ -1,4 +1,4 @@
-import { create, insert, search as oramaSearch, Orama } from '@orama/orama'
+import MiniSearch from 'minisearch'
 import type { Title } from './data'
 
 export interface SearchableTitle {
@@ -6,29 +6,45 @@ export interface SearchableTitle {
   title: string
 }
 
-let searchIndex: Orama<any> | null = null
-let titlesCache: Title[] = []
+/** Lowercase + diacritic-strip + whitespace-collapse */
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
 
-export async function initializeSearch(titles: Title[]): Promise<Orama<any>> {
+let searchIndex: MiniSearch<SearchableTitle> | null = null
+let titlesCache: Title[] = []
+let titleCacheMap: Map<string, Title> = new Map()
+
+export async function initializeSearch(titles: Title[]): Promise<void> {
   console.log('🔍 Initializing search index...')
   titlesCache = titles
+  titleCacheMap = new Map(titles.map(t => [t.jw_entry_id, t]))
 
-  searchIndex = await create({
-    schema: {
-      jw_entry_id: 'string',
-      title: 'string',
+  searchIndex = new MiniSearch<SearchableTitle>({
+    fields: ['title'],
+    storeFields: ['jw_entry_id'],
+    processTerm: (term: string) => {
+      const n = normalize(term)
+      return n.length > 0 ? n : null
+    },
+    searchOptions: {
+      prefix: true,
+      fuzzy: 0.2,
+      combineWith: 'AND',
+      boost: { title: 2 },
     },
   })
 
-  for (const title of titles) {
-    await insert(searchIndex, {
-      jw_entry_id: title.jw_entry_id,
-      title: title.title,
-    })
-  }
+  searchIndex.addAll(
+    titles.map(t => ({ id: t.jw_entry_id, jw_entry_id: t.jw_entry_id, title: t.title }))
+  )
 
   console.log(`   ✅ Indexed ${titles.length} titles`)
-  return searchIndex
 }
 
 export interface SearchFilters {
@@ -113,8 +129,10 @@ function applyFilters(titles: Title[], filters?: SearchFilters): Title[] {
 
 /**
  * Search and filter titles.
- * - If query: use Orama for fuzzy text search, then filter in JS
- * - If no query: filter all titles in JS
+ * - Empty query: return all titles (filtered)
+ * - Query < 2 chars: return empty result
+ * - Otherwise: MiniSearch prefix+fuzzy, score bonus for prefix-match on first token,
+ *   sort by score desc then popularity desc
  */
 export async function searchTitles(
   query: string,
@@ -124,19 +142,44 @@ export async function searchTitles(
     throw new Error('Search index not initialized')
   }
 
+  const trimmed = query.trim()
   let candidates: Title[]
 
-  if (query && query.trim().length > 0) {
-    const results = await oramaSearch(searchIndex, {
-      term: query.trim(),
-      properties: ['title'],
-      tolerance: 2,
-      limit: 5000,
-    })
-    const matchedIds = new Set(results.hits.map((hit: any) => hit.document.jw_entry_id))
-    candidates = titlesCache.filter(t => matchedIds.has(t.jw_entry_id))
-  } else {
+  if (trimmed.length === 0) {
     candidates = titlesCache
+  } else if (trimmed.length < 2) {
+    return []
+  } else {
+    const hits = searchIndex.search(trimmed)
+
+    const normQuery = normalize(trimmed)
+    const firstQueryToken = normQuery.split(' ')[0]
+
+    const scored = hits.map(hit => {
+      const id = hit.id as string
+      const title = titleCacheMap.get(id)
+      let score = hit.score
+      if (title && firstQueryToken) {
+        const firstTitleToken = normalize(title.title).split(' ')[0]
+        if (firstTitleToken.startsWith(firstQueryToken)) {
+          score *= 1.5
+        }
+      }
+      return { id, score }
+    })
+
+    scored.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+      const ta = titleCacheMap.get(a.id)
+      const tb = titleCacheMap.get(b.id)
+      const pa = ta?.imdb_score ?? ta?.tmdb_score ?? 0
+      const pb = tb?.imdb_score ?? tb?.tmdb_score ?? 0
+      return pb - pa
+    })
+
+    candidates = scored
+      .map(r => titleCacheMap.get(r.id))
+      .filter((t): t is Title => t !== undefined)
   }
 
   const filtered = applyFilters(candidates, filters)

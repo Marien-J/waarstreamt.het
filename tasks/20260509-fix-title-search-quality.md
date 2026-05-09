@@ -83,8 +83,101 @@ Title search misses well-known shows that the user can verify exist in the datas
 
 ---
 ## Developer log
-(Developer appends here)
+
+**Files changed:**
+- `web/src/lib/search.ts` — replaced Orama with MiniSearch; added `normalize()`, rewrote `initializeSearch` and `searchTitles` per spec
+- `web/vite.config.ts` — replaced `'orama': ['@orama/orama']` manualChunk with `'search': ['minisearch']`
+- `web/package.json` — removed `@orama/orama`, added `minisearch ^7.1.0`, added `"test:search"` script
+
+**Files created:**
+- `web/scripts/test-search.ts` — new search quality test script
+
+**Docs touched:**
+- `docs/features/streaming-web-app.md` — replaced Orama references with MiniSearch, added Search section
+- `docs/architecture/decisions/003-search-backend.md` — NEW ADR
+- `docs/INDEX.md` — linked ADR 003
+
+**Verbatim `npm run test:search` output:**
+
+```
+> nl-streaming-web-app@1.0.0 test:search
+> tsx scripts/test-search.ts
+
+
+=== NL Catalog ===
+Loaded 10385 titles
+  "suits" top 5: Suits | Suits LA | Mobile Suit Gundam GQuuuuuuX | Mobile Suit Gundam Hathaway
+  ✅ "suits" → "Suits" in top 5
+  "harry potter" top 5: Harry Potter: Wizards of Baking | Harry Potter: Hogwarts Tournament of Houses | Harry Potter 20th Anniversary: Return to Hogwarts | Harry Potter and the Prisoner of Azkaban | Harry Potter and the Philosopher's Stone
+  ✅ "harry potter" → Harry Potter title in top 5
+  "mentalist" top 5: The Mentalist
+  ✅ "mentalist" → "The Mentalist" in top 5
+  "harry poter" (typo) top 10: Harry Potter: Wizards of Baking | Harry Potter: Hogwarts Tournament of Houses | Harry Potter 20th Anniversary: Return to Hogwarts | Harry Potter and the Prisoner of Azkaban | Harry Potter and the Philosopher's Stone | Harry Potter and the Goblet of Fire | Harry Potter and the Half-Blood Prince | Harry Potter and the Chamber of Secrets | Harry Potter and the Order of the Phoenix | Harry Potter and the Deathly Hallows: Part 2
+  ✅ "harry poter" (typo) → Harry Potter in top 10
+  ✅ "s" (1 char) → 0 results (length floor)
+  ✅ empty query → 0 results from helper (floor)
+  ✅ NL catalog has 10385 titles
+
+=== DE Catalog ===
+Loaded 12287 titles
+  "dark" top 5: Dark | Dark Winds | Dark Matter | Dark Eyes | Dark Horse
+  ✅ "dark" → "Dark" in top 5 DE results
+  "vikings" top 5: Vikings | Vikings: Valhalla | The Vikings | The Vikings | Les mythes vikings
+  ✅ "vikings" → "Vikings" in top 5 DE results
+
+=== Summary: 9 passed, 0 failed ===
+```
+
+**Surprises:**
+- `tatort` does not exist in the DE catalog (not on JustWatch DE at extraction time). Used `dark` + `vikings` instead.
+- `Dark` ranks #1 for query `dark` with the start-with-first-token bonus applied correctly.
+- `combineWith: 'AND'` is essential: without it, single-token queries would match sub-tokens across unrelated titles at high volume.
 
 ---
 ## Reviewer verdict
 (Reviewer appends here)
+
+APPROVED. All 12 gates passed.
+
+**Gate results:**
+- Gate 1: `search.ts` imports `MiniSearch` from `'minisearch'`; has `normalize()` (NFD+diacritic strip+lowercase); `processTerm`, `prefix: true`, `fuzzy: 0.2`, `combineWith: 'AND'`; 1.5× first-token-prefix bonus applied; final sort by score desc → `imdb_score ?? tmdb_score ?? 0` desc; query.length < 2 → empty. ✅
+- Gate 2: `grep -rE '@orama/orama' web/src web/package.json` → zero matches. ✅
+- Gate 3: `"minisearch": "^7.1.0"` present in `web/package.json` dependencies. ✅
+- Gate 4: `npm install` succeeded. ✅
+- Gate 5: `npm run build` exits 0. ✅
+- Gate 6: `npm run test:search` exits 0. **Verbatim output:**
+
+```
+=== NL Catalog ===
+Loaded 10385 titles
+  "suits" top 5: Suits | Suits LA | Mobile Suit Gundam GQuuuuuuX | Mobile Suit Gundam Hathaway
+  ✅ "suits" → "Suits" in top 5
+  "harry potter" top 5: Harry Potter: Wizards of Baking | Harry Potter: Hogwarts Tournament of Houses | Harry Potter 20th Anniversary: Return to Hogwarts | Harry Potter and the Prisoner of Azkaban | Harry Potter and the Philosopher's Stone
+  ✅ "harry potter" → Harry Potter title in top 5
+  "mentalist" top 5: The Mentalist
+  ✅ "mentalist" → "The Mentalist" in top 5
+  "harry poter" (typo) top 10: Harry Potter: Wizards of Baking | Harry Potter: Hogwarts Tournament of Houses | Harry Potter 20th Anniversary: Return to Hogwarts | Harry Potter and the Prisoner of Azkaban | Harry Potter and the Philosopher's Stone | Harry Potter and the Goblet of Fire | Harry Potter and the Half-Blood Prince | Harry Potter and the Chamber of Secrets | Harry Potter and the Order of the Phoenix | Harry Potter and the Deathly Hallows: Part 2
+  ✅ "harry poter" (typo) → Harry Potter in top 10
+  ✅ "s" (1 char) → 0 results (length floor)
+  ✅ empty query → 0 results from helper (floor)
+  ✅ NL catalog has 10385 titles
+
+=== DE Catalog ===
+Loaded 12287 titles
+  "dark" top 5: Dark | Dark Winds | Dark Matter | Dark Eyes | Dark Horse
+  ✅ "dark" → "Dark" in top 5 DE results
+  "vikings" top 5: Vikings | Vikings: Valhalla | The Vikings | The Vikings | Les mythes vikings
+  ✅ "vikings" → "Vikings" in top 5 DE results
+
+=== Summary: 9 passed, 0 failed ===
+```
+
+9/9 assertions pass. All top-5 results verified to contain the expected titles. ✅
+- Gate 7: `check-i18n-keys.ts` → "All 4 dictionaries have the same 57 keys." ✅
+- Gate 8: `verify-wiring.ts` → "PASS — all wiring assertions satisfied." ✅
+- Gate 9: `uv run pytest` → 18 passed. ✅
+- Gate 10: `docs/architecture/decisions/003-search-backend.md` exists with Context/Decision/Consequences. ✅
+- Gate 11: `docs/INDEX.md` links ADR 003. ✅
+- Gate 12: `docs/features/streaming-web-app.md` updated to describe MiniSearch. ✅
+
+Branch: agent/20260509-fix-title-search-quality. PR: (see below)

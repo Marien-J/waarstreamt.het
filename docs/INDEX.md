@@ -12,3 +12,4 @@ Canonical entry point. The Planner reads this first when sparring.
 
 - [001: Web App Architecture](architecture/decisions/001-web-app-architecture.md) — React/Vite SPA choice for catalog browsing
 - [002: Multi-Country Catalog & i18n Strategy](architecture/decisions/002-multi-country-i18n.md) — Country-scoped extraction, ipapi.co geo-detection, custom i18n hook
+- [003: Search Backend](architecture/decisions/003-search-backend.md) — Orama → MiniSearch: no stemming, prefix+fuzzy, diacritic normalization

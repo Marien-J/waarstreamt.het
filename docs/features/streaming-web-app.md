@@ -62,7 +62,7 @@ Switching country triggers reload of the matching `titles_<cc>.json` and re-inde
 2. **Runtime**:
    - Geo-detection runs on first load; explicit preference wins
    - `loadTitles(countryCode)` fetches and caches `titles_<cc>.json` per country
-   - User searches → Orama BM25 ranking
+   - User searches → MiniSearch BM25 ranking with prefix + fuzzy
    - Results rendered via virtualized grid
 
 ## Architecture
@@ -71,7 +71,7 @@ Switching country triggers reload of the matching `titles_<cc>.json` and re-inde
 |-------|------|
 | UI Framework | React 18 + TypeScript |
 | Build | Vite 5 + tsx (preprocess) |
-| Search | Orama (BM25, in-memory) |
+| Search | MiniSearch (BM25, prefix+fuzzy, in-memory) |
 | Virtualization | TanStack Virtual |
 | State | Zustand (persisted to localStorage) |
 | Styling | Tailwind CSS |
@@ -99,7 +99,7 @@ web/
 │   │   ├── geo.ts             # detectCountry() with ipapi.co + fallbacks
 │   │   ├── i18n.ts            # useTranslation() hook
 │   │   ├── genres.ts          # Language-aware genre labels
-│   │   ├── search.ts          # Orama index + queries
+│   │   ├── search.ts          # MiniSearch index + queries
 │   │   └── providers.ts       # Provider tiering & metadata
 │   ├── store/
 │   │   ├── preferences.ts     # country + language, persisted
@@ -117,3 +117,22 @@ web/
     ├── titles_us.json
     └── titles_gb.json
 ```
+
+## Search
+
+Backend: **MiniSearch** (replaced Orama 2026-05-09 — see [ADR 003](../architecture/decisions/003-search-backend.md)).
+
+**Normalization** (`normalize(s)`): lowercase → NFD diacritic-strip → whitespace-collapse. Applied at index time and query time via `processTerm`.
+
+**Config**: `prefix: true`, `fuzzy: 0.2`, `combineWith: 'AND'`, `boost: { title: 2 }`.
+
+**Ranking**: MiniSearch BM25 score, with a 1.5× multiplier when the title's first token starts with the first query token. Tiebreaker: `imdb_score ?? tmdb_score ?? 0` descending.
+
+**Edge cases**:
+- Empty query → all titles shown
+- Query length < 2 chars → no results
+
+**Known-good queries** (locked in `web/scripts/test-search.ts`):
+- NL: `suits` → Suits (#1), `harry potter` → HP title in top 5, `mentalist` → The Mentalist in top 5, `harry poter` (typo) → HP in top 10
+- DE: `dark` → Dark in top 5, `vikings` → Vikings in top 5
+
