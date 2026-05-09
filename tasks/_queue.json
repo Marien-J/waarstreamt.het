@@ -27,6 +27,14 @@
     {
       "slug": "20260509-wire-switchers-into-root",
       "status": "DONE"
+    },
+    {
+      "slug": "20260509-switcher-labels-and-visual-differentiation",
+      "status": "DONE"
+    },
+    {
+      "slug": "20260509-fix-title-search-quality",
+      "status": "READY_FOR_DEV"
     }
   ]
 }

@@ -35,6 +35,8 @@
   "detail_min": "{n} min",
   "country_label": "Land",
   "language_label": "Taal",
+  "header.country": "Land:",
+  "header.language": "Taal:",
   "genre_drm": "Drama",
   "genre_cmy": "Komedie",
   "genre_trl": "Thriller",

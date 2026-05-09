@@ -35,6 +35,8 @@
   "detail_min": "{n} min",
   "country_label": "Country",
   "language_label": "Language",
+  "header.country": "Country:",
+  "header.language": "Language:",
   "genre_drm": "Drama",
   "genre_cmy": "Comedy",
   "genre_trl": "Thriller",

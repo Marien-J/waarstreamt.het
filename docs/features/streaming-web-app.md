@@ -43,11 +43,11 @@ Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
 
 ## Country & Language Switchers
 
-Two inline flag-button groups in the header, side by side:
-- **Country switcher** (`components/country-switcher.tsx`): 5 flag buttons (NL/DE/BE/US/GB). Active button has accent background; inactive buttons are dimmed (opacity-50).
-- **Language switcher** (`components/language-switcher.tsx`): 4 flag buttons (nl/de/en/fr). Same active/inactive style.
+Two inline control groups in the header, visually differentiated:
+- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (hidden on `<640px`) + 5 buttons each showing `<flag-emoji> <ISO-code>` (e.g., `🇩🇪 DE`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`.
+- **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (hidden on `<640px`) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
 
-Both are rendered in **`routes/__root.tsx`** alongside `ThemeToggle`. The geo-detection `useEffect` (calls `detectCountry().then(applyDetectedCountry)`) also lives in `routes/__root.tsx` and runs once on mount.
+Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
 
 Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. Switching language is instantaneous (no catalog reload).
 
