@@ -180,7 +180,7 @@ function BrowseView() {
           </div>
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="lg:hidden px-4 py-2 border border-[var(--border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors"
+            className="lg:hidden min-h-[44px] px-4 py-2 border border-[var(--border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors"
           >
             Filters
           </button>
@@ -210,22 +210,39 @@ function BrowseView() {
       {/* Mobile filters bottom sheet */}
       {showMobileFilters && (
         <div className="lg:hidden fixed inset-0 bg-black bg-opacity-75 z-40 flex items-end">
-          <div className="card w-full max-h-[80vh] overflow-y-auto rounded-t-2xl">
-            <div className="sticky top-0 bg-[var(--card)] border-b border-[var(--border)] p-4 flex items-center justify-between">
+          <div className="card w-full max-h-[80vh] rounded-t-2xl flex flex-col">
+            <div className="flex-shrink-0 border-b border-[var(--border)] p-4 flex items-center justify-between">
               <h2 className="text-xl font-bold">Filters</h2>
               <button
                 onClick={() => setShowMobileFilters(false)}
-                className="text-2xl"
+                aria-label="Close filters"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-2xl"
               >
                 ×
               </button>
             </div>
-            <FilterSidebar
-              searchParams={searchParams}
-              onUpdateParam={updateSearchParam}
-              onClearFilters={clearFilters}
-              titles={titles}
-            />
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <FilterSidebar
+                searchParams={searchParams}
+                onUpdateParam={updateSearchParam}
+                onClearFilters={clearFilters}
+                titles={titles}
+              />
+            </div>
+            <div className="flex-shrink-0 border-t border-[var(--border)] p-4 flex gap-3">
+              <button
+                onClick={() => { clearFilters(); setShowMobileFilters(false) }}
+                className="flex-1 min-h-[44px] border border-[var(--border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors text-sm"
+              >
+                Clear all filters
+              </button>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                className="flex-1 min-h-[44px] bg-[var(--accent)] text-white rounded hover:opacity-90 transition-opacity text-sm font-medium"
+              >
+                Apply
+              </button>
+            </div>
           </div>
         </div>
       )}

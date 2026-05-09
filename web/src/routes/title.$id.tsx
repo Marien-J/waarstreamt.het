@@ -92,7 +92,7 @@ function TitleDetailView() {
         {/* Back button */}
         <button
           onClick={() => navigate({ to: '/' })}
-          className="mb-4 text-[var(--accent)] hover:underline flex items-center gap-2"
+          className="mb-4 min-h-[44px] text-[var(--accent)] hover:underline flex items-center gap-2"
         >
           ← {t('detail.back_to_browse')}
         </button>
@@ -201,7 +201,7 @@ function TitleDetailView() {
                               href={offer.offer_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-between p-3 border border-[var(--border)] rounded hover:border-[var(--accent)] transition-colors"
+                              className="flex items-center justify-between min-h-[44px] p-3 border border-[var(--border)] rounded hover:border-[var(--accent)] transition-colors"
                             >
                               <div>
                                 <div className="font-medium capitalize">

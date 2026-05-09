@@ -15,7 +15,7 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-[var(--muted)] hidden sm:inline">{t('header.language')}</span>
+      <span className="text-sm text-[var(--muted)]">{t('header.language')}</span>
       <div className="flex items-center gap-0.5" role="group" aria-label="Select language">
         {LANGUAGES.map((l) => (
           <button

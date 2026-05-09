@@ -14,7 +14,7 @@ export function CountrySwitcher({ onCountryChange }: CountrySwitcherProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-[var(--muted)] hidden sm:inline">{t('header.country')}</span>
+      <span className="text-sm text-[var(--muted)]">{t('header.country')}</span>
       <div className="flex items-center gap-0.5" role="group" aria-label="Select country">
         {COUNTRIES.map((c) => (
           <button
