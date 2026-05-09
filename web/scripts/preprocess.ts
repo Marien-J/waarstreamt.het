@@ -6,6 +6,9 @@ import Papa from 'papaparse'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Supported country codes
+const SUPPORTED_COUNTRIES = ['nl', 'de', 'be', 'us', 'gb']
+
 // Types
 interface CSVRow {
   extracted_at: string
@@ -70,11 +73,16 @@ interface Title {
   lowest_buy: number | null
 }
 
-interface Manifest {
-  extracted_at: string
+interface CountryMeta {
   title_count: number
   offer_count: number
+  language: string
+}
+
+interface Manifest {
+  extracted_at: string
   build_hash: string
+  countries: Record<string, CountryMeta>
 }
 
 // Load provider metadata
@@ -82,129 +90,148 @@ const providersJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'providers.json'), 'utf-8')
 )
 
-// Find latest CSV
 const dataDir = path.join(__dirname, '../../data')
-const csvFiles = fs.readdirSync(dataDir).filter(f => 
-  f.startsWith('streaming_nl_') && 
-  f.endsWith('.csv') && 
-  !f.includes('_providers')  // Exclude provider metadata CSV
+
+// Find latest CSV per country
+// Pattern: streaming_<cc>_<lang>_<date>.csv  (new) OR streaming_nl_<date>.csv (legacy)
+const allCsvFiles = fs.readdirSync(dataDir).filter(f =>
+  f.endsWith('.csv') && !f.includes('_providers')
 )
-if (csvFiles.length === 0) {
-  throw new Error('No CSV files found in data/')
+
+function findLatestCsvForCountry(cc: string): string | null {
+  // New naming: streaming_<cc>_<lang>_YYYY-MM-DD.csv
+  const pattern = new RegExp(`^streaming_${cc}_[a-z]+_\\d{4}-\\d{2}-\\d{2}\\.csv$`)
+  const matches = allCsvFiles.filter(f => pattern.test(f))
+  if (matches.length > 0) return matches.sort().reverse()[0]
+
+  // Legacy NL naming: streaming_nl_YYYY-MM-DD.csv (for nl only)
+  if (cc === 'nl') {
+    const legacy = allCsvFiles.filter(f => /^streaming_nl_\d{4}-\d{2}-\d{2}\.csv$/.test(f))
+    if (legacy.length > 0) return legacy.sort().reverse()[0]
+  }
+  return null
 }
-const latestCsv = csvFiles.sort().reverse()[0]
-const csvPath = path.join(dataDir, latestCsv)
 
-console.log(`📊 Processing ${latestCsv}...`)
+function processCsv(csvPath: string): { titles: Title[]; offerCount: number; extractedAt: string } {
+  const csvContent = fs.readFileSync(csvPath, 'utf-8')
+  const parseResult = Papa.parse<CSVRow>(csvContent, {
+    header: true,
+    skipEmptyLines: true,
+  })
 
-// Parse CSV
-const csvContent = fs.readFileSync(csvPath, 'utf-8')
-const parseResult = Papa.parse<CSVRow>(csvContent, {
-  header: true,
-  skipEmptyLines: true,
-})
+  const rows = parseResult.data
+  const validRows = rows.filter(row => row.release_year !== '0')
 
-const rows = parseResult.data
-console.log(`   Read ${rows.length} rows`)
+  const titleMap = new Map<string, Title>()
+  let extractedAt = ''
 
-// Filter out release_year = 0
-const validRows = rows.filter(row => row.release_year !== '0')
-console.log(`   Filtered to ${validRows.length} rows (removed ${rows.length - validRows.length} with year=0)`)
+  for (const row of validRows) {
+    if (!extractedAt) extractedAt = row.extracted_at
 
-// Group by title
-const titleMap = new Map<string, Title>()
-let extractedAt = ''
+    const jwEntryId = row.jw_entry_id
 
-for (const row of validRows) {
-  if (!extractedAt) extractedAt = row.extracted_at
+    if (!titleMap.has(jwEntryId)) {
+      titleMap.set(jwEntryId, {
+        jw_entry_id: jwEntryId,
+        object_type: row.object_type,
+        title: row.title,
+        release_year: parseInt(row.release_year),
+        runtime_minutes: row.runtime_minutes ? parseInt(row.runtime_minutes) : null,
+        imdb_id: row.imdb_id || null,
+        tmdb_id: row.tmdb_id || null,
+        genres: row.genres ? row.genres.split(';').filter(Boolean) : [],
+        age_certification: row.age_certification || null,
+        imdb_score: row.imdb_score ? parseFloat(row.imdb_score) : null,
+        tmdb_score: row.tmdb_score ? parseFloat(row.tmdb_score) : null,
+        tomatometer: row.tomatometer ? parseFloat(row.tomatometer) : null,
+        jw_url: row.jw_url,
+        poster_url: row.poster_url,
+        offers: [],
+        offer_count: 0,
+        available_on_flatrate: [],
+        lowest_rent: null,
+        lowest_buy: null,
+      })
+    }
 
-  const jwEntryId = row.jw_entry_id
-  
-  if (!titleMap.has(jwEntryId)) {
-    titleMap.set(jwEntryId, {
-      jw_entry_id: jwEntryId,
-      object_type: row.object_type,
-      title: row.title,
-      release_year: parseInt(row.release_year),
-      runtime_minutes: row.runtime_minutes ? parseInt(row.runtime_minutes) : null,
-      imdb_id: row.imdb_id || null,
-      tmdb_id: row.tmdb_id || null,
-      genres: row.genres ? row.genres.split(';').filter(Boolean) : [],
-      age_certification: row.age_certification || null,
-      imdb_score: row.imdb_score ? parseFloat(row.imdb_score) : null,
-      tmdb_score: row.tmdb_score ? parseFloat(row.tmdb_score) : null,
-      tomatometer: row.tomatometer ? parseFloat(row.tomatometer) : null,
-      jw_url: row.jw_url,
-      poster_url: row.poster_url,
-      offers: [],
-      offer_count: 0,
-      available_on_flatrate: [],
-      lowest_rent: null,
-      lowest_buy: null,
-    })
+    const title = titleMap.get(jwEntryId)!
+    const presentationType = row.presentation_type.startsWith('_')
+      ? row.presentation_type.slice(1)
+      : row.presentation_type
+
+    const offer: Offer = {
+      provider_short_name: row.provider_short_name,
+      monetization_type: row.monetization_type,
+      presentation_type: presentationType,
+      price_value: row.price_value ? parseFloat(row.price_value) : null,
+      price_currency: row.price_currency,
+      offer_url: row.offer_url,
+      audio_languages: row.audio_languages ? row.audio_languages.split(';').filter(Boolean) : [],
+      subtitle_languages: row.subtitle_languages ? row.subtitle_languages.split(';').filter(Boolean) : [],
+    }
+
+    title.offers.push(offer)
   }
 
-  const title = titleMap.get(jwEntryId)!
-  
-  // Strip leading underscore from presentation_type
-  const presentationType = row.presentation_type.startsWith('_') 
-    ? row.presentation_type.slice(1) 
-    : row.presentation_type
+  const titles: Title[] = Array.from(titleMap.values())
 
-  const offer: Offer = {
-    provider_short_name: row.provider_short_name,
-    monetization_type: row.monetization_type,
-    presentation_type: presentationType,
-    price_value: row.price_value ? parseFloat(row.price_value) : null,
-    price_currency: row.price_currency,
-    offer_url: row.offer_url,
-    audio_languages: row.audio_languages ? row.audio_languages.split(';').filter(Boolean) : [],
-    subtitle_languages: row.subtitle_languages ? row.subtitle_languages.split(';').filter(Boolean) : [],
+  for (const title of titles) {
+    title.offer_count = title.offers.length
+    title.available_on_flatrate = [
+      ...new Set(
+        title.offers
+          .filter(o => o.monetization_type === 'FLATRATE')
+          .map(o => o.provider_short_name)
+      )
+    ]
+    const rentPrices = title.offers
+      .filter(o => o.monetization_type === 'RENT' && o.price_value !== null)
+      .map(o => o.price_value!)
+    title.lowest_rent = rentPrices.length > 0 ? Math.min(...rentPrices) : null
+    const buyPrices = title.offers
+      .filter(o => o.monetization_type === 'BUY' && o.price_value !== null)
+      .map(o => o.price_value!)
+    title.lowest_buy = buyPrices.length > 0 ? Math.min(...buyPrices) : null
   }
 
-  title.offers.push(offer)
+  return { titles, offerCount: validRows.length, extractedAt }
 }
-
-// Compute derived fields
-const titles: Title[] = Array.from(titleMap.values())
-
-for (const title of titles) {
-  title.offer_count = title.offers.length
-  
-  // available_on_flatrate
-  title.available_on_flatrate = [
-    ...new Set(
-      title.offers
-        .filter(o => o.monetization_type === 'FLATRATE')
-        .map(o => o.provider_short_name)
-    )
-  ]
-  
-  // lowest_rent
-  const rentPrices = title.offers
-    .filter(o => o.monetization_type === 'RENT' && o.price_value !== null)
-    .map(o => o.price_value!)
-  title.lowest_rent = rentPrices.length > 0 ? Math.min(...rentPrices) : null
-  
-  // lowest_buy
-  const buyPrices = title.offers
-    .filter(o => o.monetization_type === 'BUY' && o.price_value !== null)
-    .map(o => o.price_value!)
-  title.lowest_buy = buyPrices.length > 0 ? Math.min(...buyPrices) : null
-}
-
-console.log(`   Aggregated into ${titles.length} unique titles`)
 
 // Create output directory
 const outputDir = path.join(__dirname, '../public/data')
 fs.mkdirSync(outputDir, { recursive: true })
 
-// Write titles.json
-fs.writeFileSync(
-  path.join(outputDir, 'titles.json'),
-  JSON.stringify(titles, null, 0)
-)
-console.log(`   ✅ Wrote titles.json (${(fs.statSync(path.join(outputDir, 'titles.json')).size / 1024 / 1024).toFixed(2)} MB)`)
+const manifestCountries: Record<string, CountryMeta> = {}
+let firstExtractedAt = ''
+
+for (const cc of SUPPORTED_COUNTRIES) {
+  const csvFile = findLatestCsvForCountry(cc)
+  if (!csvFile) {
+    console.log(`⚠️  No CSV found for ${cc.toUpperCase()} — skipping`)
+    continue
+  }
+  const csvPath = path.join(dataDir, csvFile)
+  console.log(`📊 Processing ${csvFile} (${cc.toUpperCase()})...`)
+
+  const { titles, offerCount, extractedAt } = processCsv(csvPath)
+  if (!firstExtractedAt) firstExtractedAt = extractedAt
+
+  // Determine language from filename: streaming_<cc>_<lang>_<date>.csv
+  const langMatch = csvFile.match(/^streaming_[a-z]+_([a-z]+)_\d{4}/)
+  const language = langMatch ? langMatch[1] : cc
+
+  // Write titles_<cc>.json
+  const titlesPath = path.join(outputDir, `titles_${cc}.json`)
+  fs.writeFileSync(titlesPath, JSON.stringify(titles, null, 0))
+  const sizeMb = (fs.statSync(titlesPath).size / 1024 / 1024).toFixed(2)
+  console.log(`   ✅ Wrote titles_${cc}.json (${sizeMb} MB, ${titles.length} titles)`)
+
+  manifestCountries[cc] = {
+    title_count: titles.length,
+    offer_count: offerCount,
+    language,
+  }
+}
 
 // Write providers.json
 fs.writeFileSync(
@@ -215,10 +242,9 @@ console.log(`   ✅ Wrote providers.json`)
 
 // Write manifest.json
 const manifest: Manifest = {
-  extracted_at: extractedAt,
-  title_count: titles.length,
-  offer_count: validRows.length,
+  extracted_at: firstExtractedAt,
   build_hash: new Date().toISOString(),
+  countries: manifestCountries,
 }
 fs.writeFileSync(
   path.join(outputDir, 'manifest.json'),
@@ -226,4 +252,5 @@ fs.writeFileSync(
 )
 console.log(`   ✅ Wrote manifest.json`)
 
-console.log(`\n✨ Preprocessing complete!`)
+console.log(`\n✨ Preprocessing complete! Countries: ${Object.keys(manifestCountries).join(', ')}`)
+

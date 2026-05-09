@@ -51,8 +51,8 @@ const currentYear = new Date().getFullYear()
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      // Dark mode (default true)
-      darkMode: true,
+      // Dark mode (default false = light mode)
+      darkMode: false,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
       
       // My providers

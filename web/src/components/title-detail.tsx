@@ -2,6 +2,7 @@ import type { Title } from '@/lib/data'
 import { getGenreLabel } from '@/lib/genres'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 import { useEffect, useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface TitleDetailProps {
   title: Title
@@ -9,6 +10,7 @@ interface TitleDetailProps {
 }
 
 export function TitleDetail({ title, onClose }: TitleDetailProps) {
+  const t = useTranslation()
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
 
   useEffect(() => {
@@ -48,11 +50,11 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
               <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">
                 <span>{title.release_year}</span>
                 <span>•</span>
-                <span>{title.object_type === 'MOVIE' ? 'Movie' : 'TV Show'}</span>
+                <span>{title.object_type === 'MOVIE' ? t('detail_movie') : t('detail_show')}</span>
                 {title.runtime_minutes && (
                   <>
                     <span>•</span>
-                    <span>{title.runtime_minutes} min</span>
+                    <span>{t('detail_min', { n: title.runtime_minutes })}</span>
                   </>
                 )}
                 {title.age_certification && (
@@ -109,7 +111,7 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
 
             {/* Offers */}
             <div className="space-y-3">
-              <h2 className="text-xl font-semibold">Where to watch</h2>
+              <h2 className="text-xl font-semibold">{t('where_to_watch')}</h2>
               <div className="space-y-2">
                 {Array.from(offersByProvider.entries()).map(([providerKey, offers]) => {
                   const provider = providers[providerKey]
@@ -152,7 +154,7 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
                 rel="noopener noreferrer"
                 className="btn"
               >
-                View on JustWatch
+                {t('view_on_justwatch')}
               </a>
             </div>
           </div>

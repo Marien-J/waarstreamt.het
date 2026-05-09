@@ -7,7 +7,7 @@ from pathlib import Path
 
 import structlog
 
-from streaming_nl.config import CONTENT_TYPES, COUNTRY, OUTPUT_DIR
+from streaming_nl.config import CONTENT_TYPES, COUNTRY, COUNTRY_CONFIGS, OUTPUT_DIR
 from streaming_nl.extract import extract_partition
 from streaming_nl.normalize import media_entry_to_rows
 from streaming_nl.providers import resolve_provider_codes
@@ -18,27 +18,39 @@ logger = structlog.get_logger()
 
 def run_job(country: str = COUNTRY) -> Path:
     """Resolve providers → extract all partitions → normalize → write CSV.
-    
+
+    Args:
+        country: Two-letter country code (must be in COUNTRY_CONFIGS)
+
     Returns:
         Path to the written main CSV file
     """
     start_time = time.time()
-    
-    logger.info("job_started", country=country)
-    
+
+    cc = country.upper()
+    config = COUNTRY_CONFIGS.get(cc)
+    if config is None:
+        logger.error("unknown_country", country=cc, supported=list(COUNTRY_CONFIGS.keys()))
+        raise SystemExit(1)
+
+    lang = config["language"]
+    cc_lower = cc.lower()
+
+    logger.info("job_started", country=cc, language=lang)
+
     # 1. Resolve provider codes
-    provider_map = resolve_provider_codes(country=country)
-    
+    provider_map = resolve_provider_codes(country=cc)
+
     # 2. Write provider lookup CSV
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    provider_csv_path = OUTPUT_DIR / f"streaming_nl_{date_str}_providers.csv"
-    write_provider_csv(provider_map, provider_csv_path, country)
-    
+    provider_csv_path = OUTPUT_DIR / f"streaming_{cc_lower}_{lang}_{date_str}_providers.csv"
+    write_provider_csv(provider_map, provider_csv_path, cc)
+
     # 3. Extract all partitions
     all_rows: list[dict[str, str]] = []
     provider_stats: Counter[str] = Counter()
     monetization_stats: Counter[str] = Counter()
-    
+
     for display_name, short_name in provider_map.items():
         for content_type in CONTENT_TYPES:
             logger.info(
@@ -47,26 +59,26 @@ def run_job(country: str = COUNTRY) -> Path:
                 short_name=short_name,
                 content_type=content_type,
             )
-            
+
             try:
-                entries = list(extract_partition(short_name, content_type, country=country))
-                
+                entries = list(extract_partition(short_name, content_type, country=cc))
+
                 for entry in entries:
-                    rows = media_entry_to_rows(entry, country)
+                    rows = media_entry_to_rows(entry, cc)
                     all_rows.extend(rows)
-                    
+
                     # Track stats
                     for row in rows:
                         provider_stats[row["provider_short_name"]] += 1
                         monetization_stats[row["monetization_type"]] += 1
-                
+
                 logger.info(
                     "partition_extracted",
                     provider=display_name,
                     content_type=content_type,
                     entries=len(entries),
                 )
-                
+
             except Exception as exc:
                 logger.error(
                     "partition_failed",
@@ -76,30 +88,30 @@ def run_job(country: str = COUNTRY) -> Path:
                     exc_info=True,
                 )
                 # Continue with other partitions
-    
+
     # 4. Deduplicate rows (should be no-op after presentation_type collapsing)
     unique_rows: dict[tuple[str, str, str], dict[str, str]] = {}
     for row in all_rows:
         key = (row["jw_entry_id"], row["provider_short_name"], row["monetization_type"])
         if key not in unique_rows:
             unique_rows[key] = row
-    
+
     final_rows = list(unique_rows.values())
-    
+
     if len(final_rows) < len(all_rows):
         logger.warning(
             "duplicates_removed",
             original_count=len(all_rows),
             deduplicated_count=len(final_rows),
         )
-    
+
     # 5. Write main CSV
-    main_csv_path = OUTPUT_DIR / f"streaming_nl_{date_str}.csv"
+    main_csv_path = OUTPUT_DIR / f"streaming_{cc_lower}_{lang}_{date_str}.csv"
     write_csv(final_rows, main_csv_path)
-    
+
     # 6. Log summary
     elapsed = time.time() - start_time
-    
+
     logger.info(
         "job_complete",
         total_rows=len(final_rows),
@@ -108,12 +120,39 @@ def run_job(country: str = COUNTRY) -> Path:
         monetization_breakdown=dict(monetization_stats),
         output_path=str(main_csv_path),
     )
-    
-    # Final summary line
+
     print(
-        f"\n✓ Extract complete: {len(final_rows)} rows in {elapsed:.1f}s"
+        f"\n✓ Extract complete [{cc}]: {len(final_rows)} rows in {elapsed:.1f}s"
         f"\n  Providers: {dict(provider_stats)}"
         f"\n  Output: {main_csv_path}"
     )
-    
+
     return main_csv_path
+
+
+def run_all() -> dict[str, Path | Exception]:
+    """Run extraction for all countries in COUNTRY_CONFIGS sequentially.
+
+    Returns:
+        Dict mapping country code -> Path (success) or Exception (failure)
+    """
+    results: dict[str, Path | Exception] = {}
+
+    for cc in COUNTRY_CONFIGS:
+        logger.info("run_all_country_start", country=cc)
+        try:
+            path = run_job(country=cc)
+            results[cc] = path
+        except Exception as exc:
+            logger.error("run_all_country_failed", country=cc, error=str(exc), exc_info=True)
+            results[cc] = exc
+
+    # Summary
+    succeeded = [cc for cc, v in results.items() if isinstance(v, Path)]
+    failed = [cc for cc, v in results.items() if isinstance(v, Exception)]
+    print(f"\n{'='*60}")
+    print(f"run_all complete: {len(succeeded)} succeeded, {len(failed)} failed")
+    if failed:
+        print(f"  Failed: {failed}")
+
+    return results

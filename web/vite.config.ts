@@ -22,7 +22,7 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
           'router': ['@tanstack/react-router'],
-          'orama': ['@orama/orama'],
+          'search': ['minisearch'],
         },
       },
     },

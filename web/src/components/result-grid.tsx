@@ -3,6 +3,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useNavigate } from '@tanstack/react-router'
 import type { Title } from '@/lib/data'
 import { TitleCard } from './title-card'
+import { useTranslation } from '@/lib/i18n'
 
 interface ResultGridProps {
   titles: Title[]
@@ -20,6 +21,7 @@ function getColumnCount(width: number): number {
 export function ResultGrid({ titles }: ResultGridProps) {
   const parentRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+  const t = useTranslation()
   const [columns, setColumns] = useState(7)
   const [rowHeight, setRowHeight] = useState(220)
 
@@ -57,8 +59,8 @@ export function ResultGrid({ titles }: ResultGridProps) {
         <svg className="w-16 h-16 text-[var(--muted)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
-        <h3 className="text-xl font-semibold mb-2">No results found</h3>
-        <p className="text-[var(--muted)]">Try adjusting your filters or search term</p>
+        <h3 className="text-xl font-semibold mb-2">{t('no_results_title')}</h3>
+        <p className="text-[var(--muted)]">{t('no_results_sub')}</p>
       </div>
     )
   }

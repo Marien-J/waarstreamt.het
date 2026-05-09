@@ -3,6 +3,8 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useNavigate } from '@tanstack/react-router'
 import { searchTitles } from '@/lib/search'
 import { loadTitles } from '@/lib/data'
+import { useTranslation } from '@/lib/i18n'
+import { usePreferencesStore } from '@/store/preferences'
 
 interface SearchBarProps {
   onSearch: (query: string) => void
@@ -18,6 +20,8 @@ interface Suggestion {
 
 export function SearchBar({ onSearch, initialValue = '' }: SearchBarProps) {
   const navigate = useNavigate()
+  const t = useTranslation()
+  const country = usePreferencesStore((s) => s.country)
   const [localQuery, setLocalQuery] = useState(initialValue)
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -37,7 +41,7 @@ export function SearchBar({ onSearch, initialValue = '' }: SearchBarProps) {
       const fetchSuggestions = async () => {
         try {
           const titleIds = await searchTitles(localQuery, {})
-          const allTitles = await loadTitles()
+          const allTitles = await loadTitles(country.toLowerCase())
           const matchedTitles = titleIds
             .slice(0, 8)
             .map(id => allTitles.find(t => t.jw_entry_id === id))
@@ -132,7 +136,7 @@ export function SearchBar({ onSearch, initialValue = '' }: SearchBarProps) {
         onChange={(e) => setLocalQuery(e.target.value)}
         onFocus={() => localQuery.length >= 2 && suggestions.length > 0 && setShowSuggestions(true)}
         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-        placeholder="Search titles... (press / to focus)"
+        placeholder={t('search_placeholder')}
         className="input w-full pl-10 pr-10 py-3 text-lg"
         autoComplete="off"
       />
