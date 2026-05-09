@@ -39,6 +39,8 @@ function BrowseView() {
 
   useEffect(() => {
     async function init() {
+      setLoading(true)
+      setFilteredTitles([])
       try {
         console.log('Loading titles...')
         const loadedTitles = await loadTitles(country.toLowerCase())

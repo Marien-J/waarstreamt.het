@@ -41,6 +41,21 @@ console.log('\nChecking routes/index.tsx …')
 assert(indexSrc.includes('usePreferencesStore'), 'imports usePreferencesStore')
 assert(/loadTitles\(country/.test(indexSrc), 'calls loadTitles(country…)')
 assert(/\}, \[country\]/.test(indexSrc), 'useEffect depends on country')
+assert(indexSrc.includes('setLoading(true)'), 'init() resets loading to true before async load')
+assert(indexSrc.includes('setFilteredTitles([])'), 'init() clears filteredTitles before async load')
+// Ensure await initializeSearch appears before setLoading(false)
+assert(
+  indexSrc.indexOf('await initializeSearch') < indexSrc.indexOf('setLoading(false)'),
+  'await initializeSearch before setLoading(false)'
+)
+
+// ── lib/i18n.ts ───────────────────────────────────────────────────────────────
+const i18nSrc = readSrc('lib/i18n.ts')
+console.log('\nChecking lib/i18n.ts …')
+assert(
+  /usePreferencesStore\(.*s.*=>.*s\.language/.test(i18nSrc),
+  'useTranslation selects language from preferences store'
+)
 
 // ── app.tsx must be gone ──────────────────────────────────────────────────────
 import { existsSync } from 'fs'

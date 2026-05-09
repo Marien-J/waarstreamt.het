@@ -49,7 +49,12 @@ Two inline control groups in the header, visually differentiated:
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
 
-Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. Switching language is instantaneous (no catalog reload).
+Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. On country change:
+1. `setLoading(true)` and `setFilteredTitles([])` fire immediately so the loading spinner appears and the stale result grid is cleared before the async fetch begins.
+2. The new catalog is fetched, then `await initializeSearch(loadedTitles)` rebuilds the MiniSearch index.
+3. Only after both complete does `setLoading(false)` fire, revealing the new country's titles.
+
+Switching language is instantaneous (no catalog reload).
 
 ## Data Flow
 
