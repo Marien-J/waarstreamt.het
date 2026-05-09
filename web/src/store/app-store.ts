@@ -62,6 +62,10 @@ interface AppState {
   runtimeMax: number
   setRuntimeMax: (minutes: number) => void
   
+  // View purchases toggle
+  showPurchases: boolean
+  toggleShowPurchases: () => void
+
   // Search
   searchQuery: string
   setSearchQuery: (query: string) => void
@@ -111,6 +115,10 @@ export const useAppStore = create<AppState>()(
       runtimeMax: 300,
       setRuntimeMax: (minutes) => set({ runtimeMax: minutes }),
       
+      // View purchases toggle (default OFF)
+      showPurchases: false,
+      toggleShowPurchases: () => set((state) => ({ showPurchases: !state.showPurchases })),
+
       // Search
       searchQuery: '',
       setSearchQuery: (query) => set({ searchQuery: query }),
@@ -131,10 +139,10 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'waarstreamt-storage',
-      version: 2,
+      version: 3,
       migrate: (persistedState: unknown, version: number) => {
+        const s = persistedState as { myProviders?: string[]; showPurchases?: boolean }
         if (version < 2) {
-          const s = persistedState as { myProviders?: string[] }
           if (Array.isArray(s.myProviders)) {
             const knownBrandIds = new Set(Object.values(LEGACY_SHORT_NAME_TO_BRAND))
             const migrated = s.myProviders
@@ -143,11 +151,16 @@ export const useAppStore = create<AppState>()(
             s.myProviders = [...new Set(migrated)]
           }
         }
+        if (version < 3) {
+          // Default showPurchases to false for all prior versions
+          s.showPurchases = false
+        }
         return persistedState as ReturnType<typeof useAppStore.getState>
       },
       partialize: (state) => ({
         darkMode: state.darkMode,
         myProviders: state.myProviders,
+        showPurchases: state.showPurchases,
       }),
     }
   )

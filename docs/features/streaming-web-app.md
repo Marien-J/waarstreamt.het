@@ -56,6 +56,21 @@ Switching country triggers reload of the matching `titles_<cc>.json` and re-inde
 
 Switching language is instantaneous (no catalog reload).
 
+## Monetization model
+
+### Canonical offer types
+
+Only three offer types appear in `titles_<cc>.json`: **FLATRATE** (subscription), **RENT**, and **BUY**. Everything else (`FREE`, `ADS`, `CINEMA`, compound types like `FLATRATE_AND_BUY`) is normalized out by `web/scripts/preprocess.ts`. Titles with zero remaining offers after normalization are excluded entirely. This is the single source of truth — the frontend never needs to handle non-canonical types.
+
+### "View purchases" toggle
+
+A pill button (shopping-cart icon, label `view_purchases` i18n key) sits in the header bar alongside the country and language switchers.
+
+- **Default: OFF.** BUY offers are hidden across the overview, detail page, and filter sidebar. BUY-only titles are excluded from search results.
+- **When ON.** BUY offers appear everywhere, treated the same as FLATRATE/RENT.
+- **RENT is always visible** regardless of toggle state.
+- State is persisted in localStorage under store version 3 (migration from v2 sets `showPurchases: false`).
+
 ## Mobile layout
 
 **Header strategy (mobile-first stacking):** On `<640px` (`sm` breakpoint), the header switches from a single `flex-row` to a `flex-col` layout. The app title occupies its own line, then the country/language/theme controls flow below it with `flex-wrap`. This ensures the `Country:` and `Language:` prefix labels are always readable without horizontal overflow. On `sm+` the layout reverts to the original single-row `justify-between`.

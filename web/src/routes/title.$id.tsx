@@ -4,6 +4,7 @@ import { loadTitles, findTitleAcrossCachedCatalogs, type Title } from '@/lib/dat
 import { getGenreLabel } from '@/lib/genres'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 import { usePreferencesStore } from '@/store/preferences'
+import { useAppStore } from '@/store/app-store'
 import { useTranslation } from '@/lib/i18n'
 import { Flag } from '@/components/flag'
 
@@ -15,6 +16,7 @@ function TitleDetailView() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const { country } = usePreferencesStore()
+  const { showPurchases } = useAppStore()
   const t = useTranslation()
   const [title, setTitle] = useState<Title | null>(null)
   const [fallbackTitle, setFallbackTitle] = useState<Title | null>(null)
@@ -79,9 +81,13 @@ function TitleDetailView() {
   const displayTitle = title ?? fallbackTitle!
 
   // Group offers by brand_id (only for current-country title)
+  // Filter out BUY offers when showPurchases is false
   const offersByProvider = new Map<string, typeof displayTitle.offers>()
   if (title) {
-    for (const offer of title.offers) {
+    const visibleOffers = showPurchases
+      ? title.offers
+      : title.offers.filter(o => o.monetization_type !== 'BUY')
+    for (const offer of visibleOffers) {
       const key = offer.brand_id ?? offer.provider_short_name
       const existing = offersByProvider.get(key) || []
       offersByProvider.set(key, [...existing, offer])

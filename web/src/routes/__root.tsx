@@ -8,16 +8,18 @@ import { usePreferencesStore } from '@/store/preferences'
 import { detectCountry } from '@/lib/geo'
 import { useState, useEffect } from 'react'
 import { loadProviders, type BrandMetadata } from '@/lib/providers'
+import { useTranslation } from '@/lib/i18n'
 
 export const Route = createRootRoute({
   component: RootLayout,
 })
 
 function RootLayout() {
-  const { darkMode, myProviders } = useAppStore()
+  const { darkMode, myProviders, showPurchases, toggleShowPurchases } = useAppStore()
   const { applyDetectedCountry, country } = usePreferencesStore()
   const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [showProviderPicker, setShowProviderPicker] = useState(false)
+  const t = useTranslation()
 
   useEffect(() => {
     if (darkMode) {
@@ -46,6 +48,21 @@ function RootLayout() {
             <div className="flex items-center gap-2 flex-wrap">
               <CountrySwitcher />
               <LanguageSwitcher />
+              <button
+                onClick={toggleShowPurchases}
+                title={t('view_purchases')}
+                aria-pressed={showPurchases}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  showPurchases
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className="hidden sm:inline">{t('view_purchases')}</span>
+              </button>
               <ThemeToggle />
             </div>
           </div>

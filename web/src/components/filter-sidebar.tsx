@@ -4,6 +4,7 @@ import { GENRE_CODES, getGenreLabel } from '@/lib/genres'
 import { loadProviders, groupProvidersByTier, type BrandMetadata } from '@/lib/providers'
 import { useTranslation } from '@/lib/i18n'
 import { usePreferencesStore } from '@/store/preferences'
+import { useAppStore } from '@/store/app-store'
 
 interface FilterSidebarProps {
   searchParams: {
@@ -25,13 +26,14 @@ interface FilterSidebarProps {
   titles: Title[]
 }
 
-const MONETIZATION_TYPES = ['FLATRATE', 'RENT', 'BUY', 'FREE', 'ADS', 'CINEMA']
+const MONETIZATION_TYPES = ['FLATRATE', 'RENT', 'BUY']
 
 const QUALITY_OPTIONS = ['HD', '4K', 'SD']
 
 export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, titles }: FilterSidebarProps) {
   const t = useTranslation()
   const { country } = usePreferencesStore()
+  const { showPurchases } = useAppStore()
   const [providers, setProviders] = useState<Record<string, BrandMetadata>>({})
   const [providerTiers, setProviderTiers] = useState<{
     mainstream: string[]
@@ -167,7 +169,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
       <div>
         <h3 className="font-semibold mb-3">{t('monetization_label')}</h3>
         <div className="space-y-1">
-          {MONETIZATION_TYPES.map((value) => (
+          {MONETIZATION_TYPES.filter(value => value !== 'BUY' || showPurchases).map((value) => (
             <label key={value} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--card)] p-1 rounded">
               <input
                 type="checkbox"

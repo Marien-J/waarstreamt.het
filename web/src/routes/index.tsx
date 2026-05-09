@@ -34,7 +34,7 @@ function BrowseView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
-  const { myProviders } = useAppStore()
+  const { myProviders, showPurchases } = useAppStore()
   const { country } = usePreferencesStore()
 
   useEffect(() => {
@@ -73,6 +73,7 @@ function BrowseView() {
       providers: activeProviders,
       genres: searchParams.genres,
       monetization: searchParams.monetization,
+      showPurchases,
       type: searchParams.type,
       yearMin: searchParams.yearMin,
       yearMax: searchParams.yearMax,
@@ -102,7 +103,7 @@ function BrowseView() {
         .filter((t): t is Title => t !== undefined)
       setFilteredTitles(results)
     }
-  }, [titles, searchParams, myProviders])
+  }, [titles, searchParams, myProviders, showPurchases])
 
   useEffect(() => {
     applyFilters()
