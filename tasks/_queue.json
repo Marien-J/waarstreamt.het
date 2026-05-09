@@ -19,6 +19,10 @@
     {
       "slug": "20260508-nl-streaming-web-app",
       "status": "READY_FOR_REVIEW"
+    },
+    {
+      "slug": "20260509-multi-country-multi-language",
+      "status": "DONE"
     }
   ]
 }

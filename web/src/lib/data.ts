@@ -31,26 +31,36 @@ export interface Title {
   lowest_buy: number | null
 }
 
-export interface Manifest {
-  extracted_at: string
+export interface CountryMeta {
   title_count: number
   offer_count: number
-  build_hash: string
+  language: string
 }
 
-let titlesCache: Title[] | null = null
+export interface Manifest {
+  extracted_at: string
+  build_hash: string
+  countries: Record<string, CountryMeta>
+  // legacy single-country fields (may not be present)
+  title_count?: number
+  offer_count?: number
+}
+
+const titlesCache: Map<string, Title[]> = new Map()
 let manifestCache: Manifest | null = null
 
-export async function loadTitles(): Promise<Title[]> {
-  if (titlesCache) return titlesCache
+export async function loadTitles(countryCode: string = 'nl'): Promise<Title[]> {
+  const cc = countryCode.toLowerCase()
+  if (titlesCache.has(cc)) return titlesCache.get(cc)!
 
   try {
-    const response = await fetch(`${import.meta.env.BASE_URL}data/titles.json`)
+    const response = await fetch(`${import.meta.env.BASE_URL}data/titles_${cc}.json`)
     if (!response.ok) {
-      throw new Error(`Failed to load titles: ${response.status} ${response.statusText}`)
+      throw new Error(`Failed to load titles for ${cc}: ${response.status} ${response.statusText}`)
     }
-    titlesCache = await response.json()
-    return titlesCache!
+    const titles: Title[] = await response.json()
+    titlesCache.set(cc, titles)
+    return titles
   } catch (error) {
     console.error('Error loading titles:', error)
     throw error
@@ -76,3 +86,4 @@ export async function loadManifest(): Promise<Manifest> {
 export function getTitleById(titles: Title[], id: string): Title | undefined {
   return titles.find(t => t.jw_entry_id === id)
 }
+

@@ -2,8 +2,7 @@
 description: Implements tasks from the Planner. Writes tests. Maintains docs. Hands off to Reviewer.
 name: Developer
 model: ['Claude Sonnet 4.6 (copilot)', 'Claude Sonnet 4 (copilot)']
-target: vscode
-tools: ['read', 'edit', 'search', 'runCommands', 'runTasks', 'findTestFiles', 'web/fetch', 'agent', 'runSubagent']
+tools: [read, edit, search, execute, web, agent, todo, 'pylance-mcp-server/*', 'ms-python.python/*', 'ms-toolsai.jupyter/*']
 handoffs:
   - label: '⚠️ Manual fallback — hand off to Reviewer'
     agent: reviewer

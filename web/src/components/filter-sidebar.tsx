@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import type { Title } from '@/lib/data'
-import { GENRE_MAP, getGenreLabel } from '@/lib/genres'
+import { GENRE_CODES, getGenreLabel } from '@/lib/genres'
 import { loadProviders, groupProvidersByTier, type ProviderMetadata } from '@/lib/providers'
+import { useTranslation } from '@/lib/i18n'
 
 interface FilterSidebarProps {
   searchParams: {
@@ -23,22 +24,12 @@ interface FilterSidebarProps {
   titles: Title[]
 }
 
-const MONETIZATION_TYPES = [
-  { value: 'FLATRATE', label: 'Subscription' },
-  { value: 'RENT', label: 'Rent' },
-  { value: 'BUY', label: 'Buy' },
-  { value: 'FREE', label: 'Free' },
-  { value: 'ADS', label: 'With Ads' },
-  { value: 'CINEMA', label: 'In Theaters' },
-]
+const MONETIZATION_TYPES = ['FLATRATE', 'RENT', 'BUY', 'FREE', 'ADS', 'CINEMA']
 
-const QUALITY_OPTIONS = [
-  { value: 'HD', label: 'HD' },
-  { value: '4K', label: '4K' },
-  { value: 'SD', label: 'SD' },
-]
+const QUALITY_OPTIONS = ['HD', '4K', 'SD']
 
 export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, titles }: FilterSidebarProps) {
+  const t = useTranslation()
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
   const [providerTiers, setProviderTiers] = useState<{
     mainstream: string[]
@@ -88,9 +79,9 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
     <div className="p-4 space-y-6">
       {/* Type tabs */}
       <div>
-        <h3 className="font-semibold mb-3">Type</h3>
+        <h3 className="font-semibold mb-3">{t('type_label')}</h3>
         <div className="flex gap-2">
-          {['all', 'MOVIE', 'SHOW'].map((type) => (
+          {(['all', 'MOVIE', 'SHOW'] as const).map((type) => (
             <button
               key={type}
               onClick={() => onUpdateParam('type', type)}
@@ -100,7 +91,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
                   : 'border border-[var(--border)] hover:border-[var(--accent)]'
               }`}
             >
-              {type === 'all' ? 'All' : type === 'MOVIE' ? 'Movies' : 'Shows'}
+              {type === 'all' ? t('type_all') : type === 'MOVIE' ? t('type_movie') : t('type_show')}
             </button>
           ))}
         </div>
@@ -108,12 +99,12 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
 
       {/* Providers */}
       <div>
-        <h3 className="font-semibold mb-3">Providers</h3>
+        <h3 className="font-semibold mb-3">{t('providers_label')}</h3>
         <div className="space-y-4">
           {/* Mainstream */}
           {providerTiers.mainstream.length > 0 && (
             <div>
-              <div className="text-xs text-[var(--muted)] uppercase mb-2">Mainstream</div>
+              <div className="text-xs text-[var(--muted)] uppercase mb-2">{t('providers_mainstream')}</div>
               <div className="space-y-1">
                 {providerTiers.mainstream.map((code) => {
                   const provider = providers[code]
@@ -142,7 +133,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
           {/* Niche */}
           {providerTiers.niche.length > 0 && (
             <div>
-              <div className="text-xs text-[var(--muted)] uppercase mb-2">Niche</div>
+              <div className="text-xs text-[var(--muted)] uppercase mb-2">{t('providers_niche')}</div>
               <div className="space-y-1">
                 {providerTiers.niche.map((code) => {
                   const provider = providers[code]
@@ -172,9 +163,9 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
 
       {/* Monetization */}
       <div>
-        <h3 className="font-semibold mb-3">Monetization</h3>
+        <h3 className="font-semibold mb-3">{t('monetization_label')}</h3>
         <div className="space-y-1">
-          {MONETIZATION_TYPES.map(({ value, label }) => (
+          {MONETIZATION_TYPES.map((value) => (
             <label key={value} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--card)] p-1 rounded">
               <input
                 type="checkbox"
@@ -182,7 +173,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
                 onChange={() => toggleMonetization(value)}
                 className="w-4 h-4"
               />
-              <span className="text-sm">{label}</span>
+              <span className="text-sm">{t(`monetization_${value}`)}</span>
             </label>
           ))}
         </div>
@@ -190,9 +181,9 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
 
       {/* Genres */}
       <div>
-        <h3 className="font-semibold mb-3">Genres</h3>
+        <h3 className="font-semibold mb-3">{t('genres_label')}</h3>
         <div className="space-y-1 max-h-64 overflow-y-auto">
-          {Object.entries(GENRE_MAP).map(([code, label]) => (
+          {GENRE_CODES.map((code) => (
             <label key={code} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--card)] p-1 rounded">
               <input
                 type="checkbox"
@@ -200,7 +191,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
                 onChange={() => toggleGenre(code)}
                 className="w-4 h-4"
               />
-              <span className="text-sm">{label}</span>
+              <span className="text-sm">{getGenreLabel(code)}</span>
             </label>
           ))}
         </div>
@@ -208,7 +199,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
 
       {/* Year range */}
       <div>
-        <h3 className="font-semibold mb-3">Year Range</h3>
+        <h3 className="font-semibold mb-3">{t('year_range_label')}</h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span>{searchParams.yearMin}</span>
@@ -235,10 +226,10 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
 
       {/* Rating */}
       <div>
-        <h3 className="font-semibold mb-3">IMDb Rating</h3>
+        <h3 className="font-semibold mb-3">{t('imdb_rating_label')}</h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span>Min: {searchParams.ratingMin.toFixed(1)}</span>
+            <span>{t('rating_min_label', { value: searchParams.ratingMin.toFixed(1) })}</span>
           </div>
           <input
             type="range"
@@ -256,16 +247,16 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
               onChange={(e) => onUpdateParam('includeUnrated', e.target.checked)}
               className="w-4 h-4"
             />
-            <span className="text-sm">Include unrated titles</span>
+            <span className="text-sm">{t('include_unrated')}</span>
           </label>
         </div>
       </div>
 
       {/* Quality */}
       <div>
-        <h3 className="font-semibold mb-3">Quality</h3>
+        <h3 className="font-semibold mb-3">{t('quality_label')}</h3>
         <div className="space-y-1">
-          {QUALITY_OPTIONS.map(({ value, label }) => (
+          {QUALITY_OPTIONS.map((value) => (
             <label key={value} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--card)] p-1 rounded">
               <input
                 type="checkbox"
@@ -273,7 +264,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
                 onChange={() => toggleQuality(value)}
                 className="w-4 h-4"
               />
-              <span className="text-sm">{label}</span>
+              <span className="text-sm">{value}</span>
             </label>
           ))}
         </div>
@@ -282,7 +273,7 @@ export function FilterSidebar({ searchParams, onUpdateParam, onClearFilters, tit
       {/* Runtime (movies only) */}
       {(searchParams.type === 'all' || searchParams.type === 'MOVIE') && (
         <div>
-          <h3 className="font-semibold mb-3">Runtime (minutes)</h3>
+          <h3 className="font-semibold mb-3">{t('runtime_label')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span>{searchParams.runtimeMin}</span>

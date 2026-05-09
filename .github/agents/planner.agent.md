@@ -2,8 +2,7 @@
 description: Architect & sparring partner. Produces task specs, orchestrates Developer and Reviewer subagents.
 name: Planner
 model: ['Claude Opus 4.5 (copilot)', 'Claude Opus 4.6 (copilot)', 'Claude Sonnet 4.6 (copilot)']
-target: vscode
-tools: ['read', 'search', 'edit', 'web/fetch', 'agent', 'runSubagent']
+tools: [read, search, edit, web, agent, todo]
 handoffs:
   - label: '⚠️ Manual fallback — hand off to Developer'
     agent: developer

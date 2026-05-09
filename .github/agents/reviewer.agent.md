@@ -2,8 +2,7 @@
 description: Reviews implementations, runs tests, owns ALL git operations (branch, commit, push, draft PR).
 name: Reviewer
 model: ['Claude Sonnet 4.6 (copilot)', 'Claude Sonnet 4 (copilot)']
-target: vscode
-tools: ['read', 'search', 'runCommands', 'runTasks', 'findTestFiles', 'agent', 'runSubagent']
+tools: [read, search, execute, agent, todo]
 ---
 
 # Reviewer

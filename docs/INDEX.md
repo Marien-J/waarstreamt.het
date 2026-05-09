@@ -4,10 +4,11 @@ Canonical entry point. The Planner reads this first when sparring.
 
 ## Features
 
-- [NL Streaming Catalog Extractor](features/nl-streaming-catalog.md) — JustWatch-based Dutch streaming availability data extraction
-- [NL Streaming Web App](features/nl-streaming-web-app.md) — Modern React/Vite SPA for exploring the catalog (v1 active)
+- [Streaming Catalog Extractor](features/streaming-catalog.md) — JustWatch-based multi-country streaming data extraction (NL, DE, BE, US, GB)
+- [Streaming Web App](features/streaming-web-app.md) — Modern React/Vite SPA with country switcher, language switcher, and geo-detection
 - [Dashboard](features/dashboard.md) — **DEPRECATED** Legacy Python Dash interface (replaced by web app)
 
 ## Architecture decisions
 
 - [001: Web App Architecture](architecture/decisions/001-web-app-architecture.md) — React/Vite SPA choice for catalog browsing
+- [002: Multi-Country Catalog & i18n Strategy](architecture/decisions/002-multi-country-i18n.md) — Country-scoped extraction, ipapi.co geo-detection, custom i18n hook

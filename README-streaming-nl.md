@@ -1,10 +1,10 @@
 # streaming-nl
 
-Dutch streaming catalog extractor using JustWatch data.
+Multi-country streaming catalog extractor using JustWatch data.
 
 ## Overview
 
-Backend-only Python CLI job that extracts streaming availability data for the Dutch market (NL) from major SVOD/TVOD providers via the JustWatch API and writes flat, analyst-friendly CSV dumps.
+Backend-only Python CLI job that extracts streaming availability data for 5 countries (NL, DE, BE, US, GB) from major SVOD/TVOD providers via the JustWatch API and writes flat, analyst-friendly CSV dumps.
 
 ## Install
 
@@ -17,15 +17,27 @@ uv sync
 ## Run
 
 ```bash
+# Extract a single country
+uv run python -m streaming_nl --country NL
+
+# Extract multiple countries
+uv run python -m streaming_nl --country NL --country DE
+
+# Extract all 5 countries sequentially (~25–60 min total)
+uv run python -m streaming_nl --all
+
+# Print help
 uv run python -m streaming_nl
 ```
 
 This will:
-- Resolve Dutch streaming providers (Netflix, Videoland, Disney+, etc.)
+- Resolve streaming providers for each country
 - Extract movie and show catalogs with offer details
-- Write two CSV files to `data/`:
-  - `streaming_nl_<YYYY-MM-DD>.csv` — main catalog (one row per title × offer)
-  - `streaming_nl_<YYYY-MM-DD>_providers.csv` — provider metadata
+- Write two CSV files to `data/` per country:
+  - `streaming_<cc>_<lang>_<YYYY-MM-DD>.csv` — main catalog (one row per title × offer)
+  - `streaming_<cc>_<lang>_<YYYY-MM-DD>_providers.csv` — provider metadata
+
+Example: `streaming_nl_nl_2026-05-09.csv`, `streaming_de_de_2026-05-09.csv`
 
 Running on the same day overwrites existing files. Different days create new dated files.
 
@@ -73,11 +85,10 @@ Main CSV columns (snake_case, UTF-8, comma-delimited, quote-all):
 
 ## Known limitations
 
-- **1999-row API cap**: The JustWatch API limits `count + offset` to 1999 per partition. With ~7 providers × 2 content types, expect ~26,000 rows max. If a provider hits this cap with a full page at offset 1890, a warning is logged. Future refinement could partition by release year.
+- **1999-row API cap**: The JustWatch API limits `count + offset` to 1999 per partition. Logged as WARNING if hit.
 - **Unofficial API**: Uses the unofficial JustWatch GraphQL API via `simple-justwatch-python-api`. Schema changes may break extraction.
-- **NL-only**: Hardcoded to the Dutch market. Multi-country support is a future enhancement.
 - **No database backend**: CSV is the deliverable. SQLite/Postgres integration is a stretch goal.
-- **Presentation type collapsing**: When a title has multiple quality levels (SD/HD/4K) for the same offer, only the highest quality is kept. We rely on the JustWatch API's `best_only=True` parameter to do this collapsing server-side; the client-side normalize step is a defensive backstop.
+- **Presentation type collapsing**: When a title has multiple quality levels (SD/HD/4K) for the same offer, only the highest quality is kept.
 
 ## Attribution
 
