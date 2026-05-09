@@ -6,7 +6,7 @@
 
 ---
 
-Web interface for searching and exploring the Dutch streaming catalog.
+Web interface for searching and exploring streaming catalogs across multiple countries (NL, DE, BE, US, GB).
 
 ## Overview
 

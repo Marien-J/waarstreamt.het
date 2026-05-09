@@ -6,7 +6,7 @@
 
 ## Context
 
-We need a fast, modern web interface for the Dutch streaming catalog. The existing Python Dash dashboard (see `docs/features/dashboard.md`) works but has limitations:
+We need a fast, modern web interface for the multi-country streaming catalog. The existing Python Dash dashboard (see `docs/features/dashboard.md`) works but has limitations:
 - Server-side rendering overhead
 - Limited interactivity (Dash callback model)
 - Harder to deploy (requires Python runtime)
