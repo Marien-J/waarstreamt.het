@@ -3,6 +3,7 @@ import { getGenreLabel } from '@/lib/genres'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 import { useEffect, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
+import { useAppStore } from '@/store/app-store'
 
 interface TitleDetailProps {
   title: Title
@@ -11,6 +12,7 @@ interface TitleDetailProps {
 
 export function TitleDetail({ title, onClose }: TitleDetailProps) {
   const t = useTranslation()
+  const { showPurchases } = useAppStore()
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
 
   useEffect(() => {
@@ -18,8 +20,12 @@ export function TitleDetail({ title, onClose }: TitleDetailProps) {
   }, [])
 
   // Group offers by brand_id
+  // Filter out BUY offers when showPurchases is false
+  const visibleOffers = showPurchases
+    ? title.offers
+    : title.offers.filter(o => o.monetization_type !== 'BUY')
   const offersByProvider = new Map<string, typeof title.offers>()
-  for (const offer of title.offers) {
+  for (const offer of visibleOffers) {
     const key = offer.brand_id ?? offer.provider_short_name
     const existing = offersByProvider.get(key) || []
     offersByProvider.set(key, [...existing, offer])

@@ -148,6 +148,32 @@ assert(
   'routes/title.$id.tsx references brand_id in offer grouping'
 )
 
+// ── Monetization coalesce + purchases toggle ──────────────────────────────────
+const appStoreSrc = readFileSync(join(ROOT, 'src', 'store', 'app-store.ts'), 'utf-8')
+const searchSrc = readFileSync(join(ROOT, 'src', 'lib', 'search.ts'), 'utf-8')
+const titleDetailComponentSrc = readFileSync(join(ROOT, 'src', 'components', 'title-detail.tsx'), 'utf-8')
+console.log('\nChecking monetization coalesce + purchases toggle …')
+assert(
+  appStoreSrc.includes('showPurchases') && appStoreSrc.includes('toggleShowPurchases'),
+  'app-store.ts contains showPurchases and toggleShowPurchases'
+)
+assert(
+  appStoreSrc.includes('version: 3'),
+  'app-store.ts contains version: 3'
+)
+assert(
+  rootSrc.includes('showPurchases'),
+  'routes/__root.tsx contains showPurchases (button wired into root)'
+)
+assert(
+  searchSrc.includes('showPurchases'),
+  'lib/search.ts references showPurchases (filter logic respects toggle)'
+)
+assert(
+  titleDetailComponentSrc.includes('showPurchases'),
+  'components/title-detail.tsx references showPurchases'
+)
+
 // ── Final result ──────────────────────────────────────────────────────────────
 console.log()
 if (failed) {

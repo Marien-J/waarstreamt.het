@@ -14,3 +14,4 @@ Canonical entry point. The Planner reads this first when sparring.
 - [002: Multi-Country Catalog & i18n Strategy](architecture/decisions/002-multi-country-i18n.md) — Country-scoped extraction, ipapi.co geo-detection, custom i18n hook
 - [003: Search Backend](architecture/decisions/003-search-backend.md) — Orama → MiniSearch: no stemming, prefix+fuzzy, diacritic normalization
 - [004: Provider Canonicalization](architecture/decisions/004-provider-canonicalization.md) — Brand layer + per-country derived provider data; brand IDs replace raw short_names
+- [005: Monetization Coalesce & Purchases Toggle](architecture/decisions/005-monetization-coalesce.md) — Drop non-canonical offers at preprocess; global "View purchases" toggle defaulted OFF.

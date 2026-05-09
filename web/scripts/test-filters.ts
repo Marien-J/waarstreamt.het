@@ -129,7 +129,22 @@ for (const cc of COUNTRIES) {
   }
 }
 
-// ── 2. KPN absent from non-NL countries ──────────────────────────────────────
+// ── 2. All offers have canonical monetization_type ────────────────────────────
+console.log('\n[0] All offers have monetization_type ∈ {FLATRATE, RENT, BUY} …')
+const CANONICAL_TYPES = new Set(['FLATRATE', 'RENT', 'BUY'])
+for (const cc of COUNTRIES) {
+  if (!data[cc]) continue
+  const { titles } = data[cc]
+  let nonCanonical = 0
+  for (const title of titles) {
+    for (const offer of title.offers) {
+      if (!CANONICAL_TYPES.has(offer.monetization_type)) nonCanonical++
+    }
+  }
+  assert(nonCanonical === 0, `${cc.toUpperCase()} | all offers have canonical monetization_type (found ${nonCanonical} non-canonical)`)
+}
+
+// ── 3. KPN absent from non-NL countries ──────────────────────────────────────
 console.log('\n[1] KPN absent from DE/US/GB/JP providers …')
 for (const cc of ['de', 'us', 'gb', 'jp']) {
   if (!data[cc]) continue

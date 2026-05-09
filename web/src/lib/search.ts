@@ -51,6 +51,7 @@ export interface SearchFilters {
   providers?: string[]
   genres?: string[]
   monetization?: string[]
+  showPurchases?: boolean
   type?: 'MOVIE' | 'SHOW' | 'all'
   yearMin?: number
   yearMax?: number
@@ -110,10 +111,36 @@ export function applyFilters(titles: Title[], filters?: SearchFilters): Title[] 
     }
 
     // Monetization - ANY offer of selected types
+    // When showPurchases === false, strip BUY from the active set and exclude BUY offers
     if (filters.monetization && filters.monetization.length > 0) {
-      const monetizations = new Set(title.offers.map(o => o.monetization_type))
-      const hasMonetization = filters.monetization.some(m => monetizations.has(m))
-      if (!hasMonetization) return false
+      const showPurchases = filters.showPurchases !== false  // default true if not provided
+      let activeMonetization = filters.monetization
+      if (!showPurchases) {
+        activeMonetization = filters.monetization.filter(m => m !== 'BUY')
+        if (activeMonetization.length === 0) {
+          // No monetization filter after stripping BUY → skip this filter
+          // (treat as no monetization filter, but still exclude BUY offers below)
+        } else {
+          const monetizations = new Set(
+            title.offers
+              .filter(o => o.monetization_type !== 'BUY')
+              .map(o => o.monetization_type)
+          )
+          const hasMonetization = activeMonetization.some(m => monetizations.has(m))
+          if (!hasMonetization) return false
+        }
+        // When showPurchases is false, a title that only has BUY offers is excluded
+        const hasNonBuyOffer = title.offers.some(o => o.monetization_type !== 'BUY')
+        if (!hasNonBuyOffer) return false
+      } else {
+        const monetizations = new Set(title.offers.map(o => o.monetization_type))
+        const hasMonetization = filters.monetization.some(m => monetizations.has(m))
+        if (!hasMonetization) return false
+      }
+    } else if (filters.showPurchases === false) {
+      // No monetization filter set, but showPurchases is off: exclude BUY-only titles
+      const hasNonBuyOffer = title.offers.some(o => o.monetization_type !== 'BUY')
+      if (!hasNonBuyOffer) return false
     }
 
     // Quality - ANY offer of selected quality

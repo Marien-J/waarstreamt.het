@@ -151,20 +151,35 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
       ? row.presentation_type.slice(1)
       : row.presentation_type
 
-    const offer: Offer = {
-      provider_short_name: row.provider_short_name,
-      provider_name: row.provider_name,
-      brand_id: BRAND_BY_SHORT_NAME[row.provider_short_name] ?? row.provider_short_name,
-      monetization_type: row.monetization_type,
-      presentation_type: presentationType,
-      price_value: row.price_value ? parseFloat(row.price_value) : null,
-      price_currency: row.price_currency,
-      offer_url: row.offer_url,
-      audio_languages: row.audio_languages ? row.audio_languages.split(';').filter(Boolean) : [],
-      subtitle_languages: row.subtitle_languages ? row.subtitle_languages.split(';').filter(Boolean) : [],
-    }
+    // Canonical monetization types only: drop FREE, ADS, CINEMA, FAST, etc.
+    // Expand compound types (e.g. FLATRATE_AND_BUY) into individual offers.
+    const CANONICAL = new Set(['FLATRATE', 'RENT', 'BUY'])
+    const rawType = row.monetization_type
 
-    title.offers.push(offer)
+    // Detect compound types (e.g. FLATRATE_AND_BUY)
+    const parts = rawType.includes('_AND_')
+      ? rawType.split('_AND_')
+      : [rawType]
+    const canonicalParts = parts.filter(p => CANONICAL.has(p))
+
+    if (canonicalParts.length === 0) continue  // drop non-canonical offer
+
+    for (const monetizationType of canonicalParts) {
+      const offer: Offer = {
+        provider_short_name: row.provider_short_name,
+        provider_name: row.provider_name,
+        brand_id: BRAND_BY_SHORT_NAME[row.provider_short_name] ?? row.provider_short_name,
+        monetization_type: monetizationType,
+        presentation_type: presentationType,
+        price_value: row.price_value ? parseFloat(row.price_value) : null,
+        price_currency: row.price_currency,
+        offer_url: row.offer_url,
+        audio_languages: row.audio_languages ? row.audio_languages.split(';').filter(Boolean) : [],
+        subtitle_languages: row.subtitle_languages ? row.subtitle_languages.split(';').filter(Boolean) : [],
+      }
+
+      title.offers.push(offer)
+    }
   }
 
   const titles: Title[] = Array.from(titleMap.values())
