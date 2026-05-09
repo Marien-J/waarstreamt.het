@@ -1,6 +1,6 @@
 # Waar streamt het? — NL Streaming Web App
 
-Fast, modern React/Vite SPA for exploring the Dutch streaming catalog.
+Fast, modern React/Vite SPA for exploring streaming catalogs across NL, DE, BE, US, and GB.
 
 ## Quick Start
 
