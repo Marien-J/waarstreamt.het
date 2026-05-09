@@ -50,7 +50,9 @@ export const usePreferencesStore = create<PreferencesState>()(
     {
       name: 'waarstreamt.preferences',
       partialize: (state) => ({
-        country: state.country,
+        // Only persist country when the user explicitly chose it.
+        // If countryExplicit is false, geo-detection runs fresh on next load.
+        ...(state.countryExplicit ? { country: state.country } : {}),
         language: state.language,
         countryExplicit: state.countryExplicit,
       }),

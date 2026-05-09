@@ -43,11 +43,13 @@ Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
 
 ## Country & Language Switchers
 
-Two dropdowns in the header, side by side:
-- **Country switcher** (`components/country-switcher.tsx`): flag + country name
-- **Language switcher** (`components/language-switcher.tsx`): flag + language name
+Two inline flag-button groups in the header, side by side:
+- **Country switcher** (`components/country-switcher.tsx`): 5 flag buttons (NL/DE/BE/US/GB). Active button has accent background; inactive buttons are dimmed (opacity-50).
+- **Language switcher** (`components/language-switcher.tsx`): 4 flag buttons (nl/de/en/fr). Same active/inactive style.
 
-Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine. Switching language is instantaneous.
+Both are rendered in **`routes/__root.tsx`** alongside `ThemeToggle`. The geo-detection `useEffect` (calls `detectCountry().then(applyDetectedCountry)`) also lives in `routes/__root.tsx` and runs once on mount.
+
+Switching country triggers reload of the matching `titles_<cc>.json` and re-indexing of the search engine — wired in **`routes/index.tsx`** via `usePreferencesStore().country` in the `useEffect` dependency array. Switching language is instantaneous (no catalog reload).
 
 ## Data Flow
 

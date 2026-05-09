@@ -180,3 +180,7 @@ APPROVED. All acceptance criteria satisfied.
 - GB Disney+ / Apple TV+ non-match is documented in Developer log and consistent with spec guidance ("let warning log and move on").
 - Branch: agent/20260509-multi-country-multi-language
 - PR: https://github.com/Marien-J/waarstreamt.het/compare/main...agent/20260509-multi-country-multi-language?expand=1
+
+### Postmortem
+
+The switchers (`CountrySwitcher`, `LanguageSwitcher`) and geo-detection (`detectCountry`) were wired into `web/src/app.tsx`, which is **never imported** — `main.tsx` boots TanStack Router directly, which renders `routes/__root.tsx` (header) and `routes/index.tsx` (browse view). As a result, the switchers never rendered and catalog loading always defaulted to NL regardless of country store state. `npm run build` succeeded because TypeScript validated `app.tsx` in isolation, giving a false green. The follow-up task `20260509-wire-switchers-into-root` fixed the wiring by: (1) deleting `app.tsx`, (2) importing the switchers and geo-detection into `routes/__root.tsx`, and (3) making `routes/index.tsx` subscribe to `usePreferencesStore().country`.

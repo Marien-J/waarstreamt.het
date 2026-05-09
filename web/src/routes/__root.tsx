@@ -1,7 +1,11 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ProviderPicker } from '@/components/provider-picker'
+import { CountrySwitcher } from '@/components/country-switcher'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { useAppStore } from '@/store/app-store'
+import { usePreferencesStore } from '@/store/preferences'
+import { detectCountry } from '@/lib/geo'
 import { useState, useEffect } from 'react'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 
@@ -11,6 +15,7 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   const { darkMode, myProviders } = useAppStore()
+  const { applyDetectedCountry } = usePreferencesStore()
   const [providers, setProviders] = useState<Record<string, ProviderMetadata>>({})
   const [showProviderPicker, setShowProviderPicker] = useState(false)
 
@@ -26,6 +31,11 @@ function RootLayout() {
     loadProviders().then(setProviders)
   }, [])
 
+  // Run geo-detection once on mount (no-op if user has explicit preference)
+  useEffect(() => {
+    detectCountry().then(applyDetectedCountry)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
@@ -33,7 +43,11 @@ function RootLayout() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4 mb-3">
             <h1 className="text-2xl font-bold">Waar streamt het?</h1>
-            <ThemeToggle />
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <CountrySwitcher />
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
           
           {/* My Providers chips */}

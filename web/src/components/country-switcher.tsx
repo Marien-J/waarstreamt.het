@@ -1,11 +1,11 @@
 import { usePreferencesStore, type CountryCode } from '@/store/preferences'
 
-const COUNTRIES: { code: CountryCode; flag: string; label: string }[] = [
-  { code: 'NL', flag: '🇳🇱', label: 'Nederland' },
-  { code: 'DE', flag: '🇩🇪', label: 'Deutschland' },
-  { code: 'BE', flag: '🇧🇪', label: 'België' },
-  { code: 'US', flag: '🇺🇸', label: 'United States' },
-  { code: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
+const COUNTRIES: { code: CountryCode; flag: string }[] = [
+  { code: 'NL', flag: '🇳🇱' },
+  { code: 'DE', flag: '🇩🇪' },
+  { code: 'BE', flag: '🇧🇪' },
+  { code: 'US', flag: '🇺🇸' },
+  { code: 'GB', flag: '🇬🇧' },
 ]
 
 interface CountrySwitcherProps {
@@ -15,29 +15,24 @@ interface CountrySwitcherProps {
 export function CountrySwitcher({ onCountryChange }: CountrySwitcherProps) {
   const { country, setCountry } = usePreferencesStore()
 
-  const current = COUNTRIES.find((c) => c.code === country)
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newCountry = e.target.value as CountryCode
-    setCountry(newCountry)
-    onCountryChange?.(newCountry)
-  }
-
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-lg" aria-hidden="true">{current?.flag}</span>
-      <select
-        value={country}
-        onChange={handleChange}
-        className="bg-transparent border border-[var(--border)] rounded px-2 py-1 text-sm cursor-pointer hover:border-[var(--accent)] focus:outline-none focus:border-[var(--accent)]"
-        aria-label="Select country"
-      >
-        {COUNTRIES.map((c) => (
-          <option key={c.code} value={c.code}>
-            {c.flag} {c.label}
-          </option>
-        ))}
-      </select>
+    <div className="flex items-center gap-0.5" role="group" aria-label="Select country">
+      {COUNTRIES.map((c) => (
+        <button
+          key={c.code}
+          onClick={() => { setCountry(c.code); onCountryChange?.(c.code) }}
+          title={c.code}
+          aria-pressed={country === c.code}
+          className={[
+            'text-base px-1.5 py-0.5 rounded transition-colors',
+            country === c.code
+              ? 'bg-[var(--accent)] ring-1 ring-[var(--accent)]'
+              : 'opacity-50 hover:opacity-80',
+          ].join(' ')}
+        >
+          {c.flag}
+        </button>
+      ))}
     </div>
   )
 }

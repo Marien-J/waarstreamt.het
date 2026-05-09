@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { loadTitles, type Title } from '@/lib/data'
 import { initializeSearch, searchAndFilterTitles } from '@/lib/search'
 import { useAppStore } from '@/store/app-store'
+import { usePreferencesStore } from '@/store/preferences'
 import { SearchBar } from '@/components/search-bar'
 import { ResultGrid } from '@/components/result-grid'
 import { FilterSidebar } from '@/components/filter-sidebar'
@@ -34,12 +35,13 @@ function BrowseView() {
   const [error, setError] = useState<string | null>(null)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const { myProviders } = useAppStore()
+  const { country } = usePreferencesStore()
 
   useEffect(() => {
     async function init() {
       try {
         console.log('Loading titles...')
-        const loadedTitles = await loadTitles()
+        const loadedTitles = await loadTitles(country.toLowerCase())
         console.log(`Loaded ${loadedTitles.length} titles`)
         setTitles(loadedTitles)
         console.log('Initializing search index...')
@@ -53,7 +55,7 @@ function BrowseView() {
       }
     }
     init()
-  }, [])
+  }, [country])
 
   const applyFilters = useCallback(async () => {
     if (!titles.length) return
