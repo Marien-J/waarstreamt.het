@@ -5,18 +5,11 @@ import { getGenreLabel } from '@/lib/genres'
 import { loadProviders, type ProviderMetadata } from '@/lib/providers'
 import { usePreferencesStore } from '@/store/preferences'
 import { useTranslation } from '@/lib/i18n'
+import { Flag } from '@/components/flag'
 
 export const Route = createFileRoute('/title/$id')({
   component: TitleDetailView,
 })
-
-const COUNTRY_FLAGS: Record<string, string> = {
-  NL: '🇳🇱',
-  DE: '🇩🇪',
-  BE: '🇧🇪',
-  US: '🇺🇸',
-  GB: '🇬🇧',
-}
 
 function TitleDetailView() {
   const { id } = Route.useParams()
@@ -83,8 +76,6 @@ function TitleDetailView() {
   }
 
   const displayTitle = title ?? fallbackTitle!
-  const countryFlag = COUNTRY_FLAGS[country] ?? ''
-  const countryDisplay = `${countryFlag} ${country}`
 
   // Group offers by provider (only for current-country title)
   const offersByProvider = new Map<string, typeof displayTitle.offers>()
@@ -237,7 +228,8 @@ function TitleDetailView() {
             ) : (
               <div className="rounded-lg border border-[var(--border)] p-6 text-center">
                 <p className="text-lg font-medium">
-                  {t('detail.unavailable_in_country', { country: countryDisplay })}
+                  <Flag code={country} className="mr-1" />
+                  {t('detail.unavailable_in_country', { country })}
                 </p>
               </div>
             )}

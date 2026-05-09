@@ -69,6 +69,22 @@ assert(titleDetailSrc.includes('usePreferencesStore'), 'imports usePreferencesSt
 assert(/loadTitles\(country/.test(titleDetailSrc), 'calls loadTitles(country…)')
 assert(/\[id, country\]/.test(titleDetailSrc), 'useEffect depends on [id, country]')
 
+// ── Flag component wiring ─────────────────────────────────────────────────────
+const countrySwitcherSrc = readSrc('components/country-switcher.tsx')
+console.log('\nChecking Flag component wiring …')
+assert(
+  countrySwitcherSrc.includes('Flag'),
+  'country-switcher.tsx imports Flag component'
+)
+assert(
+  !/[\u{1F1E6}-\u{1F1FF}]/u.test(countrySwitcherSrc),
+  'country-switcher.tsx has no regional-indicator emoji codepoints'
+)
+assert(
+  !/[\u{1F1E6}-\u{1F1FF}]/u.test(titleDetailSrc),
+  'routes/title.$id.tsx has no regional-indicator emoji codepoints'
+)
+
 // ── detail.unavailable_in_country in all 4 dicts ──────────────────────────────
 import en from '../src/i18n/en.json' assert { type: 'json' }
 import nl from '../src/i18n/nl.json' assert { type: 'json' }

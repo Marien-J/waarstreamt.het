@@ -1,13 +1,8 @@
 import { usePreferencesStore, type CountryCode } from '@/store/preferences'
 import { useTranslation } from '@/lib/i18n'
+import { Flag } from '@/components/flag'
 
-const COUNTRIES: { code: CountryCode; flag: string }[] = [
-  { code: 'NL', flag: '🇳🇱' },
-  { code: 'DE', flag: '🇩🇪' },
-  { code: 'BE', flag: '🇧🇪' },
-  { code: 'US', flag: '🇺🇸' },
-  { code: 'GB', flag: '🇬🇧' },
-]
+const COUNTRIES: CountryCode[] = ['NL', 'DE', 'BE', 'US', 'GB']
 
 interface CountrySwitcherProps {
   onCountryChange?: (country: CountryCode) => void
@@ -23,18 +18,18 @@ export function CountrySwitcher({ onCountryChange }: CountrySwitcherProps) {
       <div className="flex items-center gap-0.5" role="group" aria-label="Select country">
         {COUNTRIES.map((c) => (
           <button
-            key={c.code}
-            onClick={() => { setCountry(c.code); onCountryChange?.(c.code) }}
-            title={c.code}
-            aria-pressed={country === c.code}
+            key={c}
+            onClick={() => { setCountry(c); onCountryChange?.(c) }}
+            title={c}
+            aria-pressed={country === c}
             className={[
               'text-sm font-medium px-1.5 py-0.5 rounded transition-colors',
-              country === c.code
+              country === c
                 ? 'bg-[var(--accent)] text-white'
                 : 'text-[var(--muted)] hover:text-[var(--text)]',
             ].join(' ')}
           >
-            {c.flag} {c.code}
+            <Flag code={c} className="mr-0.5" /> {c}
           </button>
         ))}
       </div>
