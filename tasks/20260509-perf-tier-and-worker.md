@@ -189,3 +189,4 @@ APPROVED — after one fix cycle (stale doc sections).
 **Browser smoke test caveat:** Browser smoke (switch to DE → search "harry potter" → click result) was NOT run. The `verify-wiring.ts` script confirms the worker spawn, `attachWorker` call, and `ready`-handler ordering are correctly wired. Test-script coverage is judged sufficient to ship; a human reviewer should run the smoke test before merging.
 
 Branch: `agent/20260509-perf-tier-and-worker`
+PR: https://github.com/Marien-J/waarstreamt.het/compare/main...agent/20260509-perf-tier-and-worker?expand=1
