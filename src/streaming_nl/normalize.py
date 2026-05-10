@@ -80,6 +80,11 @@ def media_entry_to_rows(entry: MediaEntry, country: str) -> list[dict[str, str]]
                 if entry.scoring and entry.scoring.tomatometer is not None
                 else ""
             ),
+            "streaming_charts_rank": (
+                str(entry.streaming_charts.rank)
+                if entry.streaming_charts and entry.streaming_charts.rank is not None
+                else ""
+            ),
             "jw_url": entry.url or "",
             "poster_url": entry.poster or "",
             "provider_short_name": offer.package.short_name or "",

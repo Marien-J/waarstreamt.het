@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Supported country codes
-const SUPPORTED_COUNTRIES = ['nl', 'de', 'be', 'us', 'gb', 'jp']
+const SUPPORTED_COUNTRIES = ['nl', 'de', 'be', 'us', 'gb']
 
 // Types
 interface CSVRow {
@@ -39,6 +39,7 @@ interface CSVRow {
   offer_url: string
   audio_languages: string
   subtitle_languages: string
+  streaming_charts_rank: string
 }
 
 interface Offer {
@@ -74,6 +75,7 @@ interface Title {
   available_on_flatrate: string[]
   lowest_rent: number | null
   lowest_buy: number | null
+  chart_rank: number | null
 }
 
 interface CountryMeta {
@@ -123,12 +125,22 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
   const validRows = rows.filter(row => row.release_year !== '0')
 
   const titleMap = new Map<string, Title>()
+  const chartRankMap = new Map<string, number>()
   let extractedAt = ''
 
   for (const row of validRows) {
     if (!extractedAt) extractedAt = row.extracted_at
 
     const jwEntryId = row.jw_entry_id
+
+    const rawRank = row.streaming_charts_rank
+    if (rawRank) {
+      const r = parseInt(rawRank, 10)
+      if (!isNaN(r)) {
+        const prev = chartRankMap.get(jwEntryId)
+        if (prev === undefined || r < prev) chartRankMap.set(jwEntryId, r)
+      }
+    }
 
     if (!titleMap.has(jwEntryId)) {
       titleMap.set(jwEntryId, {
@@ -151,6 +163,7 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
         available_on_flatrate: [],
         lowest_rent: null,
         lowest_buy: null,
+        chart_rank: null,
       })
     }
 
@@ -214,6 +227,10 @@ function processCsv(csvPath: string): { titles: Title[]; offerCount: number; ext
 
   // Drop titles with zero offers (catalog hygiene)
   const titlesWithOffers = titles.filter(t => t.offers.length > 0)
+
+  for (const title of titlesWithOffers) {
+    title.chart_rank = chartRankMap.get(title.jw_entry_id) ?? null
+  }
 
   return { titles: titlesWithOffers, offerCount: validRows.length, extractedAt }
 }
@@ -350,6 +367,7 @@ interface WireCatalogEntry {
   mn: string[]  // monet (unique monetization types)
   b: string[]   // brands (all brand ids, any monet)
   q: string[]   // quals (unique presentation types)
+  cr: number | null  // streaming chart rank
 }
 
 interface WireOffer {
@@ -375,6 +393,7 @@ function toCatalogEntry(title: Title): WireCatalogEntry {
     im: title.imdb_score, td: title.tmdb_score, tm: title.tomatometer,
     a: title.age_certification, f: title.available_on_flatrate,
     rl: title.lowest_rent, bl: title.lowest_buy, mn: monet, b: brands, q: quals,
+    cr: title.chart_rank,
   }
 }
 

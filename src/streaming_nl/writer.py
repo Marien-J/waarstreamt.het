@@ -26,6 +26,7 @@ COLUMNS = [
     "imdb_score",
     "tmdb_score",
     "tomatometer",
+    "streaming_charts_rank",
     "jw_url",
     "poster_url",
     "provider_short_name",

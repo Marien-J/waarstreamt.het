@@ -98,7 +98,7 @@ A pill button (shopping-cart icon, label `view_purchases` i18n key) sits in the 
 
 When no search query and no provider filter is active, two horizontally-scrollable poster rails appear above the main grid:
 
-- **Trending now** — top 20 flatrate titles sorted by `chart_rank ASC` (nulls last), falling back to `imdb_score || tmdb_score DESC`. Uses `chart_rank` from `Title.chart_rank` (wire key `cr`). Since current catalogs don't emit `cr`, the score-based fallback is active.
+- **Trending now** — top 20 flatrate titles sorted by `chart_rank ASC` (nulls last), falling back to `imdb_score || tmdb_score DESC`. Uses `chart_rank` from `Title.chart_rank` (wire key `cr`). Populated once CSVs are re-extracted with `streaming_charts_rank` (added 2026-05-10 pipeline).
 - **Top Rated** — top 20 flatrate titles with `imdb_score > 0`, sorted by `imdb_score DESC`.
 
 Both rails disappear instantly when a search or provider filter is applied. Implementation in `routes/index.tsx` via `useMemo`.
