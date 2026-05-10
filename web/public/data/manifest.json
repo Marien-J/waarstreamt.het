@@ -1,47 +1,40 @@
 {
-  "extracted_at": "2026-05-09T19:59:56.178658Z",
-  "build_hash": "2026-05-09T22:14:17.924Z",
+  "extracted_at": "2026-05-10T11:42:50.495760Z",
+  "build_hash": "2026-05-10T13:41:12.174Z",
   "countries": {
     "nl": {
-      "title_count": 35275,
-      "offer_count": 96156,
+      "title_count": 35256,
+      "offer_count": 96246,
       "language": "nl",
-      "catalog_size_bytes": 11497751,
+      "catalog_size_bytes": 11847313,
       "offers_shard_count": 1
     },
     "de": {
-      "title_count": 56713,
-      "offer_count": 303917,
+      "title_count": 56585,
+      "offer_count": 302987,
       "language": "de",
-      "catalog_size_bytes": 20477248,
+      "catalog_size_bytes": 21003428,
       "offers_shard_count": 2
     },
     "be": {
-      "title_count": 34168,
-      "offer_count": 83056,
+      "title_count": 34187,
+      "offer_count": 83069,
       "language": "nl",
-      "catalog_size_bytes": 11095210,
+      "catalog_size_bytes": 11444818,
       "offers_shard_count": 1
     },
     "us": {
-      "title_count": 96489,
-      "offer_count": 638066,
+      "title_count": 16865,
+      "offer_count": 114314,
       "language": "en",
-      "catalog_size_bytes": 35369015,
-      "offers_shard_count": 2
-    },
-    "gb": {
-      "title_count": 56331,
-      "offer_count": 200860,
-      "language": "en",
-      "catalog_size_bytes": 19055009,
+      "catalog_size_bytes": 6823441,
       "offers_shard_count": 1
     },
-    "jp": {
-      "title_count": 34869,
-      "offer_count": 112027,
+    "gb": {
+      "title_count": 54596,
+      "offer_count": 193216,
       "language": "en",
-      "catalog_size_bytes": 11999937,
+      "catalog_size_bytes": 19044866,
       "offers_shard_count": 1
     }
   }

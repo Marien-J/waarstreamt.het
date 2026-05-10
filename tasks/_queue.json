@@ -43,6 +43,10 @@
     {
       "slug": "20260510-trending-pipeline",
       "status": "DONE"
+    },
+    {
+      "slug": "20260510-rebuild-catalogs-with-trending",
+      "status": "DONE"
     }
   ]
 }

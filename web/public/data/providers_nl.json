@@ -4,7 +4,7 @@
     "display_name": "Netflix",
     "logo_url": "https://images.justwatch.com/icon/207360008/s100",
     "brand_color": "#E50914",
-    "title_count": 5483,
+    "title_count": 5481,
     "tier": "mainstream",
     "short_names": [
       "nfk",
@@ -15,7 +15,7 @@
     "brand_id": "kpn",
     "display_name": "KPN",
     "brand_color": "#00A03E",
-    "title_count": 4854,
+    "title_count": 4846,
     "tier": "mainstream",
     "short_names": [
       "kpn"
@@ -26,7 +26,7 @@
     "display_name": "Amazon Prime Video",
     "logo_url": "https://images.justwatch.com/icon/52449861/s100",
     "brand_color": "#00A8E1",
-    "title_count": 3092,
+    "title_count": 3094,
     "tier": "mainstream",
     "short_names": [
       "prv"
@@ -47,7 +47,7 @@
     "brand_id": "snx",
     "display_name": "Sun Nxt",
     "brand_color": "#888888",
-    "title_count": 2270,
+    "title_count": 2269,
     "tier": "mainstream",
     "short_names": [
       "snx"
@@ -92,7 +92,7 @@
     "display_name": "Videoland",
     "logo_url": "https://images.justwatch.com/icon/111860795/s100",
     "brand_color": "#FF6600",
-    "title_count": 1677,
+    "title_count": 1676,
     "tier": "niche",
     "short_names": [
       "vil"
@@ -118,31 +118,31 @@
       "cim"
     ]
   },
-  "nlziet": {
-    "brand_id": "nlziet",
-    "display_name": "NLZIET",
-    "brand_color": "#FF7A00",
-    "title_count": 1225,
-    "tier": "niche",
-    "short_names": [
-      "nlz"
-    ]
-  },
   "npoplus": {
     "brand_id": "npoplus",
     "display_name": "NPO Plus",
     "brand_color": "#E4002B",
-    "title_count": 1221,
+    "title_count": 1220,
     "tier": "niche",
     "short_names": [
       "npp"
+    ]
+  },
+  "nlziet": {
+    "brand_id": "nlziet",
+    "display_name": "NLZIET",
+    "brand_color": "#FF7A00",
+    "title_count": 1217,
+    "tier": "niche",
+    "short_names": [
+      "nlz"
     ]
   },
   "gdc": {
     "brand_id": "gdc",
     "display_name": "GuideDoc",
     "brand_color": "#888888",
-    "title_count": 1159,
+    "title_count": 1156,
     "tier": "niche",
     "short_names": [
       "gdc"
@@ -152,7 +152,7 @@
     "brand_id": "sooner",
     "display_name": "Sooner",
     "brand_color": "#000000",
-    "title_count": 1030,
+    "title_count": 1025,
     "tier": "niche",
     "short_names": [
       "snr"
@@ -182,7 +182,7 @@
     "brand_id": "magellantv",
     "display_name": "Magellan TV",
     "brand_color": "#1A3E72",
-    "title_count": 706,
+    "title_count": 705,
     "tier": "niche",
     "short_names": [
       "mgl"
@@ -192,7 +192,7 @@
     "brand_id": "mubi",
     "display_name": "MUBI",
     "brand_color": "#0B0B0B",
-    "title_count": 553,
+    "title_count": 550,
     "tier": "niche",
     "short_names": [
       "amu",
@@ -223,7 +223,7 @@
     "brand_id": "film1",
     "display_name": "Film1",
     "brand_color": "#000000",
-    "title_count": 423,
+    "title_count": 424,
     "tier": "niche",
     "short_names": [
       "fm1"
@@ -304,7 +304,7 @@
     "brand_id": "lionsgate",
     "display_name": "Lionsgate+ Amazon Channels",
     "brand_color": "#000000",
-    "title_count": 289,
+    "title_count": 294,
     "tier": "niche",
     "short_names": [
       "alg"
@@ -364,7 +364,7 @@
     "brand_id": "dsv",
     "display_name": "DOCSVILLE",
     "brand_color": "#888888",
-    "title_count": 219,
+    "title_count": 220,
     "tier": "niche",
     "short_names": [
       "dsv"
@@ -384,7 +384,7 @@
     "brand_id": "atv",
     "display_name": "ShortsTV Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 118,
+    "title_count": 117,
     "tier": "niche",
     "short_names": [
       "atv"

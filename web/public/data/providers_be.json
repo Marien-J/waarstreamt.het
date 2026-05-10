@@ -15,7 +15,7 @@
     "display_name": "Amazon Prime Video",
     "logo_url": "https://images.justwatch.com/icon/52449861/s100",
     "brand_color": "#00A8E1",
-    "title_count": 3812,
+    "title_count": 3815,
     "tier": "mainstream",
     "short_names": [
       "prv"
@@ -36,7 +36,7 @@
     "brand_id": "snx",
     "display_name": "Sun Nxt",
     "brand_color": "#888888",
-    "title_count": 2272,
+    "title_count": 2270,
     "tier": "mainstream",
     "short_names": [
       "snx"
@@ -46,7 +46,7 @@
     "brand_id": "daf",
     "display_name": "DocAlliance Films",
     "brand_color": "#888888",
-    "title_count": 1978,
+    "title_count": 1979,
     "tier": "mainstream",
     "short_names": [
       "daf"
@@ -69,7 +69,7 @@
     "display_name": "Crunchyroll Amazon Channel",
     "logo_url": "https://images.justwatch.com/icon/324213205/s100",
     "brand_color": "#F47521",
-    "title_count": 1603,
+    "title_count": 1608,
     "tier": "mainstream",
     "short_names": [
       "cra",
@@ -80,7 +80,7 @@
     "brand_id": "cultpix",
     "display_name": "Cultpix",
     "brand_color": "#E5001C",
-    "title_count": 1466,
+    "title_count": 1467,
     "tier": "mainstream",
     "short_names": [
       "ctx"
@@ -120,7 +120,7 @@
     "brand_id": "qello",
     "display_name": "Qello Concerts by Stingray Amazon Channel",
     "brand_color": "#000000",
-    "title_count": 802,
+    "title_count": 803,
     "tier": "niche",
     "short_names": [
       "qcs"
@@ -140,7 +140,7 @@
     "brand_id": "magellantv",
     "display_name": "Magellan TV",
     "brand_color": "#1A3E72",
-    "title_count": 597,
+    "title_count": 596,
     "tier": "niche",
     "short_names": [
       "mgl"
@@ -150,7 +150,7 @@
     "brand_id": "cts",
     "display_name": "Curiosity Stream",
     "brand_color": "#888888",
-    "title_count": 534,
+    "title_count": 533,
     "tier": "niche",
     "short_names": [
       "cts"
@@ -176,16 +176,6 @@
       "chl"
     ]
   },
-  "btv": {
-    "brand_id": "btv",
-    "display_name": "Be TV Go",
-    "brand_color": "#888888",
-    "title_count": 421,
-    "tier": "niche",
-    "short_names": [
-      "btv"
-    ]
-  },
   "gat": {
     "brand_id": "gat",
     "display_name": "Gaumont Amazon Channel",
@@ -194,6 +184,16 @@
     "tier": "niche",
     "short_names": [
       "gat"
+    ]
+  },
+  "btv": {
+    "brand_id": "btv",
+    "display_name": "Be TV Go",
+    "brand_color": "#888888",
+    "title_count": 414,
+    "tier": "niche",
+    "short_names": [
+      "btv"
     ]
   },
   "hoc": {
@@ -231,7 +231,7 @@
     "brand_id": "sza",
     "display_name": "Shadowz Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 311,
+    "title_count": 310,
     "tier": "niche",
     "short_names": [
       "sza"
@@ -257,6 +257,16 @@
       "trs"
     ]
   },
+  "flb": {
+    "brand_id": "flb",
+    "display_name": "FilmBox+",
+    "brand_color": "#888888",
+    "title_count": 279,
+    "tier": "niche",
+    "short_names": [
+      "flb"
+    ]
+  },
   "mgmplus": {
     "brand_id": "mgmplus",
     "display_name": "MGM Plus Amazon Channel",
@@ -265,16 +275,6 @@
     "tier": "niche",
     "short_names": [
       "mgp"
-    ]
-  },
-  "flb": {
-    "brand_id": "flb",
-    "display_name": "FilmBox+",
-    "brand_color": "#888888",
-    "title_count": 278,
-    "tier": "niche",
-    "short_names": [
-      "flb"
     ]
   },
   "dkk": {
@@ -297,6 +297,16 @@
       "hay"
     ]
   },
+  "dsv": {
+    "brand_id": "dsv",
+    "display_name": "DOCSVILLE",
+    "brand_color": "#888888",
+    "title_count": 217,
+    "tier": "niche",
+    "short_names": [
+      "dsv"
+    ]
+  },
   "auc": {
     "brand_id": "auc",
     "display_name": "Universal+ Amazon Channel",
@@ -307,21 +317,11 @@
       "auc"
     ]
   },
-  "dsv": {
-    "brand_id": "dsv",
-    "display_name": "DOCSVILLE",
-    "brand_color": "#888888",
-    "title_count": 215,
-    "tier": "niche",
-    "short_names": [
-      "dsv"
-    ]
-  },
   "atf": {
     "brand_id": "atf",
     "display_name": "Artify",
     "brand_color": "#888888",
-    "title_count": 198,
+    "title_count": 196,
     "tier": "niche",
     "short_names": [
       "atf"
@@ -341,7 +341,7 @@
     "brand_id": "ytr",
     "display_name": "YouTube Premium",
     "brand_color": "#888888",
-    "title_count": 125,
+    "title_count": 124,
     "tier": "niche",
     "short_names": [
       "ytr"
