@@ -235,5 +235,4 @@ Thumbs.db
 
 # Project-specific - data and notebooks are generated artifacts
 data/*
-!data/*.csv
 notebooks/

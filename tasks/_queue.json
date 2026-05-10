@@ -31,6 +31,10 @@
     {
       "slug": "20260509-perf-tier-and-worker",
       "status": "DONE"
+    },
+    {
+      "slug": "20260510-commit-prebuilt-data",
+      "status": "READY_FOR_DEV"
     }
   ]
 }

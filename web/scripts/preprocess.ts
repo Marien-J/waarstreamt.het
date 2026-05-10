@@ -92,6 +92,12 @@ const allCsvFiles = fs.readdirSync(dataDir).filter(f =>
   f.endsWith('.csv') && !f.includes('_providers')
 )
 
+if (allCsvFiles.length === 0) {
+  throw new Error(
+    'No CSV files found in data/. Run `uv run python -m streaming_nl --all` locally first, then re-run `npm run preprocess`.'
+  )
+}
+
 function findLatestCsvForCountry(cc: string): string | null {
   // New naming: streaming_<cc>_<lang>_YYYY-MM-DD.csv
   const pattern = new RegExp(`^streaming_${cc}_[a-z]+_\\d{4}-\\d{2}-\\d{2}\\.csv$`)
