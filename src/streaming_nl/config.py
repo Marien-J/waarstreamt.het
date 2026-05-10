@@ -31,10 +31,6 @@ COUNTRY_CONFIGS: dict[str, CountryConfig] = {
         "country": "GB",
         "language": "en",
     },
-    "JP": {
-        "country": "JP",
-        "language": "en",
-    },
 }
 
 # JustWatch API settings
@@ -50,3 +46,4 @@ CONTENT_TYPES = ["MOVIE", "SHOW"]
 
 # Output settings
 OUTPUT_DIR = Path("data")
+

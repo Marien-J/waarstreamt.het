@@ -5,7 +5,7 @@
 
 ## Overview
 
-Backend Python CLI job that extracts streaming availability data for 6 countries (NL, DE, BE, US, GB, JP) via the JustWatch API. Produces dated CSV snapshots per country suitable for analysis and web app consumption.
+Backend Python CLI job that extracts streaming availability data for 5 countries (NL, DE, BE, US, GB) via the JustWatch API. Produces dated CSV snapshots per country suitable for analysis and web app consumption.
 
 ## Supported Countries
 
@@ -16,7 +16,6 @@ Backend Python CLI job that extracts streaming availability data for 6 countries
 | Belgium | BE | nl | Netflix, Streamz, Amazon Prime Video, Disney+, Apple TV+, VRT MAX, GoPlay |
 | United States | US | en | Netflix, Hulu, Amazon Prime Video, Disney+, Apple TV+, Max, Paramount+, Peacock |
 | United Kingdom | GB | en | Netflix, Amazon Prime Video, Disney+, Apple TV+, BBC iPlayer, NOW, ITVX, Paramount+ |
-| Japan | JP | en | Netflix, Amazon Prime Video, Hulu, U-NEXT (Disney+, Apple TV+, Paramount+ unmatched by JustWatch JP API) |
 
 ## CLI Usage
 
@@ -54,9 +53,9 @@ Examples: `streaming_nl_nl_2026-05-09.csv`, `streaming_de_de_2026-05-09.csv`
 
 ## Output schema
 
-27 columns including JustWatch IDs, external IDs (IMDb/TMDB), metadata (title, year, runtime, genres, scores), and offer details (provider, monetization, quality, price, deeplinks, audio/subtitle languages).
+28 columns including JustWatch IDs, external IDs (IMDb/TMDB), metadata (title, year, runtime, genres, scores, streaming chart rank), and offer details (provider, monetization, quality, price, deeplinks, audio/subtitle languages).
 
-See `src/streaming_nl/writer.py` for the full column list.
+Key column added in 2026-05-10: `streaming_charts_rank` — integer rank from JustWatch's streaming charts (empty string if not ranked). Used to power the Trending rail in the web app.
 
 ## Configuration
 
