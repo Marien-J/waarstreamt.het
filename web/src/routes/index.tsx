@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { type Title } from '@/lib/data'
 import {
   attachWorker,
@@ -13,7 +13,7 @@ import { useAppStore } from '@/store/app-store'
 import { usePreferencesStore } from '@/store/preferences'
 import { SearchBar } from '@/components/search-bar'
 import { ResultGrid } from '@/components/result-grid'
-import { FilterSidebar } from '@/components/filter-sidebar'
+import { TitleCard } from '@/components/title-card'
 
 export const Route = createFileRoute('/')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -41,7 +41,6 @@ function BrowseView() {
   const [loading, setLoading] = useState(true)
   const [searchReady, setSearchReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const { myProviders, showPurchases } = useAppStore()
   const { country } = usePreferencesStore()
 
@@ -176,22 +175,40 @@ function BrowseView() {
     navigate({ search: { q: searchParams.q } })
   }
 
+  const isLandingPage = !searchParams.q && myProviders.length === 0
+
+  const trendingTitles = useMemo(() => {
+    return [...titles]
+      .filter(t => t.available_on_flatrate.length > 0)
+      .sort((a, b) => {
+        const ar = a.chart_rank ?? null, br = b.chart_rank ?? null
+        if (ar !== null && br !== null) return ar - br
+        if (ar !== null) return -1
+        if (br !== null) return 1
+        const sa = a.imdb_score ?? a.tmdb_score ?? 0
+        const sb = b.imdb_score ?? b.tmdb_score ?? 0
+        return sb - sa
+      })
+      .slice(0, 20)
+  }, [titles])
+
+  const topRatedTitles = useMemo(() => {
+    return [...titles]
+      .filter(t => t.available_on_flatrate.length > 0 && (t.imdb_score ?? 0) > 0)
+      .sort((a, b) => (b.imdb_score ?? 0) - (a.imdb_score ?? 0))
+      .slice(0, 20)
+  }, [titles])
+
   if (loading) {
     return (
-      <div className="h-full flex">
-        {/* Desktop sidebar skeleton */}
-        <aside className="hidden lg:block w-72 border-r border-[var(--border)] flex-shrink-0" />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="card border-b border-[var(--border)] p-4 flex gap-2 flex-shrink-0">
-            <div className="flex-1">
-              <SearchBar onSearch={handleSearch} initialValue={searchParams.q} />
-            </div>
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-[var(--muted)]">Loading catalog...</p>
-            </div>
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="card border-b border-[var(--border)] p-4 flex-shrink-0">
+          <SearchBar onSearch={handleSearch} initialValue={searchParams.q} />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-[var(--muted)]">Loading catalog...</p>
           </div>
         </div>
       </div>
@@ -217,89 +234,53 @@ function BrowseView() {
   }
 
   return (
-    <div className="h-full flex">
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-72 border-r border-[var(--border)] overflow-y-auto flex-shrink-0">
-        <FilterSidebar
-          searchParams={searchParams}
-          onUpdateParam={updateSearchParam}
-          onClearFilters={clearFilters}
-          titles={titles}
-        />
-      </aside>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Search bar + mobile filter toggle */}
-        <div className="card border-b border-[var(--border)] p-4 flex gap-2 flex-shrink-0">
-          <div className="flex-1">
-            <SearchBar onSearch={handleSearch} initialValue={searchParams.q} />
-          </div>
-          <button
-            onClick={() => setShowMobileFilters(true)}
-            className="lg:hidden min-h-[44px] px-4 py-2 border border-[var(--border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors"
-          >
-            Filters
-          </button>
-        </div>
-
-        {/* Results count */}
-        <div className="px-4 py-2 text-sm text-[var(--muted)] flex items-center justify-between border-b border-[var(--border)] flex-shrink-0">
-          <span>
-            Showing {filteredTitles.length} of {titles.length} titles
-          </span>
-          {(searchParams.q || searchParams.providers.length > 0 || searchParams.genres.length > 0) && (
-            <button onClick={clearFilters} className="text-[var(--accent)] hover:underline">
-              Clear all filters
-            </button>
-          )}
-        </div>
-
-        {/* Grid */}
-        <div className="flex-1 overflow-hidden">
-          <ResultGrid titles={filteredTitles} />
-        </div>
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Search bar */}
+      <div className="card border-b border-[var(--border)] p-4 flex-shrink-0">
+        <SearchBar onSearch={handleSearch} initialValue={searchParams.q} />
       </div>
 
-      {/* Mobile filters bottom sheet */}
-      {showMobileFilters && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-75 z-40 flex items-end">
-          <div className="card w-full max-h-[80vh] rounded-t-2xl flex flex-col">
-            <div className="flex-shrink-0 border-b border-[var(--border)] p-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold">Filters</h2>
-              <button
-                onClick={() => setShowMobileFilters(false)}
-                aria-label="Close filters"
-                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-2xl"
-              >
-                ×
-              </button>
+      {/* Results count */}
+      <div className="px-4 py-2 text-sm text-[var(--muted)] flex items-center justify-between border-b border-[var(--border)] flex-shrink-0">
+        <span>
+          Showing {filteredTitles.length} of {titles.length} titles
+        </span>
+        {(searchParams.q || searchParams.providers.length > 0 || searchParams.genres.length > 0) && (
+          <button onClick={clearFilters} className="text-[var(--accent)] hover:underline">
+            Clear all filters
+          </button>
+        )}
+      </div>
+
+      <div className="flex-1 overflow-auto">
+        {isLandingPage && trendingTitles.length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold px-4 pt-4 pb-2">Trending now</h2>
+            <div className="flex gap-3 overflow-x-auto px-4 pb-4 scrollbar-thin">
+              {trendingTitles.map((t, i) => (
+                <div key={t.jw_entry_id} className="flex-shrink-0 w-28 sm:w-36">
+                  <TitleCard title={t} onClick={() => navigate({ to: '/title/$id', params: { id: t.jw_entry_id } })} index={i} />
+                </div>
+              ))}
             </div>
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              <FilterSidebar
-                searchParams={searchParams}
-                onUpdateParam={updateSearchParam}
-                onClearFilters={clearFilters}
-                titles={titles}
-              />
+          </section>
+        )}
+        {isLandingPage && topRatedTitles.length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold px-4 pt-4 pb-2">Top rated</h2>
+            <div className="flex gap-3 overflow-x-auto px-4 pb-4 scrollbar-thin">
+              {topRatedTitles.map((t, i) => (
+                <div key={t.jw_entry_id} className="flex-shrink-0 w-28 sm:w-36">
+                  <TitleCard title={t} onClick={() => navigate({ to: '/title/$id', params: { id: t.jw_entry_id } })} index={i} />
+                </div>
+              ))}
             </div>
-            <div className="flex-shrink-0 border-t border-[var(--border)] p-4 flex gap-3">
-              <button
-                onClick={() => { clearFilters(); setShowMobileFilters(false) }}
-                className="flex-1 min-h-[44px] border border-[var(--border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors text-sm"
-              >
-                Clear all filters
-              </button>
-              <button
-                onClick={() => setShowMobileFilters(false)}
-                className="flex-1 min-h-[44px] bg-[var(--accent)] text-white rounded hover:opacity-90 transition-opacity text-sm font-medium"
-              >
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </section>
+        )}
+
+        {/* Result grid */}
+        <ResultGrid titles={filteredTitles} />
+      </div>
     </div>
   )
 }

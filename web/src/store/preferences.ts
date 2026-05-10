@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { LanguageCode } from '@/lib/i18n'
 
-export type CountryCode = 'NL' | 'DE' | 'BE' | 'US' | 'GB' | 'JP'
+export type CountryCode = 'NL' | 'DE' | 'BE' | 'US' | 'GB'
 
 const DEFAULT_LANGUAGE: Record<CountryCode, LanguageCode> = {
   NL: 'nl',
@@ -10,7 +10,6 @@ const DEFAULT_LANGUAGE: Record<CountryCode, LanguageCode> = {
   DE: 'de',
   US: 'en',
   GB: 'en',
-  JP: 'en',
 }
 
 interface PreferencesState {

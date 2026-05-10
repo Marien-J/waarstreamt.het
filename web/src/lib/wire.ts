@@ -33,6 +33,7 @@ export interface WireCatalogEntry {
   mn: string[]       // monet — unique monetization_type values across all offers
   b: string[]        // brands — all brand ids (any monetization)
   q: string[]        // quals — unique presentation_type values (for quality filter)
+  cr?: number | null // chart_rank (optional — absent in older catalogs)
 }
 
 /** Top-level shape of catalog_<cc>.json */
@@ -85,6 +86,7 @@ export function decodeCatalogEntry(w: WireCatalogEntry): Title {
     available_on_flatrate: w.f,
     lowest_rent: w.rl,
     lowest_buy: w.bl,
+    chart_rank: w.cr ?? null,
     // Catalog-only derived fields for filtering without full offers:
     brands: w.b,
     monet: w.mn,
