@@ -4,7 +4,7 @@
     "display_name": "Amazon Prime Video",
     "logo_url": "https://images.justwatch.com/icon/52449861/s100",
     "brand_color": "#00A8E1",
-    "title_count": 6220,
+    "title_count": 6184,
     "tier": "mainstream",
     "short_names": [
       "amp",
@@ -16,7 +16,7 @@
     "display_name": "Netflix",
     "logo_url": "https://images.justwatch.com/icon/207360008/s100",
     "brand_color": "#E50914",
-    "title_count": 4921,
+    "title_count": 4919,
     "tier": "mainstream",
     "short_names": [
       "nfa",
@@ -28,7 +28,7 @@
     "brand_id": "magenta",
     "display_name": "Magenta TV+",
     "brand_color": "#E20074",
-    "title_count": 3372,
+    "title_count": 3358,
     "tier": "mainstream",
     "short_names": [
       "mag"
@@ -39,7 +39,7 @@
     "display_name": "Disney Plus",
     "logo_url": "https://images.justwatch.com/icon/147638351/s100",
     "brand_color": "#113CCF",
-    "title_count": 3258,
+    "title_count": 3256,
     "tier": "mainstream",
     "short_names": [
       "dnp"
@@ -49,7 +49,7 @@
     "brand_id": "snx",
     "display_name": "Sun Nxt",
     "brand_color": "#888888",
-    "title_count": 2269,
+    "title_count": 2268,
     "tier": "mainstream",
     "short_names": [
       "snx"
@@ -59,7 +59,7 @@
     "brand_id": "daf",
     "display_name": "DocAlliance Films",
     "brand_color": "#888888",
-    "title_count": 1990,
+    "title_count": 1988,
     "tier": "mainstream",
     "short_names": [
       "daf"
@@ -69,23 +69,10 @@
     "brand_id": "sooner",
     "display_name": "Sooner",
     "brand_color": "#000000",
-    "title_count": 1746,
+    "title_count": 1745,
     "tier": "mainstream",
     "short_names": [
       "snr"
-    ]
-  },
-  "tvn": {
-    "brand_id": "tvn",
-    "display_name": "RTL+",
-    "brand_color": "#FF6D00",
-    "title_count": 1733,
-    "tier": "mainstream",
-    "short_names": [
-      "arc",
-      "rlm",
-      "rpa",
-      "tvn"
     ]
   },
   "viki": {
@@ -93,7 +80,7 @@
     "display_name": "Rakuten Viki",
     "brand_color": "#1DACE3",
     "title_count": 1728,
-    "tier": "niche",
+    "tier": "mainstream",
     "short_names": [
       "vik"
     ]
@@ -103,7 +90,7 @@
     "display_name": "Crunchyroll Amazon Channel",
     "logo_url": "https://images.justwatch.com/icon/324213205/s100",
     "brand_color": "#F47521",
-    "title_count": 1683,
+    "title_count": 1682,
     "tier": "niche",
     "short_names": [
       "cra",
@@ -114,18 +101,31 @@
     "brand_id": "wls",
     "display_name": "Wow Fiction Amazon Channel",
     "brand_color": "#003087",
-    "title_count": 1628,
+    "title_count": 1623,
     "tier": "niche",
     "short_names": [
       "sko",
       "wfa"
     ]
   },
+  "tvn": {
+    "brand_id": "tvn",
+    "display_name": "RTL+ Max Amazon Channel",
+    "brand_color": "#FF6D00",
+    "title_count": 1608,
+    "tier": "niche",
+    "short_names": [
+      "arc",
+      "rlm",
+      "rpa",
+      "tvn"
+    ]
+  },
   "ardplus": {
     "brand_id": "ardplus",
     "display_name": "ARD Plus",
     "brand_color": "#003DA5",
-    "title_count": 1540,
+    "title_count": 1539,
     "tier": "niche",
     "short_names": [
       "ara",
@@ -147,7 +147,7 @@
     "brand_id": "cultpix",
     "display_name": "Cultpix",
     "brand_color": "#E5001C",
-    "title_count": 1466,
+    "title_count": 1467,
     "tier": "niche",
     "short_names": [
       "ctx"
@@ -157,7 +157,7 @@
     "brand_id": "zdfselect",
     "display_name": "ZDF Select Amazon Channel ",
     "brand_color": "#003DA5",
-    "title_count": 1286,
+    "title_count": 1275,
     "tier": "niche",
     "short_names": [
       "zsa"
@@ -167,7 +167,7 @@
     "brand_id": "skygo",
     "display_name": "Sky Go",
     "brand_color": "#00b0f0",
-    "title_count": 1259,
+    "title_count": 1262,
     "tier": "niche",
     "short_names": [
       "skg"
@@ -177,7 +177,7 @@
     "brand_id": "rac",
     "display_name": "Sooner Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 1216,
+    "title_count": 1211,
     "tier": "niche",
     "short_names": [
       "rac"
@@ -188,7 +188,7 @@
     "display_name": "HBO Max",
     "logo_url": "https://images.justwatch.com/icon/305908916/s100",
     "brand_color": "#002BE7",
-    "title_count": 1124,
+    "title_count": 1127,
     "tier": "niche",
     "short_names": [
       "aho",
@@ -199,7 +199,7 @@
     "brand_id": "jyn",
     "display_name": "Joyn Plus",
     "brand_color": "#E52626",
-    "title_count": 917,
+    "title_count": 918,
     "tier": "niche",
     "short_names": [
       "jpl"
@@ -219,7 +219,7 @@
     "brand_id": "aak",
     "display_name": "alleskino Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 832,
+    "title_count": 820,
     "tier": "niche",
     "short_names": [
       "aak"
@@ -229,7 +229,7 @@
     "brand_id": "discovery",
     "display_name": "Discovery+ Amazon Channel",
     "brand_color": "#2175D9",
-    "title_count": 765,
+    "title_count": 764,
     "tier": "niche",
     "short_names": [
       "adp",
@@ -253,7 +253,7 @@
     "brand_id": "magellantv",
     "display_name": "Magellan TV",
     "brand_color": "#1A3E72",
-    "title_count": 743,
+    "title_count": 742,
     "tier": "niche",
     "short_names": [
       "mgl"
@@ -263,7 +263,7 @@
     "brand_id": "kixi",
     "display_name": "Kixi Select Amazon Channel",
     "brand_color": "#000000",
-    "title_count": 633,
+    "title_count": 631,
     "tier": "niche",
     "short_names": [
       "kxa"
@@ -273,7 +273,7 @@
     "brand_id": "azh",
     "display_name": "ZDF Herzkino Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 612,
+    "title_count": 611,
     "tier": "niche",
     "short_names": [
       "azh"
@@ -281,40 +281,40 @@
   },
   "mubi": {
     "brand_id": "mubi",
-    "display_name": "MUBI Amazon Channel",
+    "display_name": "MUBI",
     "brand_color": "#0B0B0B",
-    "title_count": 573,
+    "title_count": 560,
     "tier": "niche",
     "short_names": [
       "amu",
       "mbi"
     ]
   },
-  "qello": {
-    "brand_id": "qello",
-    "display_name": "Qello Concerts by Stingray Amazon Channel",
-    "brand_color": "#000000",
-    "title_count": 566,
-    "tier": "niche",
-    "short_names": [
-      "qcs"
-    ]
-  },
   "franatic": {
     "brand_id": "franatic",
     "display_name": "Franatic Amazon Channel",
     "brand_color": "#000000",
-    "title_count": 559,
+    "title_count": 556,
     "tier": "niche",
     "short_names": [
       "fta"
+    ]
+  },
+  "qello": {
+    "brand_id": "qello",
+    "display_name": "Qello Concerts by Stingray Amazon Channel",
+    "brand_color": "#000000",
+    "title_count": 556,
+    "tier": "niche",
+    "short_names": [
+      "qcs"
     ]
   },
   "tov": {
     "brand_id": "tov",
     "display_name": "Turk On Video Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 546,
+    "title_count": 540,
     "tier": "niche",
     "short_names": [
       "tov"
@@ -324,7 +324,7 @@
     "brand_id": "filmtotal",
     "display_name": "Film Total Amazon Channel",
     "brand_color": "#000000",
-    "title_count": 528,
+    "title_count": 523,
     "tier": "niche",
     "short_names": [
       "aft"
@@ -334,27 +334,17 @@
     "brand_id": "agm",
     "display_name": "Good Movies Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 478,
+    "title_count": 473,
     "tier": "niche",
     "short_names": [
       "agm"
-    ]
-  },
-  "sevenentertainment": {
-    "brand_id": "sevenentertainment",
-    "display_name": "Seven Entertainment Amazon Channel",
-    "brand_color": "#FF0000",
-    "title_count": 474,
-    "tier": "niche",
-    "short_names": [
-      "sea"
     ]
   },
   "loveandpassion": {
     "brand_id": "loveandpassion",
     "display_name": "Love and Passion Amazon Channel",
     "brand_color": "#FF69B4",
-    "title_count": 470,
+    "title_count": 469,
     "tier": "niche",
     "short_names": [
       "lap"
@@ -364,17 +354,27 @@
     "brand_id": "bloodymovies",
     "display_name": "Bloody Movies Amazon Channel",
     "brand_color": "#8B0000",
-    "title_count": 466,
+    "title_count": 461,
     "tier": "niche",
     "short_names": [
       "abm"
+    ]
+  },
+  "sevenentertainment": {
+    "brand_id": "sevenentertainment",
+    "display_name": "Seven Entertainment Amazon Channel",
+    "brand_color": "#FF0000",
+    "title_count": 458,
+    "tier": "niche",
+    "short_names": [
+      "sea"
     ]
   },
   "adrenalin": {
     "brand_id": "adrenalin",
     "display_name": "Adrenalin Amazon channel",
     "brand_color": "#FF0000",
-    "title_count": 462,
+    "title_count": 456,
     "tier": "niche",
     "short_names": [
       "adr"
@@ -390,11 +390,21 @@
       "chl"
     ]
   },
+  "cts": {
+    "brand_id": "cts",
+    "display_name": "Curiosity Stream",
+    "brand_color": "#888888",
+    "title_count": 429,
+    "tier": "niche",
+    "short_names": [
+      "cts"
+    ]
+  },
   "flimmerkiste": {
     "brand_id": "flimmerkiste",
     "display_name": "FlimmerkisteTV Amazon Channel",
     "brand_color": "#FF6600",
-    "title_count": 429,
+    "title_count": 428,
     "tier": "niche",
     "short_names": [
       "fkr"
@@ -404,7 +414,7 @@
     "brand_id": "aah",
     "display_name": "Amazon Arthaus Channel",
     "brand_color": "#888888",
-    "title_count": 426,
+    "title_count": 424,
     "tier": "niche",
     "short_names": [
       "aah"
@@ -414,7 +424,7 @@
     "brand_id": "ata",
     "display_name": "Arthaus+ Apple TV channel",
     "brand_color": "#888888",
-    "title_count": 426,
+    "title_count": 423,
     "tier": "niche",
     "short_names": [
       "ata"
@@ -434,20 +444,10 @@
     "brand_id": "fgo",
     "display_name": "filmingo",
     "brand_color": "#888888",
-    "title_count": 417,
+    "title_count": 418,
     "tier": "niche",
     "short_names": [
       "fgo"
-    ]
-  },
-  "cts": {
-    "brand_id": "cts",
-    "display_name": "Curiosity Stream",
-    "brand_color": "#888888",
-    "title_count": 410,
-    "tier": "niche",
-    "short_names": [
-      "cts"
     ]
   },
   "hoc": {
@@ -464,7 +464,7 @@
     "brand_id": "sha",
     "display_name": "Shahid VIP",
     "brand_color": "#888888",
-    "title_count": 399,
+    "title_count": 398,
     "tier": "niche",
     "short_names": [
       "sha"
@@ -484,7 +484,7 @@
     "brand_id": "zka",
     "display_name": "ZDF Krimi Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 379,
+    "title_count": 378,
     "tier": "niche",
     "short_names": [
       "zka"
@@ -494,7 +494,7 @@
     "brand_id": "trs",
     "display_name": "True Story",
     "brand_color": "#888888",
-    "title_count": 352,
+    "title_count": 351,
     "tier": "niche",
     "short_names": [
       "trs"
@@ -504,7 +504,7 @@
     "brand_id": "grjngo",
     "display_name": "GRJNGO Amazon Channel",
     "brand_color": "#D4380D",
-    "title_count": 343,
+    "title_count": 342,
     "tier": "niche",
     "short_names": [
       "gja"
@@ -534,7 +534,7 @@
     "brand_id": "disasterx",
     "display_name": "Disaster X Amazon Channel",
     "brand_color": "#FF4500",
-    "title_count": 317,
+    "title_count": 316,
     "tier": "niche",
     "short_names": [
       "dxa"
@@ -565,50 +565,60 @@
     "brand_id": "aniverse",
     "display_name": "Aniverse Amazon Channel",
     "brand_color": "#6A0DAD",
-    "title_count": 306,
+    "title_count": 305,
     "tier": "niche",
     "short_names": [
       "ava"
-    ]
-  },
-  "cmp": {
-    "brand_id": "cmp",
-    "display_name": "CineMix+ Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 298,
-    "tier": "niche",
-    "short_names": [
-      "cmp"
-    ]
-  },
-  "netzkino": {
-    "brand_id": "netzkino",
-    "display_name": "Netzkino Select Amazon Channel",
-    "brand_color": "#1A1A2E",
-    "title_count": 292,
-    "tier": "niche",
-    "short_names": [
-      "nks"
     ]
   },
   "lionsgate": {
     "brand_id": "lionsgate",
     "display_name": "Lionsgate+ Amazon Channels",
     "brand_color": "#000000",
-    "title_count": 286,
+    "title_count": 293,
     "tier": "niche",
     "short_names": [
       "alg"
+    ]
+  },
+  "netzkino": {
+    "brand_id": "netzkino",
+    "display_name": "Netzkino Select Amazon Channel",
+    "brand_color": "#1A1A2E",
+    "title_count": 291,
+    "tier": "niche",
+    "short_names": [
+      "nks"
     ]
   },
   "moviedome": {
     "brand_id": "moviedome",
     "display_name": "Moviedome Plus Amazon Channel",
     "brand_color": "#000000",
-    "title_count": 284,
+    "title_count": 281,
     "tier": "niche",
     "short_names": [
       "mdp"
+    ]
+  },
+  "cmp": {
+    "brand_id": "cmp",
+    "display_name": "CineMix+ Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 280,
+    "tier": "niche",
+    "short_names": [
+      "cmp"
+    ]
+  },
+  "flb": {
+    "brand_id": "flb",
+    "display_name": "FilmBox+",
+    "brand_color": "#888888",
+    "title_count": 279,
+    "tier": "niche",
+    "short_names": [
+      "flb"
     ]
   },
   "asi": {
@@ -621,44 +631,14 @@
       "asi"
     ]
   },
-  "flb": {
-    "brand_id": "flb",
-    "display_name": "FilmBox+",
-    "brand_color": "#888888",
-    "title_count": 278,
-    "tier": "niche",
-    "short_names": [
-      "flb"
-    ]
-  },
   "superfresh": {
     "brand_id": "superfresh",
     "display_name": "Superfresh Amazon Channel",
     "brand_color": "#00AA55",
-    "title_count": 277,
+    "title_count": 275,
     "tier": "niche",
     "short_names": [
       "sfc"
-    ]
-  },
-  "ala": {
-    "brand_id": "ala",
-    "display_name": "Allstars Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 265,
-    "tier": "niche",
-    "short_names": [
-      "ala"
-    ]
-  },
-  "aot": {
-    "brand_id": "aot",
-    "display_name": "OUTtv Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 265,
-    "tier": "niche",
-    "short_names": [
-      "aot"
     ]
   },
   "mgmplus": {
@@ -671,16 +651,6 @@
       "mgp"
     ]
   },
-  "spa": {
-    "brand_id": "spa",
-    "display_name": "Studiocanal Presents ALLSTARS Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 263,
-    "tier": "niche",
-    "short_names": [
-      "spa"
-    ]
-  },
   "mie": {
     "brand_id": "mie",
     "display_name": "Made in Europe Amazon Channel",
@@ -689,6 +659,36 @@
     "tier": "niche",
     "short_names": [
       "mie"
+    ]
+  },
+  "aot": {
+    "brand_id": "aot",
+    "display_name": "OUTtv Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 262,
+    "tier": "niche",
+    "short_names": [
+      "aot"
+    ]
+  },
+  "ala": {
+    "brand_id": "ala",
+    "display_name": "Allstars Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 260,
+    "tier": "niche",
+    "short_names": [
+      "ala"
+    ]
+  },
+  "spa": {
+    "brand_id": "spa",
+    "display_name": "Studiocanal Presents ALLSTARS Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 258,
+    "tier": "niche",
+    "short_names": [
+      "spa"
     ]
   },
   "txa": {
@@ -705,20 +705,10 @@
     "brand_id": "wwa",
     "display_name": "Wild West Amzon Channel",
     "brand_color": "#888888",
-    "title_count": 254,
+    "title_count": 253,
     "tier": "niche",
     "short_names": [
       "wwa"
-    ]
-  },
-  "fac": {
-    "brand_id": "fac",
-    "display_name": "Filmtastic Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 249,
-    "tier": "niche",
-    "short_names": [
-      "fac"
     ]
   },
   "qac": {
@@ -729,6 +719,16 @@
     "tier": "niche",
     "short_names": [
       "qac"
+    ]
+  },
+  "fac": {
+    "brand_id": "fac",
+    "display_name": "Filmtastic Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 245,
+    "tier": "niche",
+    "short_names": [
+      "fac"
     ]
   },
   "hay": {
@@ -745,30 +745,10 @@
     "brand_id": "galacticstream",
     "display_name": "Galactic Stream Amazon Channel",
     "brand_color": "#1A0A3B",
-    "title_count": 238,
+    "title_count": 237,
     "tier": "niche",
     "short_names": [
       "gsa"
-    ]
-  },
-  "bza": {
-    "brand_id": "bza",
-    "display_name": "BATTLEZONE Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 233,
-    "tier": "niche",
-    "short_names": [
-      "bza"
-    ]
-  },
-  "spm": {
-    "brand_id": "spm",
-    "display_name": "Studiocanal Presents MOVIECULT Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 232,
-    "tier": "niche",
-    "short_names": [
-      "spm"
     ]
   },
   "dkk": {
@@ -781,11 +761,31 @@
       "dkk"
     ]
   },
+  "bza": {
+    "brand_id": "bza",
+    "display_name": "BATTLEZONE Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 229,
+    "tier": "niche",
+    "short_names": [
+      "bza"
+    ]
+  },
+  "spm": {
+    "brand_id": "spm",
+    "display_name": "Studiocanal Presents MOVIECULT Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 229,
+    "tier": "niche",
+    "short_names": [
+      "spm"
+    ]
+  },
   "mct": {
     "brand_id": "mct",
     "display_name": "Moviecult Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 228,
+    "title_count": 226,
     "tier": "niche",
     "short_names": [
       "mct"
@@ -795,7 +795,7 @@
     "brand_id": "ahh",
     "display_name": "Home of Horror Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 228,
+    "title_count": 221,
     "tier": "niche",
     "short_names": [
       "ahh"
@@ -805,7 +805,7 @@
     "brand_id": "dsv",
     "display_name": "DOCSVILLE",
     "brand_color": "#888888",
-    "title_count": 219,
+    "title_count": 218,
     "tier": "niche",
     "short_names": [
       "dsv"
@@ -821,21 +821,11 @@
       "ftc"
     ]
   },
-  "kabeleins": {
-    "brand_id": "kabeleins",
-    "display_name": "Kabel Eins Classics Amazon Channel",
-    "brand_color": "#E31837",
-    "title_count": 208,
-    "tier": "niche",
-    "short_names": [
-      "kba"
-    ]
-  },
   "fpt": {
     "brand_id": "fpt",
     "display_name": "Filmpalast Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 207,
+    "title_count": 206,
     "tier": "niche",
     "short_names": [
       "fpt"
@@ -845,7 +835,7 @@
     "brand_id": "mac",
     "display_name": "Mosaik Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 202,
+    "title_count": 201,
     "tier": "niche",
     "short_names": [
       "mac"
@@ -859,6 +849,16 @@
     "tier": "niche",
     "short_names": [
       "atf"
+    ]
+  },
+  "kabeleins": {
+    "brand_id": "kabeleins",
+    "display_name": "Kabel Eins Classics Amazon Channel",
+    "brand_color": "#E31837",
+    "title_count": 197,
+    "tier": "niche",
+    "short_names": [
+      "kba"
     ]
   },
   "geo": {
@@ -886,7 +886,7 @@
     "brand_id": "qca",
     "display_name": "Queer Cinemab Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 181,
+    "title_count": 178,
     "tier": "niche",
     "short_names": [
       "qca"
@@ -926,7 +926,7 @@
     "brand_id": "vpy",
     "display_name": "Viaplay Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 163,
+    "title_count": 162,
     "tier": "niche",
     "short_names": [
       "vpy"
@@ -936,7 +936,7 @@
     "brand_id": "abp",
     "display_name": "BBC Player Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 163,
+    "title_count": 162,
     "tier": "niche",
     "short_names": [
       "abp"
@@ -946,7 +946,7 @@
     "brand_id": "tba",
     "display_name": "Thrillbox Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 162,
+    "title_count": 160,
     "tier": "niche",
     "short_names": [
       "tba"
@@ -976,27 +976,17 @@
     "brand_id": "psf",
     "display_name": "ProSieben Fun Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 149,
-    "tier": "niche",
-    "short_names": [
-      "psf"
-    ]
-  },
-  "afg": {
-    "brand_id": "afg",
-    "display_name": "Filmlegenden Amazon Channel",
-    "brand_color": "#888888",
     "title_count": 145,
     "tier": "niche",
     "short_names": [
-      "afg"
+      "psf"
     ]
   },
   "hac": {
     "brand_id": "hac",
     "display_name": "Historama Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 141,
+    "title_count": 140,
     "tier": "niche",
     "short_names": [
       "hac"
@@ -1012,6 +1002,16 @@
       "scl"
     ]
   },
+  "afg": {
+    "brand_id": "afg",
+    "display_name": "Filmlegenden Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 128,
+    "tier": "niche",
+    "short_names": [
+      "afg"
+    ]
+  },
   "ytr": {
     "brand_id": "ytr",
     "display_name": "YouTube Premium",
@@ -1022,41 +1022,41 @@
       "ytr"
     ]
   },
-  "ach": {
-    "brand_id": "ach",
-    "display_name": "Cinema of Hearts Amazon Channel",
+  "amf": {
+    "brand_id": "amf",
+    "display_name": "MIDNIGHT FACTORY Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 123,
+    "title_count": 124,
     "tier": "niche",
     "short_names": [
-      "ach"
+      "amf"
     ]
   },
   "sae": {
     "brand_id": "sae",
     "display_name": "Sat.1 emotions Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 123,
+    "title_count": 122,
     "tier": "niche",
     "short_names": [
       "sae"
     ]
   },
-  "amf": {
-    "brand_id": "amf",
-    "display_name": "MIDNIGHT FACTORY Amazon Channel",
+  "ach": {
+    "brand_id": "ach",
+    "display_name": "Cinema of Hearts Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 123,
+    "title_count": 120,
     "tier": "niche",
     "short_names": [
-      "amf"
+      "ach"
     ]
   },
   "acm": {
     "brand_id": "acm",
     "display_name": "Arthouse CNMA Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 117,
+    "title_count": 116,
     "tier": "niche",
     "short_names": [
       "acm"
@@ -1066,7 +1066,7 @@
     "brand_id": "fma",
     "display_name": "Fernsehen mit Herz Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 112,
+    "title_count": 111,
     "tier": "niche",
     "short_names": [
       "fma"
@@ -1102,21 +1102,11 @@
       "gtl"
     ]
   },
-  "ntz": {
-    "brand_id": "ntz",
-    "display_name": "Netzkino",
-    "brand_color": "#888888",
-    "title_count": 97,
-    "tier": "niche",
-    "short_names": [
-      "ntz"
-    ]
-  },
   "sla": {
     "brand_id": "sla",
     "display_name": "Silverline Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 96,
+    "title_count": 98,
     "tier": "niche",
     "short_names": [
       "sla"
@@ -1160,6 +1150,16 @@
     "tier": "niche",
     "short_names": [
       "bta"
+    ]
+  },
+  "ntz": {
+    "brand_id": "ntz",
+    "display_name": "Netzkino",
+    "brand_color": "#888888",
+    "title_count": 76,
+    "tier": "niche",
+    "short_names": [
+      "ntz"
     ]
   },
   "faf": {
@@ -1206,7 +1206,7 @@
     "brand_id": "axb",
     "display_name": "AXN Black Amazon Channel",
     "brand_color": "#888888",
-    "title_count": 65,
+    "title_count": 63,
     "tier": "niche",
     "short_names": [
       "axb"
@@ -1250,16 +1250,6 @@
     "tier": "niche",
     "short_names": [
       "cpa"
-    ]
-  },
-  "rca": {
-    "brand_id": "rca",
-    "display_name": "Redlight Cinema Amazon Channel",
-    "brand_color": "#888888",
-    "title_count": 50,
-    "tier": "niche",
-    "short_names": [
-      "rca"
     ]
   }
 }
