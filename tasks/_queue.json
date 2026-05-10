@@ -35,6 +35,14 @@
     {
       "slug": "20260510-commit-prebuilt-data",
       "status": "READY_FOR_DEV"
+    },
+    {
+      "slug": "20260510-ux-polish",
+      "status": "IN_REVIEW"
+    },
+    {
+      "slug": "20260510-trending-pipeline",
+      "status": "READY_FOR_DEV"
     }
   ]
 }

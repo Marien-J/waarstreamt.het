@@ -2,7 +2,7 @@ import { usePreferencesStore, type CountryCode } from '@/store/preferences'
 import { useTranslation } from '@/lib/i18n'
 import { Flag } from '@/components/flag'
 
-const COUNTRIES: CountryCode[] = ['NL', 'DE', 'BE', 'US', 'GB', 'JP']
+const COUNTRIES: CountryCode[] = ['NL', 'DE', 'BE', 'US', 'GB']
 
 interface CountrySwitcherProps {
   onCountryChange?: (country: CountryCode) => void

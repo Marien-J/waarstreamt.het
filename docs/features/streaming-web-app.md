@@ -22,7 +22,7 @@ npm run build && vercel --prod
 
 ## Multi-Country Support
 
-The app supports 6 countries (NL, DE, BE, US, GB, JP) with automatic country detection:
+The app supports 5 countries (NL, DE, BE, US, GB) with automatic country detection:
 
 1. **7-day localStorage cache** (returns immediately on repeat visits)
 2. **ipapi.co geolocation** (`country_code` field) — 4s timeout
@@ -39,12 +39,12 @@ Explicit user selection (via the country dropdown) always overrides detection an
 - Genre labels are language-aware via `src/lib/genres.ts`
 - Language switch is instantaneous (no reload)
 
-Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en, JP→en.
+Default language per country: NL→nl, BE→nl, DE→de, US→en, GB→en.
 
 ## Country & Language Switchers
 
 Two inline control groups in the header, visually differentiated:
-- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (always visible) + 6 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
+- **Country switcher** (`components/country-switcher.tsx`): muted `Country:` prefix label (always visible) + 5 buttons each showing an inline SVG flag + ISO-code (e.g., `[NL flag] NL`). Active button: `bg-[var(--accent)] text-white`. Inactive: `text-[var(--muted)] hover:text-[var(--text)]`. Flags are rendered via the `<Flag />` component (`components/flag.tsx`) — **no emoji codepoints**; SVGs render identically on Windows/macOS/Linux.
 - **Language switcher** (`components/language-switcher.tsx`): muted `Language:` prefix label (always visible) + 4 buttons each showing the uppercase language code only (`EN`, `NL`, `DE`, `FR`). No flag emojis — flags represent nations, not languages. Same active/inactive style.
 
 Both prefix labels are translatable via `useTranslation()` with keys `header.country` / `header.language`. Both use `aria-pressed` for accessibility.
@@ -58,9 +58,9 @@ Switching language is instantaneous (no catalog reload).
 
 ## Data layout (two-tier)
 
-Per country `<cc>` (nl | de | be | us | gb | jp), `preprocess.ts` emits:
+Per country `<cc>` (nl | de | be | us | gb), `preprocess.ts` emits:
 
-- **`web/public/data/catalog_<cc>.json`** — slim, eager. Fields: `id`, `title`, `type`, `year`, `runtime`, `poster`, `genres`, `imdb`, `tmdb`, `tomato`, `age_cert`, `flatrate`, `rent_lo`, `buy_lo`, `monet`, `brands`. Stored with compact single/two-char keys on disk; rehydrated by `src/lib/data.ts` before being handed to the UI. Sizes: NL 11 MB, BE 11 MB, DE 20 MB, GB 19 MB, JP 12 MB, US 34 MB.
+- **`web/public/data/catalog_<cc>.json`** — slim, eager. Fields: `id`, `title`, `type`, `year`, `runtime`, `poster`, `genres`, `imdb`, `tmdb`, `tomato`, `age_cert`, `flatrate`, `rent_lo`, `buy_lo`, `monet`, `brands`, `cr` (chart_rank, optional). Stored with compact single/two-char keys on disk; rehydrated by `src/lib/wire.ts` before being handed to the UI. Sizes: NL 11 MB, BE 11 MB, DE 20 MB, GB 19 MB, US 34 MB.
 - **`web/public/data/offers_<cc>.json`** (or `offers_<cc>_<n>.json` when sharded) — lazy. A `Record<id, Offer[]>` loaded on first detail-page click for that title's shard. Shard index = `parseInt(id.replace(/^[a-z]+/, '')) % K` where K = smallest power of 2 keeping each shard ≤ 50 MB (K=2 for DE and US). Cached in memory after first fetch.
 - **`web/public/data/providers_<cc>.json`** — brand metadata (display name, tier, title counts).
 - **`web/public/data/manifest.json`** — per-country `title_count`, `offer_count`, `offers_shard_count`, `catalog_size_bytes`, `language`, `extracted_at`, `build_hash`.
@@ -87,16 +87,25 @@ A pill button (shopping-cart icon, label `view_purchases` i18n key) sits in the 
 **Header strategy (mobile-first stacking):** On `<640px` (`sm` breakpoint), the header switches from a single `flex-row` to a `flex-col` layout. The app title occupies its own line, then the country/language/theme controls flow below it with `flex-wrap`. This ensures the `Country:` and `Language:` prefix labels are always readable without horizontal overflow. On `sm+` the layout reverts to the original single-row `justify-between`.
 
 **Tap targets:** All interactive elements that must be reachable on touch screens satisfy ≥44×44 px:
-- Filter toggle button (`lg:hidden` in browse view): `min-h-[44px]`
-- Filter drawer close ×: `min-h-[44px] min-w-[44px]`
 - Offer links in title detail: `min-h-[44px]`
 - Back-to-browse button: `min-h-[44px]`
 
-**Filter drawer:** The mobile bottom-sheet now uses a `flex flex-col max-h-[80vh]` wrapper, keeping the header and new sticky footer always visible while only the filter list scrolls (`flex-1 min-h-0 overflow-y-auto`). The sticky footer provides two CTAs:
-- **Clear all filters** — calls `clearFilters()` and closes the drawer.
-- **Apply** — closes the drawer (filters are applied in real-time via URL params).
+**Filter sidebar removed.** The left `<aside>` desktop sidebar and mobile bottom-sheet filter drawer are gone. Provider filtering is driven entirely by the "My Providers" picker in the header. Genre/type/year filters are not exposed in the current UI; the sidebar file (`filter-sidebar.tsx`) is retained on disk for archival.
 
 **No horizontal scroll:** `overflow-x: hidden` is set on `body` in `globals.css`. The result grid computes column count from container width (3 columns at <480 px) so it never overflows its parent.
+
+## Landing Page Rails (Trending + Top Rated)
+
+When no search query and no provider filter is active, two horizontally-scrollable poster rails appear above the main grid:
+
+- **Trending now** — top 20 flatrate titles sorted by `chart_rank ASC` (nulls last), falling back to `imdb_score || tmdb_score DESC`. Uses `chart_rank` from `Title.chart_rank` (wire key `cr`). Since current catalogs don't emit `cr`, the score-based fallback is active.
+- **Top Rated** — top 20 flatrate titles with `imdb_score > 0`, sorted by `imdb_score DESC`.
+
+Both rails disappear instantly when a search or provider filter is applied. Implementation in `routes/index.tsx` via `useMemo`.
+
+## Card Entry Animation
+
+`TitleCard` animates in with a fade + 8 px translateY (`@keyframes card-in`, 180 ms ease). Stagger is driven by a CSS custom property `--card-i` (capped at 24 to avoid long cascades). `@media (prefers-reduced-motion: reduce)` disables all card animations.
 
 ## Title Detail Page — Country Reactivity
 

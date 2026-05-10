@@ -1,18 +1,21 @@
+import type { CSSProperties } from 'react'
 import type { Title } from '@/lib/data'
 
 interface TitleCardProps {
   title: Title
   onClick: () => void
+  index?: number
 }
 
-export function TitleCard({ title, onClick }: TitleCardProps) {
+export function TitleCard({ title, onClick, index = 0 }: TitleCardProps) {
   const posterUrl = title.poster_url.replace('/s718/', '/s276/')
   const score = title.imdb_score || title.tmdb_score
 
   return (
     <button
       onClick={onClick}
-      className="group relative aspect-[2/3] rounded-md overflow-hidden bg-[var(--card)] hover:ring-2 hover:ring-[var(--accent)] transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] block w-full"
+      className="group relative aspect-[2/3] rounded-md overflow-hidden bg-[var(--card)] hover:ring-2 hover:ring-[var(--accent)] transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] block w-full title-card-anim"
+      style={{ '--card-i': Math.min(index, 24) } as CSSProperties}
       aria-label={title.title}
     >
       <img
