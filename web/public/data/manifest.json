@@ -1,6 +1,6 @@
 {
   "extracted_at": "2026-05-10T11:42:50.495760Z",
-  "build_hash": "2026-05-10T13:04:59.997Z",
+  "build_hash": "2026-05-10T13:41:12.174Z",
   "countries": {
     "nl": {
       "title_count": 35256,
@@ -28,6 +28,13 @@
       "offer_count": 114314,
       "language": "en",
       "catalog_size_bytes": 6823441,
+      "offers_shard_count": 1
+    },
+    "gb": {
+      "title_count": 54596,
+      "offer_count": 193216,
+      "language": "en",
+      "catalog_size_bytes": 19044866,
       "offers_shard_count": 1
     }
   }
