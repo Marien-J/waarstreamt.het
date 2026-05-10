@@ -1,0 +1,512 @@
+{
+  "unx": {
+    "brand_id": "unx",
+    "display_name": "U-NEXT",
+    "brand_color": "#000000",
+    "title_count": 8981,
+    "tier": "mainstream",
+    "short_names": [
+      "mxu",
+      "unx"
+    ]
+  },
+  "hulu": {
+    "brand_id": "hulu",
+    "display_name": "Hulu",
+    "logo_url": "https://images.justwatch.com/icon/116305230/s100",
+    "brand_color": "#1CE783",
+    "title_count": 5618,
+    "tier": "mainstream",
+    "short_names": [
+      "hlu"
+    ]
+  },
+  "amazon": {
+    "brand_id": "amazon",
+    "display_name": "Amazon Prime Video with Ads",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#00A8E1",
+    "title_count": 5488,
+    "tier": "mainstream",
+    "short_names": [
+      "amp",
+      "pva"
+    ]
+  },
+  "fod": {
+    "brand_id": "fod",
+    "display_name": "FOD",
+    "brand_color": "#E31837",
+    "title_count": 4972,
+    "tier": "mainstream",
+    "short_names": [
+      "fda",
+      "fuj"
+    ]
+  },
+  "netflix": {
+    "brand_id": "netflix",
+    "display_name": "Netflix",
+    "logo_url": "https://images.justwatch.com/icon/207360008/s100",
+    "brand_color": "#E50914",
+    "title_count": 4434,
+    "tier": "mainstream",
+    "short_names": [
+      "nfa",
+      "nfx"
+    ]
+  },
+  "danime": {
+    "brand_id": "danime",
+    "display_name": "dAnime Amazon Channel",
+    "brand_color": "#0099CC",
+    "title_count": 3098,
+    "tier": "mainstream",
+    "short_names": [
+      "dan"
+    ]
+  },
+  "disney": {
+    "brand_id": "disney",
+    "display_name": "Disney Plus",
+    "logo_url": "https://images.justwatch.com/icon/147638351/s100",
+    "brand_color": "#113CCF",
+    "title_count": 3002,
+    "tier": "mainstream",
+    "short_names": [
+      "dnp"
+    ]
+  },
+  "snx": {
+    "brand_id": "snx",
+    "display_name": "Sun Nxt",
+    "brand_color": "#888888",
+    "title_count": 2270,
+    "tier": "mainstream",
+    "short_names": [
+      "snx"
+    ]
+  },
+  "animetimes": {
+    "brand_id": "animetimes",
+    "display_name": "Anime Times Amazon Channel",
+    "brand_color": "#0066CC",
+    "title_count": 2240,
+    "tier": "niche",
+    "short_names": [
+      "aam"
+    ]
+  },
+  "daf": {
+    "brand_id": "daf",
+    "display_name": "DocAlliance Films",
+    "brand_color": "#888888",
+    "title_count": 1976,
+    "tier": "niche",
+    "short_names": [
+      "daf"
+    ]
+  },
+  "toei": {
+    "brand_id": "toei",
+    "display_name": "Toei On Demand Amazon Channel",
+    "brand_color": "#FF0000",
+    "title_count": 1768,
+    "tier": "niche",
+    "short_names": [
+      "toa",
+      "ton"
+    ]
+  },
+  "cultpix": {
+    "brand_id": "cultpix",
+    "display_name": "Cultpix",
+    "brand_color": "#E5001C",
+    "title_count": 1467,
+    "tier": "niche",
+    "short_names": [
+      "ctx"
+    ]
+  },
+  "qello": {
+    "brand_id": "qello",
+    "display_name": "Qello Concerts by Stingray Amazon Channel",
+    "brand_color": "#000000",
+    "title_count": 901,
+    "tier": "niche",
+    "short_names": [
+      "qcs"
+    ]
+  },
+  "magellantv": {
+    "brand_id": "magellantv",
+    "display_name": "Magellan TV",
+    "brand_color": "#1A3E72",
+    "title_count": 679,
+    "tier": "niche",
+    "short_names": [
+      "mgl"
+    ]
+  },
+  "kadokawa": {
+    "brand_id": "kadokawa",
+    "display_name": "KADOKAWA channel Amazon Channel",
+    "brand_color": "#E31837",
+    "title_count": 520,
+    "tier": "niche",
+    "short_names": [
+      "kdk"
+    ]
+  },
+  "cts": {
+    "brand_id": "cts",
+    "display_name": "Curiosity Stream",
+    "brand_color": "#888888",
+    "title_count": 444,
+    "tier": "niche",
+    "short_names": [
+      "cts"
+    ]
+  },
+  "chl": {
+    "brand_id": "chl",
+    "display_name": "Chilling",
+    "brand_color": "#888888",
+    "title_count": 438,
+    "tier": "niche",
+    "short_names": [
+      "chl"
+    ]
+  },
+  "shochiku": {
+    "brand_id": "shochiku",
+    "display_name": "Plus Shochiku Amazon Channel",
+    "brand_color": "#000000",
+    "title_count": 426,
+    "tier": "niche",
+    "short_names": [
+      "psa"
+    ]
+  },
+  "nod": {
+    "brand_id": "nod",
+    "display_name": "NHK On Demand Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 425,
+    "tier": "niche",
+    "short_names": [
+      "nod"
+    ]
+  },
+  "hoc": {
+    "brand_id": "hoc",
+    "display_name": "Hoichoi",
+    "brand_color": "#888888",
+    "title_count": 400,
+    "tier": "niche",
+    "short_names": [
+      "hoc"
+    ]
+  },
+  "trs": {
+    "brand_id": "trs",
+    "display_name": "True Story",
+    "brand_color": "#888888",
+    "title_count": 365,
+    "tier": "niche",
+    "short_names": [
+      "trs"
+    ]
+  },
+  "asiapremium": {
+    "brand_id": "asiapremium",
+    "display_name": "Asia Premium Amazon Channel ",
+    "brand_color": "#000000",
+    "title_count": 347,
+    "tier": "niche",
+    "short_names": [
+      "pma"
+    ]
+  },
+  "mubi": {
+    "brand_id": "mubi",
+    "display_name": "MUBI",
+    "brand_color": "#0B0B0B",
+    "title_count": 347,
+    "tier": "niche",
+    "short_names": [
+      "mbi"
+    ]
+  },
+  "telesa": {
+    "brand_id": "telesa",
+    "display_name": "TELESA Amazon Channel",
+    "brand_color": "#0099CC",
+    "title_count": 330,
+    "tier": "niche",
+    "short_names": [
+      "tls"
+    ]
+  },
+  "apple": {
+    "brand_id": "apple",
+    "display_name": "Apple TV",
+    "logo_url": "https://images.justwatch.com/icon/190848813/s100",
+    "brand_color": "#000000",
+    "title_count": 312,
+    "tier": "niche",
+    "short_names": [
+      "atp"
+    ]
+  },
+  "avl": {
+    "brand_id": "avl",
+    "display_name": "Apple TV Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 307,
+    "tier": "niche",
+    "short_names": [
+      "avl"
+    ]
+  },
+  "wls": {
+    "brand_id": "wls",
+    "display_name": "Cinefil Wow Plus Amazon Channel",
+    "brand_color": "#003087",
+    "title_count": 297,
+    "tier": "niche",
+    "short_names": [
+      "cwp"
+    ]
+  },
+  "channelk": {
+    "brand_id": "channelk",
+    "display_name": "Channel K Amazon Channel",
+    "brand_color": "#000000",
+    "title_count": 290,
+    "tier": "niche",
+    "short_names": [
+      "chk"
+    ]
+  },
+  "flb": {
+    "brand_id": "flb",
+    "display_name": "FilmBox+",
+    "brand_color": "#888888",
+    "title_count": 279,
+    "tier": "niche",
+    "short_names": [
+      "flb"
+    ]
+  },
+  "dkk": {
+    "brand_id": "dkk",
+    "display_name": "Dekkoo",
+    "brand_color": "#888888",
+    "title_count": 235,
+    "tier": "niche",
+    "short_names": [
+      "dkk"
+    ]
+  },
+  "dsv": {
+    "brand_id": "dsv",
+    "display_name": "DOCSVILLE",
+    "brand_color": "#888888",
+    "title_count": 217,
+    "tier": "niche",
+    "short_names": [
+      "dsv"
+    ]
+  },
+  "myh": {
+    "brand_id": "myh",
+    "display_name": "MY HERO Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 212,
+    "tier": "niche",
+    "short_names": [
+      "myh"
+    ]
+  },
+  "atf": {
+    "brand_id": "atf",
+    "display_name": "Artify",
+    "brand_color": "#888888",
+    "title_count": 194,
+    "tier": "niche",
+    "short_names": [
+      "atf"
+    ]
+  },
+  "plg": {
+    "brand_id": "plg",
+    "display_name": "Plus GAGA Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 181,
+    "tier": "niche",
+    "short_names": [
+      "plg"
+    ]
+  },
+  "kfp": {
+    "brand_id": "kfp",
+    "display_name": "kino films+ Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 173,
+    "tier": "niche",
+    "short_names": [
+      "kfp"
+    ]
+  },
+  "adh": {
+    "brand_id": "adh",
+    "display_name": "Asian Drama Channel Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 159,
+    "tier": "niche",
+    "short_names": [
+      "adh"
+    ]
+  },
+  "amg": {
+    "brand_id": "amg",
+    "display_name": "MGM Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 117,
+    "tier": "niche",
+    "short_names": [
+      "amg"
+    ]
+  },
+  "nen": {
+    "brand_id": "nen",
+    "display_name": "Nihon Eiga Net Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 114,
+    "tier": "niche",
+    "short_names": [
+      "nen"
+    ]
+  },
+  "wow": {
+    "brand_id": "wow",
+    "display_name": "WOW Presents Plus",
+    "brand_color": "#888888",
+    "title_count": 107,
+    "tier": "niche",
+    "short_names": [
+      "wow"
+    ]
+  },
+  "blp": {
+    "brand_id": "blp",
+    "display_name": "Bloome plus Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 97,
+    "tier": "niche",
+    "short_names": [
+      "blp"
+    ]
+  },
+  "esa": {
+    "brand_id": "esa",
+    "display_name": "Entertainment Asia Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 94,
+    "tier": "niche",
+    "short_names": [
+      "esa"
+    ]
+  },
+  "kbo": {
+    "brand_id": "kbo",
+    "display_name": "KableOne",
+    "brand_color": "#888888",
+    "title_count": 88,
+    "tier": "niche",
+    "short_names": [
+      "kbo"
+    ]
+  },
+  "cky": {
+    "brand_id": "cky",
+    "display_name": "Channel Kyofu Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 82,
+    "tier": "niche",
+    "short_names": [
+      "cky"
+    ]
+  },
+  "aky": {
+    "brand_id": "aky",
+    "display_name": "KANTELE DOGA CHANNEL Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 81,
+    "tier": "niche",
+    "short_names": [
+      "aky"
+    ]
+  },
+  "nec": {
+    "brand_id": "nec",
+    "display_name": "NECO Plus Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 80,
+    "tier": "niche",
+    "short_names": [
+      "nec"
+    ]
+  },
+  "aoj": {
+    "brand_id": "aoj",
+    "display_name": "ABC On Demand Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 78,
+    "tier": "niche",
+    "short_names": [
+      "aoj"
+    ]
+  },
+  "kdc": {
+    "brand_id": "kdc",
+    "display_name": "Korean Drama Channel Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 71,
+    "tier": "niche",
+    "short_names": [
+      "kdc"
+    ]
+  },
+  "bhd": {
+    "brand_id": "bhd",
+    "display_name": "BroadwayHD",
+    "brand_color": "#888888",
+    "title_count": 71,
+    "tier": "niche",
+    "short_names": [
+      "bhd"
+    ]
+  },
+  "inr": {
+    "brand_id": "inr",
+    "display_name": "Indie Films by Realto Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 53,
+    "tier": "niche",
+    "short_names": [
+      "inr"
+    ]
+  },
+  "lsa": {
+    "brand_id": "lsa",
+    "display_name": "Lemino Select Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 51,
+    "tier": "niche",
+    "short_names": [
+      "lsa"
+    ]
+  }
+}

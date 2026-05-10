@@ -1,0 +1,48 @@
+{
+  "extracted_at": "2026-05-09T19:59:56.178658Z",
+  "build_hash": "2026-05-09T22:14:17.924Z",
+  "countries": {
+    "nl": {
+      "title_count": 35275,
+      "offer_count": 96156,
+      "language": "nl",
+      "catalog_size_bytes": 11497751,
+      "offers_shard_count": 1
+    },
+    "de": {
+      "title_count": 56713,
+      "offer_count": 303917,
+      "language": "de",
+      "catalog_size_bytes": 20477248,
+      "offers_shard_count": 2
+    },
+    "be": {
+      "title_count": 34168,
+      "offer_count": 83056,
+      "language": "nl",
+      "catalog_size_bytes": 11095210,
+      "offers_shard_count": 1
+    },
+    "us": {
+      "title_count": 96489,
+      "offer_count": 638066,
+      "language": "en",
+      "catalog_size_bytes": 35369015,
+      "offers_shard_count": 2
+    },
+    "gb": {
+      "title_count": 56331,
+      "offer_count": 200860,
+      "language": "en",
+      "catalog_size_bytes": 19055009,
+      "offers_shard_count": 1
+    },
+    "jp": {
+      "title_count": 34869,
+      "offer_count": 112027,
+      "language": "en",
+      "catalog_size_bytes": 11999937,
+      "offers_shard_count": 1
+    }
+  }
+}

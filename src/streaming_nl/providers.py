@@ -8,26 +8,40 @@ from streaming_nl.config import COUNTRY
 logger = structlog.get_logger()
 
 
+INCLUDED_MONETIZATION_TYPES = {"FLATRATE", "FREE", "ADS", "RENT"}
+
+
 def resolve_provider_codes(country: str = COUNTRY) -> dict[str, str]:
-    """Return all JustWatch providers for the country as name -> short_name codes.
+    """Return JustWatch providers for the country filtered to streaming/rental offers.
+
+    Includes providers with any of: FLATRATE, FREE, ADS, RENT.
+    Excludes purchase-only (BUY) and cinema (CINEMA) providers.
 
     Args:
         country: Two-letter country code
 
     Returns:
-        Dict mapping provider display name -> short_name for all available providers
+        Dict mapping provider display name -> short_name
 
     Raises:
         SystemExit: If zero providers returned (network failure guard)
     """
-    # TODO: filter to flatrate/subscription-only once simplejustwatchapi exposes
-    # monetization type on provider objects returned by jw_providers().
     available = jw_providers(country=country)
 
     if not available:
         logger.error("no_providers_returned", country=country)
         raise SystemExit(1)
 
-    result = {p.name: p.short_name for p in available}
-    logger.info("provider_resolution_complete", country=country, count=len(result))
+    filtered = [
+        p for p in available
+        if INCLUDED_MONETIZATION_TYPES & set(p.monetization_types)
+    ]
+
+    result = {p.name: p.short_name for p in filtered}
+    logger.info(
+        "provider_resolution_complete",
+        country=country,
+        total=len(available),
+        filtered=len(result),
+    )
     return result

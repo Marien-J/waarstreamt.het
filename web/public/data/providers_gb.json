@@ -1,0 +1,845 @@
+{
+  "amazon": {
+    "brand_id": "amazon",
+    "display_name": "Amazon Prime Video",
+    "logo_url": "https://images.justwatch.com/icon/52449861/s100",
+    "brand_color": "#00A8E1",
+    "title_count": 10312,
+    "tier": "mainstream",
+    "short_names": [
+      "amp",
+      "pva"
+    ]
+  },
+  "netflix": {
+    "brand_id": "netflix",
+    "display_name": "Netflix",
+    "logo_url": "https://images.justwatch.com/icon/207360008/s100",
+    "brand_color": "#E50914",
+    "title_count": 4930,
+    "tier": "mainstream",
+    "short_names": [
+      "nfa",
+      "nfk",
+      "nfx"
+    ]
+  },
+  "skygo": {
+    "brand_id": "skygo",
+    "display_name": "Sky Go",
+    "brand_color": "#00b0f0",
+    "title_count": 3722,
+    "tier": "mainstream",
+    "short_names": [
+      "skg"
+    ]
+  },
+  "disney": {
+    "brand_id": "disney",
+    "display_name": "Disney Plus",
+    "logo_url": "https://images.justwatch.com/icon/147638351/s100",
+    "brand_color": "#113CCF",
+    "title_count": 3368,
+    "tier": "mainstream",
+    "short_names": [
+      "dnp"
+    ]
+  },
+  "ntv": {
+    "brand_id": "ntv",
+    "display_name": "Now TV",
+    "brand_color": "#00C9A7",
+    "title_count": 2503,
+    "tier": "mainstream",
+    "short_names": [
+      "ntc",
+      "ntv"
+    ]
+  },
+  "snx": {
+    "brand_id": "snx",
+    "display_name": "Sun Nxt",
+    "brand_color": "#888888",
+    "title_count": 2370,
+    "tier": "mainstream",
+    "short_names": [
+      "snx"
+    ]
+  },
+  "aen": {
+    "brand_id": "aen",
+    "display_name": "Eros Now Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 1995,
+    "tier": "mainstream",
+    "short_names": [
+      "aen"
+    ]
+  },
+  "daf": {
+    "brand_id": "daf",
+    "display_name": "DocAlliance Films",
+    "brand_color": "#888888",
+    "title_count": 1989,
+    "tier": "mainstream",
+    "short_names": [
+      "daf"
+    ]
+  },
+  "crunchyroll": {
+    "brand_id": "crunchyroll",
+    "display_name": "Crunchyroll Amazon Channel",
+    "logo_url": "https://images.justwatch.com/icon/324213205/s100",
+    "brand_color": "#F47521",
+    "title_count": 1891,
+    "tier": "niche",
+    "short_names": [
+      "cra",
+      "cru"
+    ]
+  },
+  "gdc": {
+    "brand_id": "gdc",
+    "display_name": "GuideDoc",
+    "brand_color": "#888888",
+    "title_count": 1532,
+    "tier": "niche",
+    "short_names": [
+      "gdc"
+    ]
+  },
+  "cultpix": {
+    "brand_id": "cultpix",
+    "display_name": "Cultpix",
+    "brand_color": "#E5001C",
+    "title_count": 1467,
+    "tier": "niche",
+    "short_names": [
+      "ctx"
+    ]
+  },
+  "itv": {
+    "brand_id": "itv",
+    "display_name": "ITVX Premium",
+    "brand_color": "#000000",
+    "title_count": 1364,
+    "tier": "niche",
+    "short_names": [
+      "itp",
+      "itv"
+    ]
+  },
+  "qello": {
+    "brand_id": "qello",
+    "display_name": "Qello Concerts by Stingray Amazon Channel",
+    "brand_color": "#000000",
+    "title_count": 1363,
+    "tier": "niche",
+    "short_names": [
+      "qcs"
+    ]
+  },
+  "max": {
+    "brand_id": "max",
+    "display_name": "HBO Max Amazon Channel",
+    "logo_url": "https://images.justwatch.com/icon/305908916/s100",
+    "brand_color": "#002BE7",
+    "title_count": 1349,
+    "tier": "niche",
+    "short_names": [
+      "aho"
+    ]
+  },
+  "discovery": {
+    "brand_id": "discovery",
+    "display_name": "Discovery+ Amazon Channel",
+    "brand_color": "#2175D9",
+    "title_count": 1093,
+    "tier": "niche",
+    "short_names": [
+      "adp",
+      "dpe"
+    ]
+  },
+  "paramount": {
+    "brand_id": "paramount",
+    "display_name": "Paramount+ Amazon Channel",
+    "logo_url": "https://images.justwatch.com/icon/230791108/s100",
+    "brand_color": "#0064FF",
+    "title_count": 1034,
+    "tier": "niche",
+    "short_names": [
+      "app",
+      "pba",
+      "pmp",
+      "ppa",
+      "ppp"
+    ]
+  },
+  "kocowa": {
+    "brand_id": "kocowa",
+    "display_name": "Kocowa",
+    "brand_color": "#E31837",
+    "title_count": 855,
+    "tier": "niche",
+    "short_names": [
+      "koc"
+    ]
+  },
+  "magellantv": {
+    "brand_id": "magellantv",
+    "display_name": "Magellan TV",
+    "brand_color": "#1A3E72",
+    "title_count": 813,
+    "tier": "niche",
+    "short_names": [
+      "mgl"
+    ]
+  },
+  "shudder": {
+    "brand_id": "shudder",
+    "display_name": "Shudder Amazon Channel",
+    "brand_color": "#006400",
+    "title_count": 789,
+    "tier": "niche",
+    "short_names": [
+      "asd",
+      "shd"
+    ]
+  },
+  "soa": {
+    "brand_id": "soa",
+    "display_name": "Studiocanal Presents Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 588,
+    "tier": "niche",
+    "short_names": [
+      "soa"
+    ]
+  },
+  "mubi": {
+    "brand_id": "mubi",
+    "display_name": "MUBI",
+    "brand_color": "#0B0B0B",
+    "title_count": 559,
+    "tier": "niche",
+    "short_names": [
+      "amu",
+      "mbi"
+    ]
+  },
+  "rac": {
+    "brand_id": "rac",
+    "display_name": "Sooner Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 542,
+    "tier": "niche",
+    "short_names": [
+      "rac"
+    ]
+  },
+  "bfi": {
+    "brand_id": "bfi",
+    "display_name": "BFI Player",
+    "brand_color": "#888888",
+    "title_count": 526,
+    "tier": "niche",
+    "short_names": [
+      "bfi"
+    ]
+  },
+  "ahi": {
+    "brand_id": "ahi",
+    "display_name": "Hoichoi Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 514,
+    "tier": "niche",
+    "short_names": [
+      "ahi"
+    ]
+  },
+  "abf": {
+    "brand_id": "abf",
+    "display_name": "BFI Player Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 478,
+    "tier": "niche",
+    "short_names": [
+      "abf"
+    ]
+  },
+  "bfa": {
+    "brand_id": "bfa",
+    "display_name": "BFI Player Apple TV Channel",
+    "brand_color": "#888888",
+    "title_count": 478,
+    "tier": "niche",
+    "short_names": [
+      "bfa"
+    ]
+  },
+  "eba": {
+    "brand_id": "eba",
+    "display_name": "Echoboom Amazon Channel ",
+    "brand_color": "#888888",
+    "title_count": 459,
+    "tier": "niche",
+    "short_names": [
+      "eba"
+    ]
+  },
+  "lionsgate": {
+    "brand_id": "lionsgate",
+    "display_name": "Lionsgate+ Amazon Channels",
+    "brand_color": "#000000",
+    "title_count": 446,
+    "tier": "niche",
+    "short_names": [
+      "alg"
+    ]
+  },
+  "cts": {
+    "brand_id": "cts",
+    "display_name": "Curiosity Stream",
+    "brand_color": "#888888",
+    "title_count": 443,
+    "tier": "niche",
+    "short_names": [
+      "cts"
+    ]
+  },
+  "pbm": {
+    "brand_id": "pbm",
+    "display_name": "PBS America Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 443,
+    "tier": "niche",
+    "short_names": [
+      "pbm"
+    ]
+  },
+  "chl": {
+    "brand_id": "chl",
+    "display_name": "Chilling",
+    "brand_color": "#888888",
+    "title_count": 438,
+    "tier": "niche",
+    "short_names": [
+      "chl"
+    ]
+  },
+  "acl": {
+    "brand_id": "acl",
+    "display_name": "Chaupal Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 410,
+    "tier": "niche",
+    "short_names": [
+      "acl"
+    ]
+  },
+  "sha": {
+    "brand_id": "sha",
+    "display_name": "Shahid VIP",
+    "brand_color": "#888888",
+    "title_count": 401,
+    "tier": "niche",
+    "short_names": [
+      "sha"
+    ]
+  },
+  "hoc": {
+    "brand_id": "hoc",
+    "display_name": "Hoichoi",
+    "brand_color": "#888888",
+    "title_count": 400,
+    "tier": "niche",
+    "short_names": [
+      "hoc"
+    ]
+  },
+  "trs": {
+    "brand_id": "trs",
+    "display_name": "True Story",
+    "brand_color": "#888888",
+    "title_count": 380,
+    "tier": "niche",
+    "short_names": [
+      "trs"
+    ]
+  },
+  "acs": {
+    "brand_id": "acs",
+    "display_name": "CuriosityStream Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 379,
+    "tier": "niche",
+    "short_names": [
+      "acs"
+    ]
+  },
+  "csa": {
+    "brand_id": "csa",
+    "display_name": "CuriosityStream Apple TV Channel",
+    "brand_color": "#888888",
+    "title_count": 379,
+    "tier": "niche",
+    "short_names": [
+      "csa"
+    ]
+  },
+  "aav": {
+    "brand_id": "aav",
+    "display_name": "Arrow Video Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 369,
+    "tier": "niche",
+    "short_names": [
+      "aav"
+    ]
+  },
+  "dkk": {
+    "brand_id": "dkk",
+    "display_name": "Dekkoo",
+    "brand_color": "#888888",
+    "title_count": 351,
+    "tier": "niche",
+    "short_names": [
+      "dkk"
+    ]
+  },
+  "ifa": {
+    "brand_id": "ifa",
+    "display_name": "Icon Film Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 349,
+    "tier": "niche",
+    "short_names": [
+      "ifa"
+    ]
+  },
+  "mgmplus": {
+    "brand_id": "mgmplus",
+    "display_name": "MGM Plus Amazon Channel",
+    "brand_color": "#003087",
+    "title_count": 335,
+    "tier": "niche",
+    "short_names": [
+      "mgp"
+    ]
+  },
+  "apple": {
+    "brand_id": "apple",
+    "display_name": "Apple TV",
+    "logo_url": "https://images.justwatch.com/icon/190848813/s100",
+    "brand_color": "#000000",
+    "title_count": 318,
+    "tier": "niche",
+    "short_names": [
+      "atp",
+      "itu"
+    ]
+  },
+  "avl": {
+    "brand_id": "avl",
+    "display_name": "Apple TV Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 310,
+    "tier": "niche",
+    "short_names": [
+      "avl"
+    ]
+  },
+  "cac": {
+    "brand_id": "cac",
+    "display_name": "Curzon Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 296,
+    "tier": "niche",
+    "short_names": [
+      "cac"
+    ]
+  },
+  "flb": {
+    "brand_id": "flb",
+    "display_name": "FilmBox+",
+    "brand_color": "#888888",
+    "title_count": 278,
+    "tier": "niche",
+    "short_names": [
+      "flb"
+    ]
+  },
+  "kls": {
+    "brand_id": "kls",
+    "display_name": "Klassiki",
+    "brand_color": "#888888",
+    "title_count": 274,
+    "tier": "niche",
+    "short_names": [
+      "kls"
+    ]
+  },
+  "ahy": {
+    "brand_id": "ahy",
+    "display_name": "Hayu Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 260,
+    "tier": "niche",
+    "short_names": [
+      "ahy"
+    ]
+  },
+  "ccl": {
+    "brand_id": "ccl",
+    "display_name": "The Coda Collection Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 253,
+    "tier": "niche",
+    "short_names": [
+      "ccl"
+    ]
+  },
+  "vpy": {
+    "brand_id": "vpy",
+    "display_name": "Viaplay Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 249,
+    "tier": "niche",
+    "short_names": [
+      "vpy"
+    ]
+  },
+  "aga": {
+    "brand_id": "aga",
+    "display_name": "Gaia Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 249,
+    "tier": "niche",
+    "short_names": [
+      "aga"
+    ]
+  },
+  "hay": {
+    "brand_id": "hay",
+    "display_name": "Hayu",
+    "brand_color": "#888888",
+    "title_count": 248,
+    "tier": "niche",
+    "short_names": [
+      "hay"
+    ]
+  },
+  "afm": {
+    "brand_id": "afm",
+    "display_name": "Full Moon Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 238,
+    "tier": "niche",
+    "short_names": [
+      "afm"
+    ]
+  },
+  "dov": {
+    "brand_id": "dov",
+    "display_name": "Docsville Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 225,
+    "tier": "niche",
+    "short_names": [
+      "dov"
+    ]
+  },
+  "hpa": {
+    "brand_id": "hpa",
+    "display_name": "HistoryPlay Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 224,
+    "tier": "niche",
+    "short_names": [
+      "hpa"
+    ]
+  },
+  "dsv": {
+    "brand_id": "dsv",
+    "display_name": "DOCSVILLE",
+    "brand_color": "#888888",
+    "title_count": 220,
+    "tier": "niche",
+    "short_names": [
+      "dsv"
+    ]
+  },
+  "scl": {
+    "brand_id": "scl",
+    "display_name": "Stingray Classica Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 216,
+    "tier": "niche",
+    "short_names": [
+      "scl"
+    ]
+  },
+  "a4p": {
+    "brand_id": "a4p",
+    "display_name": "Channel 4 Plus",
+    "brand_color": "#888888",
+    "title_count": 211,
+    "tier": "niche",
+    "short_names": [
+      "a4p"
+    ]
+  },
+  "shoutfactory": {
+    "brand_id": "shoutfactory",
+    "display_name": "Shout! Factory Amazon Channel",
+    "brand_color": "#E31837",
+    "title_count": 209,
+    "tier": "niche",
+    "short_names": [
+      "asf"
+    ]
+  },
+  "atf": {
+    "brand_id": "atf",
+    "display_name": "Artify",
+    "brand_color": "#888888",
+    "title_count": 199,
+    "tier": "niche",
+    "short_names": [
+      "atf"
+    ]
+  },
+  "hda": {
+    "brand_id": "hda",
+    "display_name": "Hidive Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 180,
+    "tier": "niche",
+    "short_names": [
+      "hda"
+    ]
+  },
+  "mqa": {
+    "brand_id": "mqa",
+    "display_name": "Marquee TV Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 174,
+    "tier": "niche",
+    "short_names": [
+      "mqa"
+    ]
+  },
+  "pbo": {
+    "brand_id": "pbo",
+    "display_name": "Pinoy Box Office Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 159,
+    "tier": "niche",
+    "short_names": [
+      "pbo"
+    ]
+  },
+  "hma": {
+    "brand_id": "hma",
+    "display_name": "Hallmark TV Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 155,
+    "tier": "niche",
+    "short_names": [
+      "hma"
+    ]
+  },
+  "atv": {
+    "brand_id": "atv",
+    "display_name": "ShortsTV Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 150,
+    "tier": "niche",
+    "short_names": [
+      "atv"
+    ]
+  },
+  "hta": {
+    "brand_id": "hta",
+    "display_name": "Here TV  Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 145,
+    "tier": "niche",
+    "short_names": [
+      "hta"
+    ]
+  },
+  "ytr": {
+    "brand_id": "ytr",
+    "display_name": "YouTube Premium",
+    "brand_color": "#888888",
+    "title_count": 131,
+    "tier": "niche",
+    "short_names": [
+      "ytr"
+    ]
+  },
+  "aci": {
+    "brand_id": "aci",
+    "display_name": "Crime+ Investigation Play Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 128,
+    "tier": "niche",
+    "short_names": [
+      "aci"
+    ]
+  },
+  "asp": {
+    "brand_id": "asp",
+    "display_name": "STUDIOCANAL PRESENTS Apple TV Channel",
+    "brand_color": "#888888",
+    "title_count": 126,
+    "tier": "niche",
+    "short_names": [
+      "asp"
+    ]
+  },
+  "atg": {
+    "brand_id": "atg",
+    "display_name": "The Great Courses Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 116,
+    "tier": "niche",
+    "short_names": [
+      "atg"
+    ]
+  },
+  "afb": {
+    "brand_id": "afb",
+    "display_name": "FilmBox Live Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 116,
+    "tier": "niche",
+    "short_names": [
+      "afb"
+    ]
+  },
+  "acorntv": {
+    "brand_id": "acorntv",
+    "display_name": "Acorn TV Apple TV",
+    "brand_color": "#004B23",
+    "title_count": 101,
+    "tier": "niche",
+    "short_names": [
+      "aac",
+      "acr",
+      "act"
+    ]
+  },
+  "wow": {
+    "brand_id": "wow",
+    "display_name": "WOW Presents Plus",
+    "brand_color": "#888888",
+    "title_count": 101,
+    "tier": "niche",
+    "short_names": [
+      "wow"
+    ]
+  },
+  "aot": {
+    "brand_id": "aot",
+    "display_name": "OUTtv Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 93,
+    "tier": "niche",
+    "short_names": [
+      "aot"
+    ]
+  },
+  "aln": {
+    "brand_id": "aln",
+    "display_name": "Love Nature Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 88,
+    "tier": "niche",
+    "short_names": [
+      "aln"
+    ]
+  },
+  "kbo": {
+    "brand_id": "kbo",
+    "display_name": "KableOne",
+    "brand_color": "#888888",
+    "title_count": 88,
+    "tier": "niche",
+    "short_names": [
+      "kbo"
+    ]
+  },
+  "asn": {
+    "brand_id": "asn",
+    "display_name": "Sundance Now Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 82,
+    "tier": "niche",
+    "short_names": [
+      "asn"
+    ]
+  },
+  "bhd": {
+    "brand_id": "bhd",
+    "display_name": "BroadwayHD",
+    "brand_color": "#888888",
+    "title_count": 78,
+    "tier": "niche",
+    "short_names": [
+      "bhd"
+    ]
+  },
+  "adz": {
+    "brand_id": "adz",
+    "display_name": "Stingray Djazz Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 78,
+    "tier": "niche",
+    "short_names": [
+      "adz"
+    ]
+  },
+  "kda": {
+    "brand_id": "kda",
+    "display_name": "Kidstream Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 60,
+    "tier": "niche",
+    "short_names": [
+      "kda"
+    ]
+  },
+  "aal": {
+    "brand_id": "aal",
+    "display_name": "Alchemiya Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 60,
+    "tier": "niche",
+    "short_names": [
+      "aal"
+    ]
+  },
+  "ado": {
+    "brand_id": "ado",
+    "display_name": "DocuBay Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 59,
+    "tier": "niche",
+    "short_names": [
+      "ado"
+    ]
+  },
+  "ahs": {
+    "brand_id": "ahs",
+    "display_name": "Hopster Amazon Channel",
+    "brand_color": "#888888",
+    "title_count": 57,
+    "tier": "niche",
+    "short_names": [
+      "ahs"
+    ]
+  }
+}

@@ -10,6 +10,7 @@ def make_package(
     short_name: str,
     name: str,
     technical_name: str,
+    monetization_types: list[str] | None = None,
 ) -> OfferPackage:
     return OfferPackage(
         id=f"pkg:{short_name}",
@@ -17,7 +18,7 @@ def make_package(
         name=name,
         technical_name=technical_name,
         short_name=short_name,
-        monetization_types=[],
+        monetization_types=monetization_types if monetization_types is not None else ["FLATRATE"],
         icon="",
     )
 
